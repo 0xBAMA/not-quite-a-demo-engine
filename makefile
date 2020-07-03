@@ -1,7 +1,7 @@
-VORALDO_FLAGS =  -Wall -O3 -std=c++17 -lGLEW -lGL -lstdc++fs $(shell pkg-config sdl2 --cflags --libs)
+FLAGS =  -Wall -O3 -std=c++17 -lGLEW -lGL -lstdc++fs $(shell pkg-config sdl2 --cflags --libs)
 IMGUI_FLAGS   =  -Wall -lGLEW -DIMGUI_IMPL_OPENGL_LOADER_GLEW `sdl2-config --cflags`
 
-all: msg main clean run
+all: msg exe clean run
 
 msg:
 		@echo
@@ -9,33 +9,33 @@ msg:
 		@date
 		@echo
 
-main: imgui lodepng.o perlin.o sdf.o utils.o
-		g++ -o main resources/code/main.cc *.o                           ${VORALDO_FLAGS}
+exe: resources/imgui/imgui.o resources/code/lodepng.o resources/code/perlin.o rtiow.o utils.o
+		g++ -o exe resources/code/main.cc *.o resources/imgui/*.o resources/code/*.o       ${FLAGS}
 
-imgui: resources/imgui/*
-		g++ -c -o imgui_impl_sdl.o resources/imgui/imgui_impl_sdl.cc         ${IMGUI_FLAGS}
-		g++ -c -o imgui_impl_opengl3.o resources/imgui/imgui_impl_opengl3.cc ${IMGUI_FLAGS}
-		g++ -c -o imgui.o resources/imgui/imgui.cc                           ${IMGUI_FLAGS}
-		g++ -c -o imgui_demo.o resources/imgui/imgui_demo.cc                 ${IMGUI_FLAGS}
-		g++ -c -o imgui_draw.o resources/imgui/imgui_draw.cc                 ${IMGUI_FLAGS}
-		g++ -c -o imgui_widgets.o resources/imgui/imgui_widgets.cc           ${IMGUI_FLAGS}
+resources/imgui/imgui.o: resources/imgui/*.cc
+		g++ -c -o resources/imgui/imgui_impl_sdl.o resources/imgui/imgui_impl_sdl.cc         ${IMGUI_FLAGS}
+		g++ -c -o resources/imgui/imgui_impl_opengl3.o resources/imgui/imgui_impl_opengl3.cc ${IMGUI_FLAGS}
+		g++ -c -o resources/imgui/imgui.o resources/imgui/imgui.cc                           ${IMGUI_FLAGS}
+		g++ -c -o resources/imgui/imgui_demo.o resources/imgui/imgui_demo.cc                 ${IMGUI_FLAGS}
+		g++ -c -o resources/imgui/imgui_draw.o resources/imgui/imgui_draw.cc                 ${IMGUI_FLAGS}
+		g++ -c -o resources/imgui/imgui_widgets.o resources/imgui/imgui_widgets.cc           ${IMGUI_FLAGS}
 		@echo
 
 
-utils.o: resources/code/sdf.h resources/code/sdf_utils.cc
-		g++ -c -o utils.o resources/code/sdf_utils.cc               ${VORALDO_FLAGS}
+utils.o: resources/code/rtiow.h resources/code/rtiow_utils.cc
+		g++ -c -o utils.o resources/code/rtiow_utils.cc               ${FLAGS}
 
-sdf.o: resources/code/sdf.h resources/code/sdf.cc
-		g++ -c -o physarum.o resources/code/sdf.cc                  ${VORALDO_FLAGS}
+rtiow.o: resources/code/rtiow.h resources/code/rtiow.cc
+		g++ -c -o rtiow.o resources/code/rtiow.cc                  ${FLAGS}
 
-debug.o: resources/code/debug.cc
-		g++ -c -o debug.o resources/code/debug.cc                        ${VORALDO_FLAGS}
+resources/code/debug.o: resources/code/debug.cc
+		g++ -c -o resources/code/debug.o resources/code/debug.cc                        ${FLAGS}
 
-perlin.o: resources/code/perlin.cc
-		g++ -c -o perlin.o resources/code/perlin.cc                      ${VORALDO_FLAGS}
+resources/code/lodepng.o: resources/code/lodepng.h resources/code/lodepng.cc
+		g++ -c -o resources/code/lodepng.o resources/code/lodepng.cc                    ${FLAGS}
 
-lodepng.o: resources/code/lodepng.h resources/code/lodepng.cc
-		g++ -c -o lodepng.o resources/code/lodepng.cc                    ${VORALDO_FLAGS}
+resources/code/perlin.o: resources/code/perlin.h resources/code/perlin.cc
+		g++ -c -o resources/code/perlin.o resources/code/perlin.cc                      ${FLAGS}
 
 
 clean:
@@ -45,8 +45,8 @@ clean:
 		@echo
 		@rm *.o
 		@echo 'executable size:'
-		@stat --printf "%s bytes\n" main
+		@stat --printf "%s bytes\n" exe
 		@echo
 
 run:
-		@./main
+		@./exe

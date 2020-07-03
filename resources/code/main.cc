@@ -3,7 +3,7 @@
  *
  *       Filename:  main.cc
  *
- *    Description: working on SDF raymarching 
+ *    Description: working on my implementation of ray-tracing-in-one-weekend
  *
  *        Version:  1.0
  *        Created:  06/18/2020 09:19:16 PM
@@ -15,7 +15,7 @@
  */
 
 
-#include "sdf.h"
+#include "rtiow.h"
 
 int main(int argc, char *argv[])
 {

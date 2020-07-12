@@ -1,8 +1,8 @@
-#include "rtiow.h"
+#include "rttnw.h"
 #include "debug.h"
 // This contains the very high level expression of what's going on
 
-sdf::sdf()
+rttnw::rttnw()
 {
     pquit = false;
 
@@ -16,7 +16,7 @@ sdf::sdf()
     }
 }
 
-sdf::~sdf()
+rttnw::~rttnw()
 {
     quit();
 }

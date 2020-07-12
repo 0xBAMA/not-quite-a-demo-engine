@@ -1,7 +1,7 @@
-#include "rtiow.h"
+#include "rttnw.h"
 // This contains the lower level code
 
-void sdf::create_window()
+void rttnw::create_window()
 {
 	if(SDL_Init( SDL_INIT_EVERYTHING ) != 0)
 	{
@@ -29,13 +29,13 @@ void sdf::create_window()
 	// the window, in a way that's flexible on different resolution screens
 	int total_screen_width = dm.w;
 	int total_screen_height = dm.h;
-	
+
 	cout << "creating window...";
 
 	// window = SDL_CreateWindow( "OpenGL Window", 0, 0, total_screen_width, total_screen_height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS );
 	window = SDL_CreateWindow( "OpenGL Window", 0, 0, total_screen_width, total_screen_height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE );
   	SDL_ShowWindow(window);
-	
+
 	cout << "done." << endl;
 
 
@@ -73,7 +73,7 @@ void sdf::create_window()
     glPointSize(3.0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -91,11 +91,11 @@ void sdf::create_window()
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear( GL_COLOR_BUFFER_BIT );
 	SDL_GL_SwapWindow( window );
-	
+
 	cout << "done." << endl;
-	
+
 	ImVec4* colors = ImGui::GetStyle().Colors;
-	
+
 	colors[ImGuiCol_Text]                   = ImVec4(0.64f, 0.37f, 0.37f, 1.00f);
 	colors[ImGuiCol_TextDisabled]           = ImVec4(0.49f, 0.26f, 0.26f, 1.00f);
 	colors[ImGuiCol_WindowBg]               = ImVec4(0.17f, 0.00f, 0.00f, 0.94f);
@@ -146,20 +146,20 @@ void sdf::create_window()
 	colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 }
 
-void sdf::gl_setup()
+void rttnw::gl_setup()
 {
 	// some info on your current platform
 	const GLubyte *renderer = glGetString( GL_RENDERER ); // get renderer string
 	const GLubyte *version = glGetString( GL_VERSION );		// version as a string
 	printf( "Renderer: %s\n", renderer );
 	printf( "OpenGL version supported %s\n\n\n", version );
-	
-	
-	
-    // create the shader for the triangles to draw the pheremone field
+
+
+
+    // create the shader for the triangles to cover the screen
     display_shader = Shader("resources/code/shaders/blit.vs.glsl", "resources/code/shaders/blit.fs.glsl").Program;
 
-    // set up the points for the continuum
+    // set up the points for the display
     //  A---------------B
     //  |          .    |
     //  |       .       |
@@ -173,7 +173,7 @@ void sdf::gl_setup()
     //  C is -1,-1
     //  D is  1,-1
     std::vector<glm::vec3> points;
-    
+
     points.clear();
     points.push_back(glm::vec3(-1, 1, 0.5));  //A
     points.push_back(glm::vec3(-1,-1, 0.5));  //C
@@ -184,7 +184,7 @@ void sdf::gl_setup()
     points.push_back(glm::vec3( 1,-1, 0.5));  //D
 
     // vao, vbo
-    cout << "  setting up vao, vbo for display geometry...";
+    cout << "  setting up vao, vbo for display geometry...........";
     glGenVertexArrays( 1, &display_vao );
     glBindVertexArray( display_vao );
 
@@ -193,23 +193,23 @@ void sdf::gl_setup()
     cout << "done." << endl;
 
     // buffer the data
-    cout << "  buffering vertex data...";
+    cout << "  buffering vertex data..............................";
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * points.size(), NULL, GL_DYNAMIC_DRAW);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * points.size(), &points[0]);
     cout << "done." << endl;
 
     // set up attributes
-    cout << "  setting up attributes in continuum shader...";
+    cout << "  setting up attributes in display shader............";
     GLuint points_attrib = glGetAttribLocation(display_shader, "vPosition");
     glEnableVertexAttribArray(points_attrib);
     glVertexAttribPointer(points_attrib, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*) (static_cast<const char*>(0) + (0)));
-    cout << "done." << endl; 
+    cout << "done." << endl;
 
 
     // create the image textures
-    
+
     // compile the compute shader to do the raycasting
-    
+
     // ...
 
 
@@ -230,18 +230,18 @@ static void HelpMarker(const char* desc)
 	}
 }
 
-void sdf::draw_everything()
+void rttnw::draw_everything()
 {
 	ImGuiIO& io = ImGui::GetIO(); (void)io; // void cast prevents unused variable warning
     //get the screen dimensions and pass in as uniforms
-    
+
 
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);   // from hsv picker
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);                     // clear the background
 
 	// draw the stuff on the GPU
 
-    // continuum
+    // texture display
     glUseProgram(display_shader);
     glBindVertexArray( display_vao );
     glBindBuffer( GL_ARRAY_BUFFER, display_vbo );
@@ -263,19 +263,24 @@ void sdf::draw_everything()
 	ImGui::SetNextWindowSize(ImVec2(256,385));
 	ImGui::Begin("Controls", NULL, 0);
 
-    //do the other widgets	
+
+
+    //do the other widgets
    HelpMarker("shut up, compiler");
-    
+
+
+
+
 
 	ImGui::End();
 	ImGui::Render();
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());   // put imgui data into the framebuffer
-	
-	SDL_GL_SwapWindow(window);			// swap the double buffers 
-	
+
+	SDL_GL_SwapWindow(window);			// swap the double buffers
+
 	// handle events
-	
+
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
@@ -293,7 +298,7 @@ void sdf::draw_everything()
 }
 
 
-void sdf::quit()
+void rttnw::quit()
 {
   //shutdown everything
   ImGui_ImplOpenGL3_Shutdown();
@@ -304,6 +309,6 @@ void sdf::quit()
   SDL_GL_DeleteContext(GLcontext);
   SDL_DestroyWindow(window);
   SDL_Quit();
-  
+
   cout << "goodbye." << endl;
 }

@@ -1,6 +1,12 @@
 #include "rttnw.h"
 // This contains the lower level code
 
+//TinyOBJLoader - This has to be included in a .cc file, so it's here for right now
+#define TINYOBJLOADER_IMPLEMENTATION
+// #define TINYOBJLOADER_USE_DOUBLE
+#include "tiny_obj_loader.h"
+
+
 void rttnw::create_window()
 {
 	if(SDL_Init( SDL_INIT_EVERYTHING ) != 0)

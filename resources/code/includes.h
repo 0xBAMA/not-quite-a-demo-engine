@@ -67,5 +67,11 @@ using std::endl;
 //diamond square heightmap generation
 #include "diamond_square.h"
 
+//Brent Werness' Voxel Automata Terrain
+// need to incorporate the BigInt stuff in order to use
+// #include "vat.h"
+
+
+
 
 #endif

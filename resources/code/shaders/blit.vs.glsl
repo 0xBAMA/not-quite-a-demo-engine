@@ -1,7 +1,6 @@
 #version 430
 
 in vec3 vPosition;
-
 out vec2 v_pos;
 
 void main()

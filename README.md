@@ -7,7 +7,7 @@ In order to support rapid prototyping of graphical applications, there are a num
   
   - GLM for vector and matrix types
   
-  - LodePNG for loading of PNG images (supports transparency)
+  - LodePNG for loading/saving of PNG images (supports transparency)
   
   - Diamond-Square algorithm heightmap generation
   

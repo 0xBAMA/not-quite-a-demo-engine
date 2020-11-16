@@ -19,7 +19,7 @@ In order to support rapid prototyping of graphical applications, there are a num
   
   - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
   
-  - Brent Werness' Voxel Automata Terrain, converted from processing to C++
+  - Brent Werness' Voxel Automata Terrain (VAT), converted from processing to C++
   
   - BigInt library required by the VAT implementation (to replace java/processing BigInt)
   

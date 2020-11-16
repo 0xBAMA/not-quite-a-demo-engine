@@ -17,7 +17,7 @@ In order to support rapid prototyping of graphical applications, there are a num
   
   - Perlin Noise generation
   
-  - TinyOBJLoader for loading of OBJ files
+  - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
   
   - Brent Werness' Voxel Automata Terrain, converted from processing to C++
   

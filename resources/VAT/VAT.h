@@ -4,7 +4,7 @@
 #include <string>
 
 // `BigIntegerLibrary.hh' includes all of the library headers.
-#include "../BigInt/BigIntegerLibrary.hh"
+#include "mmccutchen_BigInt/BigIntegerLibrary.hh"
 
 // adapted from the original processing source code found at:
 //   https://bitbucket.org/BWerness/voxel-automata-terrain/src/master/

@@ -4,7 +4,7 @@
 //TinyOBJLoader - This has to be included in a .cc file, so it's here for right now
 #define TINYOBJLOADER_IMPLEMENTATION
 // #define TINYOBJLOADER_USE_DOUBLE
-#include "tiny_obj_loader.h"
+#include "../TinyOBJLoader/tiny_obj_loader.h"
 
 
 void engine::create_window()
@@ -153,7 +153,7 @@ void engine::gl_setup()
 
 
     // create the shader for the triangles to cover the screen
-    display_shader = Shader("resources/code/shaders/blit.vs.glsl", "resources/code/shaders/blit.fs.glsl").Program;
+    display_shader = Shader("resources/engine_code/shaders/blit.vs.glsl", "resources/engine_code/shaders/blit.fs.glsl").Program;
 
     // set up the points for the display
     //  A---------------B
@@ -207,7 +207,7 @@ void engine::gl_setup()
 
     // fill with random values
     std::default_random_engine gen;
-    std::uniform_int_distribution<unsigned char> dist(0,255); 
+    std::uniform_int_distribution<unsigned char> dist(0,255);
     for(auto it = image_data.begin(); it != image_data.end(); it++)
         *it = ((it-image_data.begin()) % 4 == 3) ? 255 : dist(gen); // alpha channels get 255, other colors get random
 

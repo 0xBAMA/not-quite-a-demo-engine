@@ -1,7 +1,7 @@
 #ifndef DEBUG
 #define DEBUG
 
-#include "includes.h"
+#include "../engine_code/includes.h"
 
 //gl debug dump
 void GLAPIENTRY MessageCallback( GLenum source,

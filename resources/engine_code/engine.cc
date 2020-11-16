@@ -1,5 +1,5 @@
 #include "engine.h"
-#include "debug.h"
+#include "../debug/debug.h"
 // This contains the very high level expression of what's going on
 
 engine::engine()
@@ -10,7 +10,7 @@ engine::engine()
     gl_debug_enable();
     gl_setup();
 
-    while(!pquit)
+    while(!pquit) // main loop
     {
         draw_everything();
     }

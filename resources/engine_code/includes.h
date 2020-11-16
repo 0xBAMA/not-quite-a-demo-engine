@@ -18,7 +18,7 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
-//#include <filesystem>
+//#include <filesystem> //c++20 support not quite universal yet
 
 //iostream aliases
 using std::cin;
@@ -41,9 +41,9 @@ using std::endl;
 
 
 //GUI library (dear ImGUI)
-#include "../imgui/imgui.h"
-#include "../imgui/imgui_impl_sdl.h"
-#include "../imgui/imgui_impl_opengl3.h"
+#include "../ocornut_imgui/imgui.h"
+#include "../ocornut_imgui/imgui_impl_sdl.h"
+#include "../ocornut_imgui/imgui_impl_opengl3.h"
 
 
 // Initialize glew loader with glewInit()
@@ -56,19 +56,24 @@ using std::endl;
 
 
 //png loading library - very powerful
-#include "lodepng.h"
+#include "../lodev_lodePNG/lodepng.h"
 
 //shader compilation wrapper - may need to be extended
 #include "shader.h"
 
 //up to 3d perlin noise generation
-#include "perlin.h"
+#include "../perlin/perlin.h"
 
 //diamond square heightmap generation
-#include "diamond_square.h"
+#include "../mafford_diamond_square/diamond_square.h"
 
 //Brent Werness' Voxel Automata Terrain
-#include "vat.h"
+#include "../VAT/VAT.h"
+
+// Niels Lohmann - JSON for Modern C++
+#include "../nlohmann_JSON/json.hpp"
+using json = nlohmann::json;
+
 
 #define WIDTH  128
 #define HEIGHT 128

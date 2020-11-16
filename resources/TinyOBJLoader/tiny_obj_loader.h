@@ -61,6 +61,12 @@ THE SOFTWARE.
 #include <map>
 #include <string>
 #include <vector>
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 namespace tinyobj {
 

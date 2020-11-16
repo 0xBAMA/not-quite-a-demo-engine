@@ -1,4 +1,4 @@
-#include "rttnw.h"
+#include "engine.h"
 // This contains the lower level code
 
 //TinyOBJLoader - This has to be included in a .cc file, so it's here for right now
@@ -7,7 +7,7 @@
 #include "tiny_obj_loader.h"
 
 
-void rttnw::create_window()
+void engine::create_window()
 {
 	if(SDL_Init( SDL_INIT_EVERYTHING ) != 0)
 	{
@@ -142,7 +142,7 @@ void rttnw::create_window()
 	colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 }
 
-void rttnw::gl_setup()
+void engine::gl_setup()
 {
 	// some info on your current platform
 	const GLubyte *renderer = glGetString( GL_RENDERER ); // get renderer string
@@ -215,12 +215,12 @@ void rttnw::gl_setup()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // replace this with real image data
-    std::vector<unsigned char> image_data;
-    image_data.resize(WIDTH*HEIGHT*4);
+    // std::vector<unsigned char> image_data;
+    // image_data.resize(WIDTH*HEIGHT*4);
 
 	// buffer the averaged data to the GPU
 	glBindTexture(GL_TEXTURE_2D, display_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image_data[0]);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image_data[0]);
 
     // compile the compute shader to do the raycasting
 
@@ -244,7 +244,7 @@ static void HelpMarker(const char* desc)
 	}
 }
 
-void rttnw::draw_everything()
+void engine::draw_everything()
 {
 	ImGuiIO& io = ImGui::GetIO(); (void)io; // void cast prevents unused variable warning
     //get the screen dimensions and pass in as uniforms
@@ -312,7 +312,7 @@ void rttnw::draw_everything()
 }
 
 
-void rttnw::quit()
+void engine::quit()
 {
   //shutdown everything
   ImGui_ImplOpenGL3_Shutdown();

@@ -1,8 +1,8 @@
-#include "rttnw.h"
+#include "engine.h"
 #include "debug.h"
 // This contains the very high level expression of what's going on
 
-rttnw::rttnw()
+engine::engine()
 {
     pquit = false;
 
@@ -16,7 +16,7 @@ rttnw::rttnw()
     }
 }
 
-rttnw::~rttnw()
+engine::~engine()
 {
     quit();
 }

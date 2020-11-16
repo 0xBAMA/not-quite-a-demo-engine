@@ -15,10 +15,10 @@
  */
 
 
-#include "rttnw.h"
+#include "engine.h"
 
 int main(int argc, char *argv[])
 {
-    rttnw r;
+    engine e;
     return 0;
 }

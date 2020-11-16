@@ -1,14 +1,14 @@
-#ifndef RTTNW
-#define RTTNW
+#ifndef ENGINE
+#define ENGINE
 
 #include "includes.h"
 
-class rttnw
+class engine
 {
 public:
 
-	rttnw();
-	~rttnw();
+	engine();
+	~engine();
 
 private:
 

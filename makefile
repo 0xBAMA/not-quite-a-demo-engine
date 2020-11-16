@@ -9,7 +9,7 @@ msg:
 		@date
 		@echo
 
-exe: resources/imgui/imgui.o resources/BigInt/*.o resources/code/lodepng.o resources/code/perlin.o rttnw.o utils.o
+exe: resources/imgui/imgui.o resources/BigInt/*.o resources/code/lodepng.o resources/code/perlin.o engine.o utils.o
 		g++ -o exe resources/code/main.cc *.o resources/imgui/*.o resources/code/*.o resources/BigInt/*.o    ${FLAGS}
 
 resources/imgui/imgui.o: resources/imgui/*.cc
@@ -22,11 +22,11 @@ resources/imgui/imgui.o: resources/imgui/*.cc
 		@echo
 
 
-utils.o: resources/code/rttnw.h resources/code/rttnw_utils.cc
-		g++ -c -o utils.o resources/code/rttnw_utils.cc               ${FLAGS}
+utils.o: resources/code/engine.h resources/code/engine_utils.cc
+		g++ -c -o utils.o resources/code/engine_utils.cc               ${FLAGS}
 
-rttnw.o: resources/code/rttnw.h resources/code/rttnw.cc
-		g++ -c -o rttnw.o resources/code/rttnw.cc                  ${FLAGS}
+engine.o: resources/code/engine.h resources/code/engine.cc
+		g++ -c -o engine.o resources/code/engine.cc                  ${FLAGS}
 
 resources/BigInt/*.o:
 		g++ -c -o resources/BigInt/BigUnsigned.o -O2 -Wno-deprecated 			resources/BigInt/BigUnsigned.cc

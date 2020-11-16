@@ -1,6 +1,8 @@
 # not-quite-an-engine
 I've been using a very similar structure for the last few projects - why not boil it down to some basics, so I can start a new project more quickly and cleanly. My recent efforts have been to clean up the directory structure and provide all the improvements that I have been adding to the Voraldo codebase.
 
+Requires `libsdl2-dev` and `libglew-dev` on Ubuntu.
+
 In order to support rapid prototyping of graphical applications, there are a number of utilities provided:
 
   - OpenGL Debug callback for error/warning reporting

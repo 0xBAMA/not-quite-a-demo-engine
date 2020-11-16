@@ -17,7 +17,9 @@ private:
 
 	ImVec4 clear_color;
 
-	GLuint display_shader;
+
+    GLuint display_texture;
+    GLuint display_shader;
 	GLuint display_vao;
 	GLuint display_vbo;
 

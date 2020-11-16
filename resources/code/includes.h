@@ -68,10 +68,10 @@ using std::endl;
 #include "diamond_square.h"
 
 //Brent Werness' Voxel Automata Terrain
-// need to incorporate the BigInt stuff in order to use
-// #include "vat.h"
+#include "vat.h"
 
-
+#define WIDTH 256
+#define HEIGHT 256
 
 
 #endif

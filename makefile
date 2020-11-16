@@ -1,4 +1,4 @@
-FLAGS =  -Wall -O3 -std=c++17 -lGLEW -lGL -lstdc++fs $(shell pkg-config sdl2 --cflags --libs)
+FLAGS =  -Wall -O3 -std=c++17 -lGLEW -lGL -lstdc++fs $(shell pkg-config sdl2 --cflags --libs) -Wno-deprecated
 IMGUI_FLAGS   =  -Wall -lGLEW -DIMGUI_IMPL_OPENGL_LOADER_GLEW `sdl2-config --cflags`
 
 all: msg exe clean run
@@ -9,8 +9,8 @@ msg:
 		@date
 		@echo
 
-exe: resources/imgui/imgui.o resources/code/lodepng.o resources/code/perlin.o rttnw.o utils.o
-		g++ -o exe resources/code/main.cc *.o resources/imgui/*.o resources/code/*.o       ${FLAGS}
+exe: resources/imgui/imgui.o resources/BigInt/*.o resources/code/lodepng.o resources/code/perlin.o rttnw.o utils.o
+		g++ -o exe resources/code/main.cc *.o resources/imgui/*.o resources/code/*.o resources/BigInt/*.o    ${FLAGS}
 
 resources/imgui/imgui.o: resources/imgui/*.cc
 		g++ -c -o resources/imgui/imgui_impl_sdl.o resources/imgui/imgui_impl_sdl.cc         ${IMGUI_FLAGS}
@@ -28,6 +28,14 @@ utils.o: resources/code/rttnw.h resources/code/rttnw_utils.cc
 rttnw.o: resources/code/rttnw.h resources/code/rttnw.cc
 		g++ -c -o rttnw.o resources/code/rttnw.cc                  ${FLAGS}
 
+resources/BigInt/*.o:
+		g++ -c -o resources/BigInt/BigUnsigned.o -O2 -Wno-deprecated 			resources/BigInt/BigUnsigned.cc
+		g++ -c -o resources/BigInt/BigInteger.o -O2 -Wno-deprecated 			resources/BigInt/BigInteger.cc
+		g++ -c -o resources/BigInt/BigIntegerAlgorithms.o -O2 -Wno-deprecated 		resources/BigInt/BigIntegerAlgorithms.cc
+		g++ -c -o resources/BigInt/BigUnsignedInABase.o -O2 -Wno-deprecated 		resources/BigInt/BigUnsignedInABase.cc
+		g++ -c -o resources/BigInt/BigIntegerUtils.o -O2 -Wno-deprecated 		resources/BigInt/BigIntegerUtils.cc
+		@echo
+
 resources/code/debug.o: resources/code/debug.cc
 		g++ -c -o resources/code/debug.o resources/code/debug.cc                        ${FLAGS}
 
@@ -38,7 +46,7 @@ resources/code/perlin.o: resources/code/perlin.h resources/code/perlin.cc
 		g++ -c -o resources/code/perlin.o resources/code/perlin.cc                      ${FLAGS}
 
 clean_all:
-	rm resources/imgui/*.o resources/code/lodepng.o resources/code/perlin.o *.o
+	rm resources/imgui/*.o resources/BigInt/*.o resources/code/lodepng.o resources/code/perlin.o *.o
 
 clean:
 		@echo

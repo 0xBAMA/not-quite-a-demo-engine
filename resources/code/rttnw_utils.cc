@@ -58,16 +58,6 @@ void rttnw::create_window()
 	SDL_GL_SetSwapInterval(1); // Enable vsync
 	// SDL_GL_SetSwapInterval(0); // explicitly disable vsync
 
-    // CONTINUUM REPRESENTATION POINTS
-
-
-
-
-
-
-
-
-
 	if (glewInit() != GLEW_OK)
 	{
 		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
@@ -213,6 +203,24 @@ void rttnw::gl_setup()
 
 
     // create the image textures
+    glGenTextures(1, &display_texture);
+    glActiveTexture(GL_TEXTURE0+1);
+    glBindTexture(GL_TEXTURE_2D, display_texture);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // replace this with real image data
+    std::vector<unsigned char> image_data;
+    image_data.resize(WIDTH*HEIGHT*4);
+
+	// buffer the averaged data to the GPU
+	glBindTexture(GL_TEXTURE_2D, display_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image_data[0]);
 
     // compile the compute shader to do the raycasting
 

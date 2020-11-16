@@ -23,4 +23,4 @@ In order to support rapid prototyping of graphical applications, there are a num
   
   - BigInt library required by the VAT implementation (to replace java/processing BigInt)
   
-  - SDL is used for windowing and input handling, basic template for application in resources/engine_code/
+  - SDL is used for windowing and input handling, basic template for application in `resources/engine_code/`

@@ -209,7 +209,7 @@ void engine::gl_setup()
     std::default_random_engine gen;
     std::uniform_int_distribution<unsigned char> dist(0,255); 
     for(auto it = image_data.begin(); it != image_data.end(); it++)
-        *it = dist(gen);
+        *it = ((it-image_data.begin()) % 4 == 3) ? 255 : dist(gen); // alpha channels get 255, other colors get random
 
     // create the image textures
     glGenTextures(1, &display_texture);

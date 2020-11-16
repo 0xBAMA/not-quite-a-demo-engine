@@ -70,8 +70,8 @@ using std::endl;
 //Brent Werness' Voxel Automata Terrain
 #include "vat.h"
 
-#define WIDTH 256
-#define HEIGHT 256
+#define WIDTH  128
+#define HEIGHT 128
 
 
 #endif

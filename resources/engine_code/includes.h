@@ -58,25 +58,30 @@ using std::endl;
 //png loading library - very powerful
 #include "../lodev_lodePNG/lodepng.h"
 
+
 //shader compilation wrapper - may need to be extended
 #include "shader.h"
+
 
 //up to 3d perlin noise generation
 #include "../perlin/perlin.h"
 
+
 //diamond square heightmap generation
 #include "../mafford_diamond_square/diamond_square.h"
 
+
 //Brent Werness' Voxel Automata Terrain
 #include "../VAT/VAT.h"
+
 
 // Niels Lohmann - JSON for Modern C++
 #include "../nlohmann_JSON/json.hpp"
 using json = nlohmann::json;
 
 
-#define WIDTH  128
-#define HEIGHT 128
+#define WIDTH  640
+#define HEIGHT 480
 
 
 #endif

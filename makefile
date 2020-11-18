@@ -10,7 +10,7 @@ msg:
 		@echo
 
 exe: resources/ocornut_imgui/imgui.o resources/VAT/mmccutchen_BigInt/*.o resources/lodev_lodePNG/lodepng.o resources/perlin/perlin.o engine.o utils.o
-		g++ -o exe resources/engine_code/main.cc *.o resources/ocornut_imgui/*.o resources/VAT/mmccutchen_BigInt/*.o resources/perlin/perlin.o    ${FLAGS}
+		g++ -o exe resources/engine_code/main.cc *.o resources/lodev_lodePNG/lodepng.o resources/ocornut_imgui/*.o resources/VAT/mmccutchen_BigInt/*.o resources/perlin/perlin.o    ${FLAGS}
 
 resources/ocornut_imgui/imgui.o: resources/ocornut_imgui/*.cc
 		g++ -c -o resources/ocornut_imgui/imgui_impl_sdl.o resources/ocornut_imgui/imgui_impl_sdl.cc         ${IMGUI_FLAGS}

@@ -83,7 +83,8 @@ void engine::create_window()
 
 
     // adds a font, as default
-    io.Fonts->AddFontFromFileTTF("resources/fonts/star_trek/titles/Jefferies.ttf", 16);
+    io.Fonts->AddFontFromFileTTF("resources/fonts/star_trek/titles/Jefferies.ttf", 15);
+    io.Fonts->AddFontFromFileTTF("resources/fonts/star_trek/titles/TNG_Title.ttf", 16);
     
 
     ImGui::StyleColorsDark();

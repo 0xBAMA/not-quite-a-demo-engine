@@ -5,6 +5,115 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 // #define TINYOBJLOADER_USE_DOUBLE
 #include "../TinyOBJLoader/tiny_obj_loader.h"
+// tinyobj callbacks
+//  user_data is passed in as void, then cast as 'engine' class to push vertices, normals, texcoords, index, material info
+void vertex_cb(void *user_data, float x, float y, float z, float w)
+{
+    engine *t = reinterpret_cast<engine *>(user_data);
+
+    t->vertices.push_back(glm::vec4(x,y,z,w));
+}
+
+void normal_cb(void *user_data, float x, float y, float z)
+{
+    engine *t = reinterpret_cast<engine *>(user_data); 
+
+    t->normals.push_back(glm::vec3(x,y,z));
+}
+
+void texcoord_cb(void *user_data, float x, float y, float z)
+{
+    engine *t = reinterpret_cast<engine *>(user_data); 
+
+    t->texcoords.push_back(glm::vec3(x,y,z));
+}
+
+void index_cb(void *user_data, tinyobj::index_t *indices, int num_indices)
+{
+    engine *t = reinterpret_cast<engine *>(user_data); 
+
+    if(num_indices == 3) // this is a triangle
+    {
+        // OBJ uses 1-indexing, convert to 0-indexing
+        t->triangle_indices.push_back(glm::ivec3(indices[0].vertex_index-1,   indices[1].vertex_index-1,   indices[2].vertex_index-1));
+        t->normal_indices.push_back(  glm::ivec3(indices[0].normal_index-1,   indices[1].normal_index-1,   indices[2].normal_index-1));
+        t->texcoord_indices.push_back(glm::ivec3(indices[0].texcoord_index-1, indices[1].texcoord_index-1, indices[2].texcoord_index-1));
+    }
+
+    // lines, points have a different number of indicies
+    //  might want to handle these
+}
+
+void usemtl_cb(void *user_data, const char *name, int material_idx)
+{
+    engine *t = reinterpret_cast<engine *>(user_data); 
+    (void)t;
+}
+
+void mtllib_cb(void *user_data, const tinyobj::material_t *materials, int num_materials)
+{
+    engine *t = reinterpret_cast<engine *>(user_data); 
+    (void)t;
+}
+
+void group_cb(void *user_data, const char **names, int num_names)
+{
+    engine *t = reinterpret_cast<engine *>(user_data); 
+    (void)t;
+}
+
+void object_cb(void *user_data, const char *name)
+{
+    engine *t = reinterpret_cast<engine *>(user_data); 
+    (void)t;
+}
+
+// this is where the callbacks are used
+void engine::load_OBJ(std::string filename)
+{
+    tinyobj::callback_t cb;
+    cb.vertex_cb = vertex_cb;
+    cb.normal_cb = normal_cb;
+    cb.texcoord_cb = texcoord_cb;
+    cb.index_cb = index_cb;
+    cb.usemtl_cb = usemtl_cb;
+    cb.mtllib_cb = mtllib_cb;
+    cb.group_cb = group_cb;
+    cb.object_cb = object_cb;
+
+    std::string warn;
+    std::string err;
+
+    std::ifstream ifs(filename.c_str());
+    tinyobj::MaterialFileReader mtlReader(".");
+
+    bool ret = tinyobj::LoadObjWithCallback(ifs, cb, this, &mtlReader, &warn, &err);
+
+    if (!warn.empty())
+    {
+        std::cout << "WARN: " << warn << std::endl;
+    }
+
+    if (!err.empty())
+    {
+        std::cerr << err << std::endl;
+    }
+
+    if (!ret)
+    {
+        std::cerr << "Failed to parse .obj" << std::endl;
+    }
+
+    cout << "vertex list length: " << vertices.size() << endl;
+    cout << "normal list length: " << normals.size() << endl;
+    cout << "texcoord list length: " << texcoords.size() << endl;
+
+    cout << "vertex index list length: " << triangle_indices.size() << endl;
+    cout << "normal index length: " << normal_indices.size() << endl;
+    cout << "texcoord index length: " << texcoord_indices.size() << endl;
+}
+
+
 
 
 void engine::create_window()
@@ -62,7 +171,7 @@ void engine::create_window()
     {
         fprintf(stderr, "Failed to initialize OpenGL loader!\n");
     }*/
-    
+
     if(gl3wInit() != 0)
     	fprintf(stderr, "Failed to initialize OpenGL loader!\n");
 
@@ -85,7 +194,7 @@ void engine::create_window()
     // adds a font, as default
     io.Fonts->AddFontFromFileTTF("resources/fonts/star_trek/titles/Jefferies.ttf", 15);
     io.Fonts->AddFontFromFileTTF("resources/fonts/star_trek/titles/TNG_Title.ttf", 16);
-    
+
 
     ImGui::StyleColorsDark();
 
@@ -159,7 +268,7 @@ void engine::quit_conf(bool *open)
     if(*open)
     {
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
-        
+
         // create centered window
         ImGui::SetNextWindowPos(ImVec2(total_screen_width/2 - 120, total_screen_height/2 - 25));
         ImGui::SetNextWindowSize(ImVec2(300, 55));
@@ -169,7 +278,7 @@ void engine::quit_conf(bool *open)
 
         ImGui::Text("  ");
         ImGui::SameLine();
-        
+
         // button to cancel -> set this window's bool to false
         if(ImGui::Button(" Cancel "))
             *open = false;
@@ -181,7 +290,7 @@ void engine::quit_conf(bool *open)
         // button to quit -> set pquit to true
         if(ImGui::Button(" Quit "))
             pquit = true;
-        
+
         ImGui::End();
     }
 }
@@ -252,12 +361,13 @@ void engine::gl_setup()
 
     // fill with random values
     std::default_random_engine gen;
-    std::uniform_int_distribution<unsigned char> dist(0,255);
+    std::uniform_int_distribution<unsigned char> dist(150,255);
+    std::uniform_int_distribution<unsigned char> dist2(12,45);
     PerlinNoise p;
-    
+
     for(auto it = image_data.begin(); it != image_data.end(); it++)
     {
-        int index = (it-image_data.begin()); 
+        int index = (it-image_data.begin());
         float noise = std::clamp(std::abs(p.noise((index/(WIDTH))*0.003, (index%(4*WIDTH))*0.003, 0.0)-0.3 +
                                           p.noise((index/(WIDTH))*0.006, (index%(4*WIDTH))*0.006, 0.2)-0.25 +
                                           p.noise((index/(WIDTH))*0.012, (index%(4*WIDTH))*0.012, 0.25)-0.15)/1.618, 0., 1.);
@@ -271,9 +381,9 @@ void engine::gl_setup()
                 break;
 
             case 2:
-                *it = 12; 
+                *it = (index%(WIDTH*3) < WIDTH) ? 36 - dist2(gen) : 0;
                 break;
-                
+
             case 1:
                 *it = noise > 0.35 ? noise*0.2*(rxor) : noise*dist(gen);
                 break;
@@ -285,10 +395,10 @@ void engine::gl_setup()
             default:
                 break;
         }
-        
+
         // *it = ((index) % 4 == 3) ? 255 : noise < 0.56 ? noise * 0.75 * (3-(index%4)) * rxor : noise*dist(gen); // alpha channels get 255, other colors get random
     }
-    
+
     // create the image textures
     glGenTextures(1, &display_texture);
     glActiveTexture(GL_TEXTURE0);
@@ -456,13 +566,13 @@ void engine::draw_everything()
     ImGui::NewFrame();
 
 
-    
+
 
     static bool show_dockspace = true;
-    if (show_dockspace) ShowExampleAppDockSpace(&show_dockspace); 
+    if (show_dockspace) ShowExampleAppDockSpace(&show_dockspace);
 
     // show quit confirm window
-    quit_conf(&quitconfirm); 
+    quit_conf(&quitconfirm);
 
     // show the demo window
     static bool show_demo_window = true;
@@ -483,7 +593,7 @@ void engine::draw_everything()
     ImGui::Begin("Controls2", NULL, 0);
     ImGui::Text("This is some text");
     ImGui::End();
-    
+
     ImGui::Render();
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());   // put imgui data into the framebuffer

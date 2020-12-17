@@ -38,7 +38,7 @@ void engine::create_window()
 
     cout << "creating window...";
 
-    // window = SDL_CreateWindow( "OpenGL Window", 0, 0, total_screen_width, total_screen_height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS );
+    // window = SDL_CreateWindow( "OpenGL Window", 50, 50, total_screen_width-100, total_screen_height-100, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS );
     window = SDL_CreateWindow( "OpenGL Window", 0, 0, total_screen_width, total_screen_height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE );
     SDL_ShowWindow(window);
 

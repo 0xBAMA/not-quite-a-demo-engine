@@ -106,7 +106,7 @@ void engine::create_window()
 
     colors[ImGuiCol_Text]                   = ImVec4(0.64f, 0.37f, 0.37f, 1.00f);
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.49f, 0.26f, 0.26f, 1.00f);
-    colors[ImGuiCol_WindowBg]               = ImVec4(0.17f, 0.00f, 0.00f, 0.94f);
+    colors[ImGuiCol_WindowBg]               = ImVec4(0.17f, 0.00f, 0.00f, 0.98f);
     colors[ImGuiCol_ChildBg]                = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
     colors[ImGuiCol_PopupBg]                = ImVec4(0.18f, 0.00f, 0.00f, 0.94f);
     colors[ImGuiCol_Border]                 = ImVec4(0.35f, 0.00f, 0.03f, 0.50f);
@@ -253,9 +253,42 @@ void engine::gl_setup()
     // fill with random values
     std::default_random_engine gen;
     std::uniform_int_distribution<unsigned char> dist(0,255);
+    PerlinNoise p;
+    
     for(auto it = image_data.begin(); it != image_data.end(); it++)
-        *it = ((it-image_data.begin()) % 4 == 3) ? 255 : dist(gen); // alpha channels get 255, other colors get random
+    {
+        int index = (it-image_data.begin()); 
+        float noise = std::clamp(std::abs(p.noise((index/(WIDTH))*0.003, (index%(4*WIDTH))*0.003, 0.0)-0.3 +
+                                          p.noise((index/(WIDTH))*0.006, (index%(4*WIDTH))*0.006, 0.2)-0.25 +
+                                          p.noise((index/(WIDTH))*0.012, (index%(4*WIDTH))*0.012, 0.25)-0.15)/1.618, 0., 1.);
 
+        unsigned char rxor = (unsigned char)((index/(WIDTH))%256) ^ (unsigned char)((index%(4*WIDTH))%256);
+
+        switch((index)%4)
+        {
+            case 3:
+                *it = 255; // alpha channels
+                break;
+
+            case 2:
+                *it = 12; 
+                break;
+                
+            case 1:
+                *it = noise > 0.35 ? noise*0.2*(rxor) : noise*dist(gen);
+                break;
+
+            case 0:
+                *it = noise < 0.54 ? noise*0.75*(rxor) : noise*dist(gen);
+                break;
+
+            default:
+                break;
+        }
+        
+        // *it = ((index) % 4 == 3) ? 255 : noise < 0.56 ? noise * 0.75 * (3-(index%4)) * rxor : noise*dist(gen); // alpha channels get 255, other colors get random
+    }
+    
     // create the image textures
     glGenTextures(1, &display_texture);
     glActiveTexture(GL_TEXTURE0);

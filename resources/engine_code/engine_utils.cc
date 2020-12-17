@@ -33,8 +33,8 @@ void engine::create_window()
 
     // pulling these out because I'm going to try to span the whole screen with
     // the window, in a way that's flexible on different resolution screens
-    int total_screen_width = dm.w;
-    int total_screen_height = dm.h;
+    total_screen_width = dm.w;
+    total_screen_height = dm.h;
 
     cout << "creating window...";
 
@@ -153,6 +153,39 @@ void engine::create_window()
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 }
+
+void engine::quit_conf(bool *open)
+{
+    if(*open)
+    {
+        ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
+        
+        // create centered window
+        ImGui::SetNextWindowPos(ImVec2(total_screen_width/2 - 120, total_screen_height/2 - 25));
+        ImGui::SetNextWindowSize(ImVec2(300, 55));
+        ImGui::Begin("quit", open, flags);
+
+        ImGui::Text("Are you sure you want to quit?");
+
+        ImGui::Text("  ");
+        ImGui::SameLine();
+        
+        // button to cancel -> set this window's bool to false
+        if(ImGui::Button(" Cancel "))
+            *open = false;
+
+        ImGui::SameLine();
+        ImGui::Text("      ");
+        ImGui::SameLine();
+
+        // button to quit -> set pquit to true
+        if(ImGui::Button(" Quit "))
+            pquit = true;
+        
+        ImGui::End();
+    }
+}
+
 
 void engine::gl_setup()
 {
@@ -394,7 +427,10 @@ void engine::draw_everything()
 
     static bool show_dockspace = true;
     if (show_dockspace) ShowExampleAppDockSpace(&show_dockspace); 
-    
+
+    // show quit confirm window
+    quit_conf(&quitconfirm); 
+
     // show the demo window
     static bool show_demo_window = true;
     if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
@@ -435,7 +471,7 @@ void engine::draw_everything()
             pquit = true;
 
         if ((event.type == SDL_KEYUP  && event.key.keysym.sym == SDLK_ESCAPE) || (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1)) //x1 is browser back on the mouse
-            pquit = true;
+            quitconfirm = true;
     }
 }
 

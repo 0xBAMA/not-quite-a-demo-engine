@@ -23,14 +23,17 @@ private:
 	GLuint display_vao;
 	GLuint display_vbo;
 
+	int total_screen_width, total_screen_height;
 
 	void create_window();
 	void gl_setup();
 	void draw_everything();
 
 	void quit();
-
-	bool pquit;
+	void quit_conf(bool *open);
+		
+	bool quitconfirm = false;
+	bool pquit = false;
 
 };
 

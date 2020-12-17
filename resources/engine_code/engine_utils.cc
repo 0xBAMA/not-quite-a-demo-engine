@@ -81,6 +81,11 @@ void engine::create_window()
     // enable docking
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
+
+    // adds a font, as default
+    io.Fonts->AddFontFromFileTTF("resources/fonts/star_trek/titles/Jefferies.ttf", 16);
+    
+
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer bindings
@@ -378,11 +383,13 @@ void engine::draw_everything()
 
     glDrawArrays( GL_TRIANGLES, 0, 6 );
 
-
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
+
+
+    
 
     static bool show_dockspace = true;
     if (show_dockspace) ShowExampleAppDockSpace(&show_dockspace); 
@@ -394,16 +401,18 @@ void engine::draw_everything()
     // do my own windows
     ImGui::SetNextWindowSize(ImVec2(256,385));
     ImGui::Begin("Controls0", NULL, 0);
+    ImGui::Text("This is some text");
     ImGui::End();
 
     ImGui::SetNextWindowSize(ImVec2(256,385));
     ImGui::Begin("Controls1", NULL, 0);
+    ImGui::Text("This is some text");
     ImGui::End();
 
     ImGui::SetNextWindowSize(ImVec2(256,385));
     ImGui::Begin("Controls2", NULL, 0);
+    ImGui::Text("This is some text");
     ImGui::End();
-    
     
     ImGui::Render();
 

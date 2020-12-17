@@ -1,5 +1,6 @@
-FLAGS =  -Wall -O3 -std=c++17 -lGLEW -lGL -lstdc++fs $(shell pkg-config sdl2 --cflags --libs) -Wno-deprecated
-IMGUI_FLAGS   =  -Wall -lGLEW -DIMGUI_IMPL_OPENGL_LOADER_GLEW `sdl2-config --cflags`
+FLAGS =  -Wall -O3 -std=c++17 -lGL -lstdc++fs $(shell pkg-config sdl2 --cflags --libs) -Wno-deprecated -lGL -ldl `sdl2-config --libs`
+IMGUI_FLAGS   =  -Wall -DIMGUI_IMPL_OPENGL_LOADER_GL3W `sdl2-config --cflags` 
+
 
 all: msg exe clean run
 
@@ -19,6 +20,8 @@ resources/ocornut_imgui/imgui.o: resources/ocornut_imgui/*.cc
 		g++ -c -o resources/ocornut_imgui/imgui_demo.o resources/ocornut_imgui/imgui_demo.cc                 ${IMGUI_FLAGS}
 		g++ -c -o resources/ocornut_imgui/imgui_draw.o resources/ocornut_imgui/imgui_draw.cc                 ${IMGUI_FLAGS}
 		g++ -c -o resources/ocornut_imgui/imgui_widgets.o resources/ocornut_imgui/imgui_widgets.cc           ${IMGUI_FLAGS}
+		g++ -c -o resources/ocornut_imgui/imgui_tables.o resources/ocornut_imgui/imgui_tables.cc             ${IMGUI_FLAGS}
+		cc -c -o resources/ocornut_imgui/imgui_gl3w.o resources/ocornut_imgui/imgui_gl3w.c                  ${IMGUI_FLAGS}
 		@echo
 
 resources/VAT/mmccutchen_BigInt/*.o:

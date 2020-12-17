@@ -58,13 +58,16 @@ void engine::create_window()
     SDL_GL_SetSwapInterval(1); // Enable vsync
     // SDL_GL_SetSwapInterval(0); // explicitly disable vsync
 
-    if (glewInit() != GLEW_OK)
+/*    if (glewInit() != GLEW_OK)
     {
         fprintf(stderr, "Failed to initialize OpenGL loader!\n");
-    }
+    }*/
+    
+    if(gl3wInit() != 0)
+    	fprintf(stderr, "Failed to initialize OpenGL loader!\n");
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_POINT_SMOOTH);
+    //glEnable(GL_LINE_SMOOTH);
 
     glPointSize(3.0);
     glEnable(GL_BLEND);
@@ -271,24 +274,20 @@ void engine::draw_everything()
     ImGui::NewFrame();
 
     // show the demo window
-    // static bool show_demo_window = true;
-    // if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
+    static bool show_demo_window = true;
+    if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
 
     // do my own window
-    ImGui::SetNextWindowPos(ImVec2(10,10));
-    ImGui::SetNextWindowSize(ImVec2(256,385));
-    ImGui::Begin("Controls", NULL, 0);
-
-
+    // ImGui::SetNextWindowPos(ImVec2(10,10));
+    // ImGui::SetNextWindowSize(ImVec2(256,385));
+    // ImGui::Begin("Controls", NULL, 0);
 
     //do the other widgets
-    HelpMarker("shut up, compiler");
+    // HelpMarker("shut up, compiler");
 
-
-
-
-
-    ImGui::End();
+    //ImGui::End();
+    
+    
     ImGui::Render();
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());   // put imgui data into the framebuffer

@@ -47,7 +47,10 @@ using std::endl;
 
 
 // Initialize glew loader with glewInit()
-#include <GL/glew.h>
+// #include <GL/glew.h>
+
+// now handled differently with imgui
+#include "../ocornut_imgui/gl3w.h"
 
 //SDL includes - windowing, gl context, system info
 #include <SDL2/SDL.h>

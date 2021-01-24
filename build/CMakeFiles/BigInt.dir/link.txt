@@ -1,2 +1,0 @@
-/usr/bin/ar qc libBigInt.a  CMakeFiles/BigInt.dir/resources/VAT/mmccutchen_BigInt/BigUnsigned.cc.o CMakeFiles/BigInt.dir/resources/VAT/mmccutchen_BigInt/BigInteger.cc.o CMakeFiles/BigInt.dir/resources/VAT/mmccutchen_BigInt/BigIntegerAlgorithms.cc.o CMakeFiles/BigInt.dir/resources/VAT/mmccutchen_BigInt/BigUnsignedInABase.cc.o CMakeFiles/BigInt.dir/resources/VAT/mmccutchen_BigInt/BigIntegerUtils.cc.o
-/usr/bin/ranlib libBigInt.a

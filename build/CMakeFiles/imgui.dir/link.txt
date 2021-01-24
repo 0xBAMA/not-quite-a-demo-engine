@@ -1,2 +1,0 @@
-/usr/bin/ar qc libimgui.a  CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui_impl_sdl.cc.o CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui_impl_opengl3.cc.o CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui.cc.o CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui_demo.cc.o CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui_draw.cc.o CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui_widgets.cc.o CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui_tables.cc.o CMakeFiles/imgui.dir/resources/ocornut_imgui/imgui_gl3w.c.o
-/usr/bin/ranlib libimgui.a

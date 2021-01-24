@@ -1,5 +1,0 @@
-/home/jb/Documents/Repos/not-quite-an-engine/build/CMakeFiles/rebuild_cache.dir
-/home/jb/Documents/Repos/not-quite-an-engine/build/CMakeFiles/edit_cache.dir
-/home/jb/Documents/Repos/not-quite-an-engine/build/CMakeFiles/exe.dir
-/home/jb/Documents/Repos/not-quite-an-engine/build/CMakeFiles/BigInt.dir
-/home/jb/Documents/Repos/not-quite-an-engine/build/CMakeFiles/imgui.dir

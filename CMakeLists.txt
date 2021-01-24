@@ -22,7 +22,7 @@ add_library(imgui
   resources/ocornut_imgui/imgui_tables.cc  
   resources/ocornut_imgui/imgui_gl3w.c)
 
-# target_compile_options(imgui PUBLIC -ldl `sdl2-config --libs`)
+target_compile_options(imgui PUBLIC -ldl `sdl2-config --libs`)
 target_compile_definitions(imgui PUBLIC -D IMGUI_IMPL_OPENGL_LOADER_GL3W)
 
 add_library(BigInt

@@ -3,7 +3,7 @@
  *
  *       Filename:  main.cc
  *
- *    Description: working on my implementation of ray-tracing-the-next-weekend
+ *    Description:  instatiates an engine object, which falls through and quits on exit
  *
  *        Version:  1.0
  *        Created:  07/12/2020 11:04:36 AM

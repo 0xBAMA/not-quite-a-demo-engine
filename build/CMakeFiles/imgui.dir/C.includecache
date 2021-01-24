@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jb/Documents/Repos/not-quite-an-engine/resources/ocornut_imgui/gl3w.h
+glcorearb.h
+/home/jb/Documents/Repos/not-quite-an-engine/resources/ocornut_imgui/glcorearb.h
+
+/home/jb/Documents/Repos/not-quite-an-engine/resources/ocornut_imgui/glcorearb.h
+windows.h
+-
+stddef.h
+-
+inttypes.h
+-
+inttypes.h
+-
+inttypes.h
+-
+stdint.h
+-
+stdint.h
+-
+inttypes.h
+-
+
+/home/jb/Documents/Repos/not-quite-an-engine/resources/ocornut_imgui/imgui_gl3w.c
+gl3w.h
+/home/jb/Documents/Repos/not-quite-an-engine/resources/ocornut_imgui/gl3w.h
+windows.h
+-
+Carbon/Carbon.h
+-
+dlfcn.h
+-
+GL/glx.h
+-
+

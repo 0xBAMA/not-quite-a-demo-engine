@@ -5,12 +5,8 @@ project(Voraldo VERSION 1.2 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-
-# includes cmake/FindSDL2.cmake
+# this makes SDL2 work
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-
-# find_package(SDL2 REQUIRED)
-# include_directories(${SDL2_INCLUDE_DIR})
 
 find_package(SDL2 REQUIRED)
 add_library(sdl2 INTERFACE)
@@ -24,12 +20,14 @@ target_link_libraries(sdl2
         ${CMAKE_DL_LIBS}
 )
 
+# this makes OpenGL work
 set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
 add_library(opengl INTERFACE)
 target_link_libraries(opengl INTERFACE OpenGL::GL)
 
 
+# this is for ImGUI
 add_library(imgui
   resources/ocornut_imgui/imgui_impl_sdl.cc
   resources/ocornut_imgui/imgui_impl_opengl3.cc
@@ -45,6 +43,7 @@ target_link_libraries(imgui PUBLIC sdl2 opengl)
 target_compile_options(imgui PUBLIC -I/usr/include/SDL2)
 target_compile_definitions(imgui PUBLIC -D IMGUI_IMPL_OPENGL_LOADER_GL3W -D_REENTRANT)
 
+# this is the bigint library to suppor the VAT code
 add_library(BigInt
   resources/VAT/mmccutchen_BigInt/BigUnsigned.cc
   resources/VAT/mmccutchen_BigInt/BigInteger.cc
@@ -55,8 +54,9 @@ add_library(BigInt
 target_compile_options(BigInt PUBLIC -Wno-deprecated)
 
 add_library(CompilerFlags INTERFACE)
-target_compile_options(CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -Wno-deprecated -ldl)
+target_compile_options(CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -ldl)
 
+# this builds the final executable
 add_executable(exe
   resources/engine_code/main.cc
   resources/engine_code/gpu_data.cc
@@ -65,11 +65,4 @@ add_executable(exe
   resources/perlin/perlin.cc
   resources/lodev_lodePNG/lodepng.cc)
 
-target_link_libraries(exe PUBLIC imgui BigInt opengl sdl2 CompilerFlags ${SDL2_LIBRARY} ${CMAKE_DL_LIBS})
-
-
-
-
-
-# add_executable(${PROJECT_NAME} resources/engine_code/main.cc)
-
+target_link_libraries(exe PUBLIC imgui BigInt opengl sdl2 CompilerFlags)

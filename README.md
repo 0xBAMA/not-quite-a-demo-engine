@@ -28,4 +28,4 @@ In order to support rapid prototyping of graphical applications, there are a num
   - SDL is used for windowing and input handling, basic template for application in `resources/engine_code/`
   
  
-The cmakelists.txt is currently WIP, due to some issues linking. On Ubuntu the makefile should work fine.
+Run build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder.

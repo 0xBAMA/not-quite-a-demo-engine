@@ -9,8 +9,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # includes cmake/FindSDL2.cmake
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
+# find_package(SDL2 REQUIRED)
+# include_directories(${SDL2_INCLUDE_DIR})
+
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
+add_library(sdl2 INTERFACE)
+target_include_directories(sdl2
+    INTERFACE
+        ${SDL2_INCLUDE_DIR}
+)
+target_link_libraries(sdl2
+    INTERFACE
+        ${SDL2_LIBRARY}
+        ${CMAKE_DL_LIBS}
+)
+
+set(OpenGL_GL_PREFERENCE "GLVND")
+find_package(OpenGL REQUIRED)
+add_library(opengl INTERFACE)
+target_link_libraries(opengl INTERFACE OpenGL::GL)
+
 
 add_library(imgui
   resources/ocornut_imgui/imgui_impl_sdl.cc
@@ -22,8 +40,10 @@ add_library(imgui
   resources/ocornut_imgui/imgui_tables.cc  
   resources/ocornut_imgui/imgui_gl3w.c)
 
-target_compile_options(imgui PUBLIC -ldl `sdl2-config --libs`)
-target_compile_definitions(imgui PUBLIC -D IMGUI_IMPL_OPENGL_LOADER_GL3W)
+target_link_libraries(imgui PUBLIC sdl2 opengl)
+
+target_compile_options(imgui PUBLIC -I/usr/include/SDL2)
+target_compile_definitions(imgui PUBLIC -D IMGUI_IMPL_OPENGL_LOADER_GL3W -D_REENTRANT)
 
 add_library(BigInt
   resources/VAT/mmccutchen_BigInt/BigUnsigned.cc
@@ -35,7 +55,7 @@ add_library(BigInt
 target_compile_options(BigInt PUBLIC -Wno-deprecated)
 
 add_library(CompilerFlags INTERFACE)
-target_compile_options(CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -Wno-deprecated)
+target_compile_options(CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -Wno-deprecated -ldl)
 
 add_executable(exe
   resources/engine_code/main.cc
@@ -45,7 +65,7 @@ add_executable(exe
   resources/perlin/perlin.cc
   resources/lodev_lodePNG/lodepng.cc)
 
-target_link_libraries(exe PUBLIC imgui BigInt CompilerFlags ${SDL2_LIBRARY} ${CMAKE_DL_LIBS})
+target_link_libraries(exe PUBLIC imgui BigInt opengl sdl2 CompilerFlags ${SDL2_LIBRARY} ${CMAKE_DL_LIBS})
 
 
 

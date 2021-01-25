@@ -309,29 +309,14 @@ void engine::gl_setup()
     // create the shader for the triangles to cover the screen
     display_shader = Shader("resources/engine_code/shaders/blit.vs.glsl", "resources/engine_code/shaders/blit.fs.glsl").Program;
 
-    // set up the points for the display
-    //  A---------------B
-    //  |          .    |
-    //  |       .       |
-    //  |    .          |
-    //  |               |
-    //  C---------------D
 
-    // diagonal runs from C to B
-    //  A is -1, 1
-    //  B is  1, 1
-    //  C is -1,-1
-    //  D is  1,-1
     std::vector<glm::vec3> points;
-
     points.clear();
-    points.push_back(glm::vec3(-1, 1, 0.5));  //A
-    points.push_back(glm::vec3(-1,-1, 0.5));  //C
-    points.push_back(glm::vec3( 1, 1, 0.5));  //B
-
-    points.push_back(glm::vec3( 1, 1, 0.5));  //B
-    points.push_back(glm::vec3(-1,-1, 0.5));  //C
-    points.push_back(glm::vec3( 1,-1, 0.5));  //D
+    
+    // based on this, one triangle is significantly faster than two https://michaldrobot.com/2014/04/01/gcn-execution-patterns-in-full-screen-passes/
+    points.push_back(glm::vec3(-1,-1,0.5)); // A
+    points.push_back(glm::vec3( 3,-1,0.5)); // B
+    points.push_back(glm::vec3(-1, 3,0.5)); // C
 
     // vao, vbo
     cout << "  setting up vao, vbo for display geometry...........";
@@ -558,7 +543,7 @@ void engine::draw_everything()
     glBindVertexArray( display_vao );
     glBindBuffer( GL_ARRAY_BUFFER, display_vbo );
 
-    glDrawArrays( GL_TRIANGLES, 0, 6 );
+    glDrawArrays( GL_TRIANGLES, 0, 3 );
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();

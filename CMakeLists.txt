@@ -36,7 +36,8 @@ add_library(imgui
   resources/ocornut_imgui/imgui_draw.cc
   resources/ocornut_imgui/imgui_widgets.cc
   resources/ocornut_imgui/imgui_tables.cc  
-  resources/ocornut_imgui/imgui_gl3w.c)
+  resources/ocornut_imgui/imgui_gl3w.c
+  resources/ocornut_imgui/TextEditor.cpp)
 
 target_link_libraries(imgui PUBLIC sdl2 opengl)
 

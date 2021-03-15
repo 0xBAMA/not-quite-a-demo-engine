@@ -594,6 +594,8 @@ void engine::draw_everything() {
   glBindVertexArray(display_vao);
   glBindBuffer(GL_ARRAY_BUFFER, display_vbo);
 
+  glUniform2f(glGetUniformLocation(display_shader, "resolution"),
+              io.DisplaySize.x, io.DisplaySize.y);
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
   // Start the Dear ImGui frame
@@ -614,18 +616,15 @@ void engine::draw_everything() {
     ImGui::ShowDemoWindow(&show_demo_window);
 
   // do my own windows
-  ImGui::SetNextWindowSize(ImVec2(256, 385));
   ImGui::Begin("Controls0", NULL, 0);
   ImGui::Text("This is some text");
   ImGui::End();
 
-  ImGui::SetNextWindowSize(ImVec2(256, 385));
   ImGui::Begin("Controls1", NULL, 0);
   ImGui::Text("This is some text");
   ImGui::End();
 
-  ImGui::SetNextWindowSize(ImVec2(256, 385));
-  ImGui::Begin("Controls2", NULL, 0);
+  ImGui::Begin("Editor", NULL, 0);
 
   static TextEditor editor;
   // static auto lang = TextEditor::LanguageDefinition::CPlusPlus();
@@ -634,8 +633,8 @@ void engine::draw_everything() {
 
   auto cpos = editor.GetCursorPosition();
   // editor.SetPalette(TextEditor::GetLightPalette());
-  // editor.SetPalette(TextEditor::GetDarkPalette());
-  editor.SetPalette(TextEditor::GetRetroBluePalette());
+  editor.SetPalette(TextEditor::GetDarkPalette());
+  // editor.SetPalette(TextEditor::GetRetroBluePalette());
 
   static const char *fileToEdit = "resources/engine_code/shaders/blit.vs.glsl";
   std::ifstream t(fileToEdit);

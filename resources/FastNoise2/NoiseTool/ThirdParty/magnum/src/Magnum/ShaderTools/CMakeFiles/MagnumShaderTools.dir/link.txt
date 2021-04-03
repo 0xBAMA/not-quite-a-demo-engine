@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../../../../../../../lib/libMagnumShaderTools.a  CMakeFiles/MagnumShaderTools.dir/AbstractConverter.cpp.o CMakeFiles/MagnumShaderTools.dir/Stage.cpp.o
-/usr/bin/ranlib ../../../../../../../../lib/libMagnumShaderTools.a

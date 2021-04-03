@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../../../../../../../lib/libMagnumImGuiIntegration.a  CMakeFiles/MagnumImGuiIntegration.dir/Context.cpp.o CMakeFiles/MagnumImGuiIntegration.dir/__/__/__/__/imgui/imgui.cpp.o CMakeFiles/MagnumImGuiIntegration.dir/__/__/__/__/imgui/imgui_widgets.cpp.o CMakeFiles/MagnumImGuiIntegration.dir/__/__/__/__/imgui/imgui_draw.cpp.o CMakeFiles/MagnumImGuiIntegration.dir/__/__/__/__/imgui/imgui_demo.cpp.o CMakeFiles/MagnumImGuiIntegration.dir/__/__/__/__/imgui/imgui_tables.cpp.o
-/usr/bin/ranlib ../../../../../../../../lib/libMagnumImGuiIntegration.a

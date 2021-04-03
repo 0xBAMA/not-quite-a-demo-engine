@@ -3,6 +3,8 @@ I've been using a very similar structure for the last few projects - why not boi
 
 Requires `libsdl2-dev` on Ubuntu.
 
+Make sure to recurse submodules to pull in FastNoise2 code - `git submodule update --init --recursive`
+
 In order to support rapid prototyping of graphical applications, there are a number of utilities provided:
 
   - OpenGL Debug callback for error/warning reporting
@@ -28,4 +30,4 @@ In order to support rapid prototyping of graphical applications, there are a num
   - SDL is used for windowing and input handling, basic template for application in `resources/engine_code/`
   
  
-Run build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder.
+Run build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder (if called with the "clean" option).

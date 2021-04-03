@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../../../../../../../lib/libMagnumSdl2Application.a  CMakeFiles/MagnumSdl2Application.dir/Sdl2Application.cpp.o CMakeFiles/MagnumPlatformObjects.dir/Implementation/DpiScaling.cpp.o CMakeFiles/MagnumGlxContextObjects.dir/Implementation/OpenGLFunctionLoader.cpp.o CMakeFiles/MagnumGlxContextObjects.dir/__/__/MagnumExternal/OpenGL/GL/flextGLPlatform.cpp.o
-/usr/bin/ranlib ../../../../../../../../lib/libMagnumSdl2Application.a

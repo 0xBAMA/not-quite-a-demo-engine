@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../../../../../../../lib/libCorradeInterconnect.a  CMakeFiles/CorradeInterconnect.dir/Connection.cpp.o CMakeFiles/CorradeInterconnect.dir/Emitter.cpp.o CMakeFiles/CorradeInterconnect.dir/Receiver.cpp.o
-/usr/bin/ranlib ../../../../../../../../lib/libCorradeInterconnect.a

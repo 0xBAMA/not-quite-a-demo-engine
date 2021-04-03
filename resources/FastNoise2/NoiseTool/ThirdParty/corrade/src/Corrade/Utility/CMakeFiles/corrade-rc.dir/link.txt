@@ -1,1 +1,0 @@
-/usr/bin/c++  -std=c++17 -lstdc++fs   CMakeFiles/corrade-rc.dir/rc.cpp.o  -o ../../../../../../../../bin/corrade-rc  ../../../../../../../../lib/libCorradeUtility.a -ldl 

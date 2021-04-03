@@ -29,12 +29,16 @@ using std::cout;
 using std::endl;
 using std::flush;
 
+// pi definition
+constexpr double pi = 3.14159265358979323846;
+
 // vector math library GLM
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZW
 #include "../glm/glm.hpp"                  //general vector types
 #include "../glm/gtc/matrix_transform.hpp" // for glm::ortho
 #include "../glm/gtc/type_ptr.hpp"         //to send matricies gpu-side
+#include "../glm/gtx/rotate_vector.hpp"
 #include "../glm/gtx/transform.hpp"
 
 // not sure as to the utility of this
@@ -46,10 +50,7 @@ using std::flush;
 #include "../ocornut_imgui/imgui_impl_opengl3.h"
 #include "../ocornut_imgui/imgui_impl_sdl.h"
 
-// Initialize glew loader with glewInit()
-// #include <GL/glew.h>
-
-// now handled differently with imgui
+// OpenGL Loader
 #include "../ocornut_imgui/gl3w.h"
 
 // SDL includes - windowing, gl context, system info
@@ -65,6 +66,9 @@ using std::flush;
 
 // up to 3d perlin noise generation
 #include "../perlin/perlin.h"
+
+// blue noise
+#include "../kajott_bluenoise/bluenoise.h"
 
 // diamond square heightmap generation
 #include "../mafford_diamond_square/diamond_square.h"

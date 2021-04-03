@@ -1,7 +1,13 @@
+#!/bin/bash
+
 mkdir build
-cmake -S . -B ./build
+cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release
 cd build
-make
-cp ./exe ..
+make exe
+cp ./Release/bin/exe ..
 cd ..
-rm -r ./build
+
+if [ "$1" == "clean" ]
+then
+   rm -r ./build
+fi

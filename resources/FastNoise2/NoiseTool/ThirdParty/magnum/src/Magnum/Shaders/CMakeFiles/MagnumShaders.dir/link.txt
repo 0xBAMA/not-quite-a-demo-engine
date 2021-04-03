@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../../../../../../lib/libMagnumShaders.a  CMakeFiles/MagnumShaders.dir/DistanceFieldVector.cpp.o CMakeFiles/MagnumShaders.dir/Flat.cpp.o CMakeFiles/MagnumShaders.dir/MeshVisualizer.cpp.o CMakeFiles/MagnumShaders.dir/Phong.cpp.o CMakeFiles/MagnumShaders.dir/Vector.cpp.o CMakeFiles/MagnumShadersObjects.dir/AbstractVector.cpp.o CMakeFiles/MagnumShadersObjects.dir/VertexColor.cpp.o CMakeFiles/MagnumShadersObjects.dir/resource_MagnumShaders_RCS.cpp.o
+/usr/bin/ranlib ../../../../../../../../lib/libMagnumShaders.a

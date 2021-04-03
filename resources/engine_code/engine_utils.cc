@@ -309,6 +309,10 @@ void engine::gl_setup() {
 
   // based on this, one triangle is significantly faster than two
   // https://michaldrobot.com/2014/04/01/gcn-execution-patterns-in-full-screen-passes/
+  // main idea there is that there is coherency along the diagonal, which does not exist with two triangles
+  // e.g. if the execution blocks straddle the diagonal, they have to consider two primitives instead of one
+  // so even with the clipping that happens around the viewport, the rasterization process is still cheaper,
+  // since there is no divergence there. Long story short, good for about 10% speedup. Good practice.
   points.push_back(glm::vec3(-1, -1, 0.5)); // A
   points.push_back(glm::vec3(3, -1, 0.5));  // B
   points.push_back(glm::vec3(-1, 3, 0.5));  // C

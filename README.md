@@ -1,4 +1,4 @@
-# not-quite-an-engine (NQAE)
+# not-quite-an-engine (NQAE - IPA pronuncation: *eŋkweɪ*)
 I've been using a very similar structure for the last few projects - why not boil it down to some basics, so I can start a new project more quickly and cleanly. My recent efforts have been to clean up the directory structure and provide all the improvements that I have been adding to the Voraldo codebase.
 
 Requires `libsdl2-dev` on Ubuntu.
@@ -18,8 +18,8 @@ In order to support rapid prototyping of graphical applications, there are a num
   - Perlin Noise generation
   
   - Now using FastNoise2 for more flexible, more powerful, and much, much faster noise generation
-  
-  - simple blue noise generation header adapted from code by [kajott](https://gist.github.com/kajott/d9f9bb93043040bfe2f48f4f499903d8)
+ 
+  - Simple 2D blue noise generation header adapted from code by [kajott](https://gist.github.com/kajott/d9f9bb93043040bfe2f48f4f499903d8)
   
   - JSON parsing using nlohmann's single header implementation
   

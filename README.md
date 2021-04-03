@@ -17,7 +17,7 @@ In order to support rapid prototyping of graphical applications, there are a num
   
   - Perlin Noise generation
   
-  - Now using FastNoise2 for more flexible, more powerful and much, much faster noise generation
+  - Now using FastNoise2 for more flexible, more powerful, and much, much faster noise generation
   
   - simple blue noise generation header adapted from code by [kajott](https://gist.github.com/kajott/d9f9bb93043040bfe2f48f4f499903d8)
   

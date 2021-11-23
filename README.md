@@ -6,11 +6,13 @@
 - Run build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder (if called with the "clean" option).
 
 
+
+### Features
 **Graphics Stuff**
   - OpenGL Debug callback for error/warning reporting
-  - GLM for vector and matrix types
-  - dearImGUI for menus, etc
   - SDL is used for windowing and input handling
+  - GLM for vector and matrix types
+  - dearImGUI + some addon functionality
 
 **Noise**
   - Diamond-Square algorithm heightmap generation

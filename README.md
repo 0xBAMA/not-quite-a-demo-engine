@@ -12,7 +12,7 @@
   - OpenGL Debug callback for error/warning reporting
   - SDL is used for windowing and input handling
   - GLM for vector and matrix types
-  - dearImGUI + some addon functionality
+  - Dear ImGui + ImGuiColorTextEdit
 
   **Noise**
   - Diamond-Square algorithm heightmap generation

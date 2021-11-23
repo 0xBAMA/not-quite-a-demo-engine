@@ -10,19 +10,19 @@ Make sure to recurse submodules to pull in FastNoise2 code - `git submodule upda
 In order to support rapid prototyping of graphical applications, there are a number of utilities provided:
 
 
-#Graphics Stuff
+# Graphics Stuff
   - OpenGL Debug callback for error/warning reporting
   - GLM for vector and matrix types
   - dearImGUI for menus, etc
   - SDL is used for windowing and input handling, basic template for application in `resources/engine_code/`
 
 
-#Noise
+# Noise
   - Diamond-Square algorithm heightmap generation
   - FastNoise2 - flexible, powerful, very fast noise generation
 
 
-#Utilities
+# Utilities
   - LodePNG for loading/saving of PNG images ( supports transparency and very large images )
   - JSON parsing using nlohmann's single header implementation
   - TinyOBJLoader for loading of Wavefront .OBJ 3D model files

@@ -17,7 +17,7 @@
   **Noise**
   - Diamond-Square algorithm heightmap generation
   - FastNoise2 - flexible, powerful, very fast noise generation
-  - 4 channel blue noise texture from Christoph Peters
+  - 4 channel blue noise texture from [Christoph Peters](http://momentsingraphics.de/BlueNoise.html)
 
   **Utilities**
   - CMake build setup

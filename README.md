@@ -7,22 +7,22 @@
 
 
 
-### Features
-**Graphics Stuff**
-  - OpenGL Debug callback for error/warning reporting
-  - SDL is used for windowing and input handling
-  - GLM for vector and matrix types
-  - dearImGUI + some addon functionality
+## Features
+  **Graphics Stuff**
+    - OpenGL Debug callback for error/warning reporting
+    - SDL is used for windowing and input handling
+    - GLM for vector and matrix types
+    - dearImGUI + some addon functionality
 
-**Noise**
-  - Diamond-Square algorithm heightmap generation
-  - FastNoise2 - flexible, powerful, very fast noise generation
-  - 4 channel blue noise texture from Christoph Peters
+  **Noise**
+    - Diamond-Square algorithm heightmap generation
+    - FastNoise2 - flexible, powerful, very fast noise generation
+    - 4 channel blue noise texture from Christoph Peters
 
-**Utilities**
-  - CMake build setup
-  - LodePNG for loading/saving of PNG images ( supports transparency and very large images )
-  - JSON parsing using nlohmann's single header implementation
-  - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
-  - Brent Werness' Voxel Automata Terrain ( VAT ), converted from processing to C++
-    - BigInt library required by the VAT implementation ( to replace java/processing BigInt )
+  **Utilities**
+    - CMake build setup
+    - LodePNG for loading/saving of PNG images ( supports transparency and very large images )
+    - JSON parsing using nlohmann's single header implementation
+    - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
+    - Brent Werness' Voxel Automata Terrain ( VAT ), converted from processing to C++
+      - BigInt library required by the VAT implementation ( to replace java/processing BigInt )

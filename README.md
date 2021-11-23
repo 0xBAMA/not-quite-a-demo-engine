@@ -1,27 +1,23 @@
-# not-quite-a-demo-engine
-## (aka NQADE /eŋkweɪd/)
-
-
-
+# not-quite-a-demo-engine (aka NQADE /eŋkweɪd/)
 
 # Setup
 - Requires `libsdl2-dev` on Ubuntu.
 - Make sure to recurse submodules to pull in FastNoise2 code - `git submodule update --init --recursive`
 - Run build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder (if called with the "clean" option).
 
----
 
-## Graphics Stuff
+**Graphics Stuff**
   - OpenGL Debug callback for error/warning reporting
   - GLM for vector and matrix types
   - dearImGUI for menus, etc
   - SDL is used for windowing and input handling
 
-## Noise
+**Noise**
   - Diamond-Square algorithm heightmap generation
   - FastNoise2 - flexible, powerful, very fast noise generation
+  - 4 channel blue noise texture from Christoph Peters
 
-## Utilities
+**Utilities**
   - CMake build setup
   - LodePNG for loading/saving of PNG images ( supports transparency and very large images )
   - JSON parsing using nlohmann's single header implementation

@@ -10,9 +10,11 @@
 ## Features
   **Graphics Stuff**
   - OpenGL Debug callback for error/warning reporting
+  - GL3W as an OpenGL loader
   - SDL is used for windowing and input handling
   - GLM for vector and matrix types
-  - Dear ImGui + ImGuiColorTextEdit
+  - Dear ImGui Docking Branch + ImGuiColorTextEdit
+    - Setup to spawn platform windows
 
 
   **Noise**
@@ -23,8 +25,8 @@
 
   **Utilities**
   - CMake build setup
-  - LodePNG for loading/saving of PNG images ( supports transparency and very large images )
-  - JSON parsing using nlohmann's single header implementation
+  - [LodePNG](https://lodev.org/lodepng/) for loading/saving of PNG images ( supports transparency and very large images )
+  - JSON parsing using [nlohmann's single header implementation](https://github.com/nlohmann/json)
   - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
-  - Brent Werness' Voxel Automata Terrain ( VAT ), converted from processing to C++
+  - [Brent Werness' Voxel Automata Terrain ( VAT )](https://bitbucket.org/BWerness/voxel-automata-terrain/src/master/), converted from processing to C++
     - BigInt library required by the VAT implementation ( to replace java/processing BigInt )

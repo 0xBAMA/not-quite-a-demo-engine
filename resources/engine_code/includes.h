@@ -30,6 +30,9 @@ using std::flush;
 // pi definition - definitely sufficient precision
 constexpr double pi = 3.14159265358979323846;
 
+// MSAA count - effects OpenGL geometry evaluation
+constexpr int MSAACount = 1;
+
 // vector math library GLM
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZW
@@ -58,8 +61,14 @@ constexpr double pi = 3.14159265358979323846;
 // png loading library - very powerful
 #include "../lodev_lodePNG/lodepng.h"
 
+// wrapper for TinyOBJLoader
+#include "../TinyOBJLoader/objLoader.h"
+
 // shader compilation wrapper
 #include "shader.h"
+
+// coloring of CLI output
+#include "colors.h"
 
 // diamond square heightmap generation
 #include "../mafford_diamond_square/diamond_square.h"

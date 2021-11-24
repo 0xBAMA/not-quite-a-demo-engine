@@ -3,53 +3,52 @@
 
 #include "includes.h"
 
-class engine
-{
+class engine {
 public:
+	engine()  { init(); }
+	~engine() { quit(); }
 
-	engine();
-	~engine();
+  // called from main
+  bool mainLoop();
 
 private:
-
+  // application handles + basic data
 	SDL_Window * window;
 	SDL_GLContext GLcontext;
+  int totalScreenWidth, totalScreenHeight;
+	ImVec4 clearColor;
 
-	ImVec4 clear_color;
+  // OpenGL data
+  GLuint displayTexture;
+  GLuint displayShader;
+	GLuint displayVAO;
+	GLuint displayVBO;
+  // objLoader o; // wrapper for TinyOBJLoader
 
+  // initialization
+  void init();
+  void startMessage();
+	void createWindowAndContext();
+  void displaySetup();
+  void computeShaderCompile();
+  void imguiSetup();
 
-    GLuint display_texture;
-    GLuint display_shader;
-	GLuint display_vao;
-	GLuint display_vbo;
+  // main loop functions
+  void imguiFrameStart();
+  void drawTextEditor();
+  void handleEvents();
+  void quitConf( bool *open );
+  void imguiFrameEnd();
 
-	int total_screen_width, total_screen_height;
-
-	void create_window();
-	void gl_setup();
-	void draw_everything();
-
-	void load_OBJ(std::string filename);
-
+  // shutdown procedures
+  void imguiQuit();
+  void SDLQuit();
 	void quit();
-	void quit_conf(bool *open);
-		
-	bool quitconfirm = false;
-	bool pquit = false;
 
-public:
-//placeholder
-// OBJ data (per mesh)	
-	// this may vary in length
-	std::vector<glm::vec4> vertices;
-	std::vector<glm::vec3> normals;
-	std::vector<glm::vec3> texcoords;
+  // program flags
+	bool quitConfirm = false;
+	bool pQuit = false;
 
-	// these should all be the same length, the number of triangles
-	std::vector<glm::ivec3> triangle_indices;
-	std::vector<glm::ivec3> normal_indices;
-	std::vector<glm::ivec3> texcoord_indices;
-		
 };
 
 #endif

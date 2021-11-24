@@ -34,12 +34,12 @@ void MessageCallback( GLenum source,
            ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type, message );
 }
 
-void gl_debug_enable()
+void glDebugEnable()
 {
   //DEBUG ENABLE
   glEnable              ( GL_DEBUG_OUTPUT );
   glDebugMessageCallback( MessageCallback, 0 );      //getting a seg fault here, I think
-  cout << "OpenGL debug output enabled." << endl << endl;
+  cout << endl << "\e[33m" << "  OpenGL debug callback enabled." << "\e[0m" << endl;
 
 
   //report all gl extensions - useful on different platforms

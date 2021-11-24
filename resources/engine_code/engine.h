@@ -34,11 +34,13 @@ private:
   void imguiSetup();
 
   // main loop functions
-  void imguiFrameStart();
-  void drawTextEditor();
+  void mainDisplay();
   void handleEvents();
-  void quitConf( bool *open );
+  void imguiPass();
+  void imguiFrameStart();
   void imguiFrameEnd();
+  void drawTextEditor();
+  void quitConf( bool *open );
 
   // shutdown procedures
   void imguiQuit();

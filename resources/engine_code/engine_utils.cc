@@ -1,32 +1,15 @@
 #include "engine.h"
 
 bool engine::mainLoop() {
-  ImGuiIO &io = ImGui::GetIO();
 
-  glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w ); // from hsv picker
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the background
+  // compute passes here
+    // invoke any shaders you want to use to do work on the GPU
 
-  // texture display
-  glUseProgram( displayShader );
-  glBindVertexArray( displayVAO );
-  glBindBuffer( GL_ARRAY_BUFFER, displayVBO );
+  // fullscreen triangle copying the image
+  mainDisplay();
 
-  glUniform2f( glGetUniformLocation( displayShader, "resolution"), io.DisplaySize.x, io.DisplaySize.y );
-  glDrawArrays( GL_TRIANGLES, 0, 3 );
-
-  // start the imgui frame
-  imguiFrameStart();
-
-  // show quit confirm window
-  quitConf( &quitConfirm );
-
-  // show the demo window
-  static bool showDemoWindow = true;
-  if ( showDemoWindow )
-    ImGui::ShowDemoWindow( &showDemoWindow );
-
-  // finish up the imgui stuff and put it in the framebuffer
-  imguiFrameEnd();
+  // do all the gui stuff
+  imguiPass();
 
   // swap the double buffers to present
   SDL_GL_SwapWindow( window );
@@ -38,12 +21,41 @@ bool engine::mainLoop() {
   return pQuit;
 }
 
+void engine::mainDisplay() {
+  // clear the screen
+  glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w ); // from hsv picker
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // texture display
+  glUseProgram( displayShader );
+  glBindVertexArray( displayVAO );
+  glBindBuffer( GL_ARRAY_BUFFER, displayVBO );
+
+  ImGuiIO &io = ImGui::GetIO();
+  glUniform2f( glGetUniformLocation( displayShader, "resolution"), io.DisplaySize.x, io.DisplaySize.y );
+  glDrawArrays( GL_TRIANGLES, 0, 3 );
+}
+
+void engine::imguiPass() {
+  // start the imgui frame
+  imguiFrameStart();
+
+  // show the demo window
+  static bool showDemoWindow = true;
+  if ( showDemoWindow )
+    ImGui::ShowDemoWindow( &showDemoWindow );
+
+  // show quit confirm window
+  quitConf( &quitConfirm );
+
+  // finish up the imgui stuff and put it in the framebuffer
+  imguiFrameEnd();
+}
+
 
 void engine::handleEvents() {
-  // handle events
   SDL_Event event;
   while ( SDL_PollEvent( &event ) ) {
-
     // imgui event handling
     ImGui_ImplSDL2_ProcessEvent( &event );
 
@@ -57,7 +69,6 @@ void engine::handleEvents() {
       quitConfirm = !quitConfirm; // x1 is browser back on the mouse
 
     if ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT )
-      pQuit = true; // force quit on shift+esc
-
+      pQuit = true; // force quit on shift+esc ( bypasses confirm window )
   }
 }

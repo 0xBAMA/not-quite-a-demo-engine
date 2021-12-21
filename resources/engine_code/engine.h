@@ -21,9 +21,7 @@ private:
   // OpenGL data
   GLuint displayTexture;
   GLuint displayShader;
-	GLuint displayVAO;
-	GLuint displayVBO;
-  // objLoader o; // wrapper for TinyOBJLoader
+  GLuint displayVAO;
 
   // initialization
   void init();
@@ -36,6 +34,7 @@ private:
   // main loop functions
   void mainDisplay();
   void handleEvents();
+  void clear();
   void imguiPass();
   void imguiFrameStart();
   void imguiFrameEnd();

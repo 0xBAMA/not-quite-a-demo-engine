@@ -5,6 +5,11 @@ bool engine::mainLoop() {
   // compute passes here
     // invoke any shaders you want to use to do work on the GPU
 
+
+
+  // clear the screen and depth buffer
+  clear();
+
   // fullscreen triangle copying the image
   mainDisplay();
 
@@ -21,18 +26,18 @@ bool engine::mainLoop() {
   return pQuit;
 }
 
-void engine::mainDisplay() {
+void engine::clear() {
   // clear the screen
   glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w ); // from hsv picker
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
+void engine::mainDisplay() {
   // texture display
+  ImGuiIO &io = ImGui::GetIO();
   glUseProgram( displayShader );
   glBindVertexArray( displayVAO );
-  glBindBuffer( GL_ARRAY_BUFFER, displayVBO );
-
-  ImGuiIO &io = ImGui::GetIO();
-  glUniform2f( glGetUniformLocation( displayShader, "resolution"), io.DisplaySize.x, io.DisplaySize.y );
+  glUniform2f( glGetUniformLocation( displayShader, "resolution" ), io.DisplaySize.x, io.DisplaySize.y );
   glDrawArrays( GL_TRIANGLES, 0, 3 );
 }
 

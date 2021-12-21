@@ -75,42 +75,8 @@ void engine::displaySetup() {
   // create the shader for the triangles to cover the screen
   displayShader = Shader( "resources/engine_code/shaders/blit.vs.glsl", "resources/engine_code/shaders/blit.fs.glsl" ).Program;
 
-  // Based on this, one triangle is significantly faster than two
-  // https://michaldrobot.com/2014/04/01/gcn-execution-patterns-in-full-screen-passes/
-  // main idea there is that there is coherency along the diagonal, which does not
-  // exist shen you split the screen with two triangles, e.g. if the execution blocks
-  // straddle the diagonal, they have to consider two primitives instead of one - so
-  // even with the clipping that happens around the viewport, the rasterization process
-  // is still cheaper, since there is no divergence there. Long story short, good for
-  // a small speedup and it is Good Practice.
-
-  glm::vec3 points[] = {
-    glm::vec3(-1, -1, 0.5), // A
-    glm::vec3( 3, -1, 0.5), // B
-    glm::vec3(-1,  3, 0.5)  // C
-  };
-
-  // VAO, VBO
-  cout << T_BLUE << "    Setting up VAO, VBO for display geometry" << RESET << " ......... ";
+  // have to have dummy call to this - core requires a VAO bound when calling glDrawArrays, otherwise it complains
   glGenVertexArrays( 1, &displayVAO );
-  glBindVertexArray( displayVAO );
-
-  glGenBuffers( 1, &displayVBO );
-  glBindBuffer( GL_ARRAY_BUFFER, displayVBO );
-  cout << T_GREEN << "done." << RESET << endl;
-
-  // buffer the data
-  cout << T_BLUE << "    Buffering vertex data" << RESET << " ............................ ";
-  glBufferData( GL_ARRAY_BUFFER, sizeof( glm::vec3 ) * 3, NULL, GL_DYNAMIC_DRAW );
-  glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( glm::vec3 ) * 3, &points[ 0 ] );
-  cout << T_GREEN << "done." << RESET << endl;
-
-  // set up attributes
-  cout << T_BLUE << "    Setting up attributes in display shader" << RESET << " .......... ";
-  GLuint pointsAttrib = glGetAttribLocation( displayShader, "vPosition" );
-  glEnableVertexAttribArray( pointsAttrib );
-  glVertexAttribPointer( pointsAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-  cout << T_GREEN << "done." << RESET << endl;
 
   // replace this with real image data
   std::vector<uint8_t> imageData;

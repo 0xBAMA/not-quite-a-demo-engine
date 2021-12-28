@@ -59,7 +59,7 @@ constexpr int MSAACount = 1;
 #include <SDL2/SDL_opengl.h>
 
 // png loading library - very powerful
-#include "../lodevLodePNG/lodepng.h"
+#include "../LodePNG/lodepng.h"
 
 // wrapper for TinyOBJLoader
 #include "../TinyOBJLoader/objLoader.h"

@@ -68,7 +68,7 @@ constexpr int MSAACount = 1;
 #include "shader.h"
 
 // coloring of CLI output
-#include "colors.h"
+#include "../fonts/colors.h"
 
 // diamond square heightmap generation
 #include "../noise/diamondSquare/diamond_square.h"

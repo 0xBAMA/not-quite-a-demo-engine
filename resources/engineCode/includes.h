@@ -65,7 +65,7 @@ constexpr int MSAACount = 1;
 #include "../TinyOBJLoader/objLoader.h"
 
 // shader compilation wrapper
-#include "shader.h"
+#include "shaders/shader.h"
 
 // coloring of CLI output
 #include "../fonts/colors.h"

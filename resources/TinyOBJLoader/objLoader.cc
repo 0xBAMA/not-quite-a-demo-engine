@@ -64,7 +64,7 @@ void object_cb(void *user_data, const char *name) {
 }
 
 // this is where the callbacks are used
-void objLoader::load_OBJ(std::string filename) {
+void objLoader::LoadOBJ(std::string filename) {
 	tinyobj::callback_t cb;
 	cb.vertex_cb = vertex_cb;
 	cb.normal_cb = normal_cb;

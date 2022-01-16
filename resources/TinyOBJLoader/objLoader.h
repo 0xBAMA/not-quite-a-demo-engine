@@ -6,7 +6,12 @@
 
 class objLoader {
 public:
-	void load_OBJ(std::string filename);
+	objLoader(){}
+	objLoader( std::string filename ){
+		LoadOBJ( filename );
+	}
+
+	void LoadOBJ(std::string filename);
 
 	// OBJ data (per mesh)
 	// this may vary in length

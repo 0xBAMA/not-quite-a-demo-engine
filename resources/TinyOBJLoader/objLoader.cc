@@ -6,65 +6,63 @@
 // tinyobj callbacks
 //  user_data is passed in as void, then cast as 'objLoader' class to push
 //  vertices, normals, texcoords, index, material info
-void vertex_cb(void *user_data, float x, float y, float z, float w) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
-	t->vertices.push_back(glm::vec4(x, y, z, w));
+void vertex_cb( void *user_data, float x, float y, float z, float w ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
+	t->vertices.push_back( glm::vec4( x, y, z, w ) );
 }
 
-void normal_cb(void *user_data, float x, float y, float z) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
-	t->normals.push_back(glm::vec3(x, y, z));
+void normal_cb( void *user_data, float x, float y, float z ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
+	t->normals.push_back( glm::vec3( x, y, z ) );
 }
 
-void texcoord_cb(void *user_data, float x, float y, float z) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
-	t->texcoords.push_back(glm::vec3(x, y, z));
+void texcoord_cb( void *user_data, float x, float y, float z ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
+	t->texcoords.push_back( glm::vec3( x, y, z ) );
 }
 
-void index_cb(void *user_data, tinyobj::index_t *indices, int num_indices) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
+void index_cb( void *user_data, tinyobj::index_t *indices, int num_indices ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
 
-	if (num_indices == 3) // this is a triangle
-	{
+	if ( num_indices == 3 ) { // this is a triangle
 	// OBJ uses 1-indexing, convert to 0-indexing
-	t->triangle_indices.push_back(glm::ivec3(indices[0].vertex_index - 1,
-																					indices[1].vertex_index - 1,
-																					indices[2].vertex_index - 1));
-	t->normal_indices.push_back(glm::ivec3(indices[0].normal_index - 1,
-																					indices[1].normal_index - 1,
-																					indices[2].normal_index - 1));
-	t->texcoord_indices.push_back(glm::ivec3(indices[0].texcoord_index - 1,
-																					indices[1].texcoord_index - 1,
-																					indices[2].texcoord_index - 1));
+	t->triangle_indices.push_back( glm::ivec3( indices[ 0 ].vertex_index - 1,
+																					indices[ 1 ].vertex_index - 1,
+																					indices[ 2 ].vertex_index - 1 ) );
+	t->normal_indices.push_back( glm::ivec3( indices[ 0 ].normal_index - 1,
+																					indices[ 1 ].normal_index - 1,
+																					indices[ 2 ].normal_index - 1 ) );
+	t->texcoord_indices.push_back( glm::ivec3( indices[ 0 ].texcoord_index - 1,
+																					indices[ 1 ].texcoord_index - 1,
+																					indices[ 2 ].texcoord_index - 1 ) );
 	}
-
 	// lines, points have a different number of indicies
 	//  might want to handle these
 }
 
-void usemtl_cb(void *user_data, const char *name, int material_idx) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
-	(void)t;
+void usemtl_cb( void *user_data, const char *name, int material_idx ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
+	( void ) t;
 }
 
-void mtllib_cb(void *user_data, const tinyobj::material_t *materials,
-							int num_materials) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
-	(void)t;
+void mtllib_cb( void *user_data, const tinyobj::material_t *materials,
+							int num_materials ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
+	( void ) t;
 }
 
-void group_cb(void *user_data, const char **names, int num_names) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
-	(void)t;
+void group_cb( void *user_data, const char **names, int num_names ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
+	( void ) t;
 }
 
-void object_cb(void *user_data, const char *name) {
-	objLoader *t = reinterpret_cast<objLoader *>(user_data);
-	(void)t;
+void object_cb( void *user_data, const char *name ) {
+	objLoader *t = reinterpret_cast< objLoader * >( user_data );
+	( void ) t;
 }
 
-// this is where the callbacks are used
-void objLoader::LoadOBJ(std::string filename) {
+// this is where the callbacks are set up and used
+void objLoader::LoadOBJ( std::string filename ) {
 	tinyobj::callback_t cb;
 	cb.vertex_cb = vertex_cb;
 	cb.normal_cb = normal_cb;
@@ -78,20 +76,20 @@ void objLoader::LoadOBJ(std::string filename) {
 	std::string warn;
 	std::string err;
 
-	std::ifstream ifs(filename.c_str());
-	tinyobj::MaterialFileReader mtlReader(".");
+	std::ifstream ifs( filename.c_str() );
+	tinyobj::MaterialFileReader mtlReader( "." );
 
-	bool ret = tinyobj::LoadObjWithCallback(ifs, cb, this, &mtlReader, &warn, &err);
+	bool ret = tinyobj::LoadObjWithCallback( ifs, cb, this, &mtlReader, &warn, &err );
 
-	if (!warn.empty()) {
+	if ( !warn.empty() ) {
 		std::cout << "WARN: " << warn << std::endl;
 	}
 
-	if (!err.empty()) {
+	if ( !err.empty() ) {
 		std::cerr << err << std::endl;
 	}
 
-	if (!ret) {
+	if ( !ret ) {
 		std::cerr << "Failed to parse .obj" << std::endl;
 	}
 

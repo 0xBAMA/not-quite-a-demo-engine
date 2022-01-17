@@ -26,15 +26,15 @@ void index_cb( void *user_data, tinyobj::index_t *indices, int num_indices ) {
 
 	if ( num_indices == 3 ) { // this is a triangle
 	// OBJ uses 1-indexing, convert to 0-indexing
-	t->triangle_indices.push_back( glm::ivec3( indices[ 0 ].vertex_index - 1,
-																					indices[ 1 ].vertex_index - 1,
-																					indices[ 2 ].vertex_index - 1 ) );
-	t->normal_indices.push_back( glm::ivec3( indices[ 0 ].normal_index - 1,
+	t->triangleIndices.push_back( glm::ivec3( indices[ 0 ].vertex_index - 1,
+																						indices[ 1 ].vertex_index - 1,
+																						indices[ 2 ].vertex_index - 1 ) );
+	t->normalIndices.push_back( glm::ivec3( indices[ 0 ].normal_index - 1,
 																					indices[ 1 ].normal_index - 1,
 																					indices[ 2 ].normal_index - 1 ) );
-	t->texcoord_indices.push_back( glm::ivec3( indices[ 0 ].texcoord_index - 1,
-																					indices[ 1 ].texcoord_index - 1,
-																					indices[ 2 ].texcoord_index - 1 ) );
+	t->texcoordIndices.push_back( glm::ivec3( indices[ 0 ].texcoord_index - 1,
+																						indices[ 1 ].texcoord_index - 1,
+																						indices[ 2 ].texcoord_index - 1 ) );
 	}
 	// lines, points have a different number of indicies
 	//  might want to handle these
@@ -45,8 +45,7 @@ void usemtl_cb( void *user_data, const char *name, int material_idx ) {
 	( void ) t;
 }
 
-void mtllib_cb( void *user_data, const tinyobj::material_t *materials,
-							int num_materials ) {
+void mtllib_cb( void *user_data, const tinyobj::material_t *materials, int num_materials ) {
 	objLoader *t = reinterpret_cast< objLoader * >( user_data );
 	( void ) t;
 }
@@ -62,7 +61,7 @@ void object_cb( void *user_data, const char *name ) {
 }
 
 // this is where the callbacks are set up and used
-void objLoader::LoadOBJ( std::string filename ) {
+void objLoader::LoadOBJ( std::string fileName ) {
 	tinyobj::callback_t cb;
 	cb.vertex_cb = vertex_cb;
 	cb.normal_cb = normal_cb;
@@ -76,7 +75,7 @@ void objLoader::LoadOBJ( std::string filename ) {
 	std::string warn;
 	std::string err;
 
-	std::ifstream ifs( filename.c_str() );
+	std::ifstream ifs( fileName.c_str() );
 	tinyobj::MaterialFileReader mtlReader( "." );
 
 	bool ret = tinyobj::LoadObjWithCallback( ifs, cb, this, &mtlReader, &warn, &err );
@@ -90,14 +89,14 @@ void objLoader::LoadOBJ( std::string filename ) {
 	}
 
 	if ( !ret ) {
-		std::cerr << "Failed to parse .obj" << std::endl;
+		std::cerr << "Failed to parse .obj at location " << fileName << std::endl;
 	}
 
 	cout << "vertex list length: " << vertices.size() << endl;
 	cout << "normal list length: " << normals.size() << endl;
 	cout << "texcoord list length: " << texcoords.size() << endl;
 
-	cout << "vertex index list length: " << triangle_indices.size() << endl;
-	cout << "normal index length: " << normal_indices.size() << endl;
-	cout << "texcoord index length: " << texcoord_indices.size() << endl;
+	cout << "vertex index list length: " << triangleIndices.size() << endl;
+	cout << "normal index length: " << normalIndices.size() << endl;
+	cout << "texcoord index length: " << texcoordIndices.size() << endl;
 }

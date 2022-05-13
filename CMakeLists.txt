@@ -63,6 +63,7 @@ target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc
 
 # this builds the final executable
 add_executable( exe
+	resources/noise/perlin.cc
 	resources/engineCode/main.cc
 	resources/engineCode/engine.cc
 	resources/engineCode/engineUtils.cc

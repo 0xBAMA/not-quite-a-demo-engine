@@ -23,7 +23,7 @@ using std::endl;
 class PerlinNoise
 {
 	// The permutation vector
-	std::vector<int> p;
+	std::vector< int > p;
 public:
 	// Initialize with the reference values for the permutation vector
 	PerlinNoise( );

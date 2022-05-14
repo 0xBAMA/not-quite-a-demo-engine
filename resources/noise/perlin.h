@@ -20,8 +20,7 @@ using std::flush;
 using std::endl;
 
 
-class PerlinNoise
-{
+class PerlinNoise {
 	// The permutation vector
 	std::vector< int > p;
 public:

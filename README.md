@@ -2,8 +2,8 @@
 
 # Setup
 - Requires `libsdl2-dev` on Ubuntu.
-- Make sure to recurse submodules to pull in FastNoise2 code - `git submodule update --init --recursive`, alternatively just run init.sh to do the same thing.
-- Run build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder (if called with the "clean" option).
+- Make sure to recurse submodules to pull in FastNoise2 code - `git submodule update --init --recursive`, alternatively just run scripts/init.sh to do the same thing.
+- Run scripts/build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder (if called with the "clean" option).
 
 
 
@@ -25,7 +25,7 @@
 **Utilities**
 - CMake build setup
 - [GLM](http://glm.g-truc.net/0.9.8/api/index.html) for vector and matrix types
-- [LodePNG](https://lodev.org/lodepng/) for loading/saving of PNG images ( supports transparency and very large images )
+- Image wrapper for loading/saving/resizing/etc of images ( 4 channel, 8-bit default - fpng, stb, and lodepng backends )
 - JSON parsing using [nlohmann's single header implementation](https://github.com/nlohmann/json)
 - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
 - [Brent Werness' Voxel Automata Terrain ( VAT )](https://bitbucket.org/BWerness/voxel-automata-terrain/src/master/), converted from processing to C++

@@ -69,7 +69,7 @@ add_executable( exe
 	resources/engineCode/engineUtils.cc
 	resources/engineCode/engineInit.cc
 	resources/engineCode/engineImguiUtils.cc
-	resources/LodePNG/lodepng.cc
+	resources/ImageHandling/LodePNG/lodepng.cc
 	resources/TinyOBJLoader/objLoader.cc )
 
 target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 stdc++fs FastNoise CompilerFlags )

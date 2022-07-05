@@ -58,8 +58,17 @@ constexpr int MSAACount = 1;
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-// png loading library - very powerful
-#include "../LodePNG/lodepng.h"
+// png loading library
+// key functions:
+// load: unsigned error = lodepng::decode( byte vector, unsigned width, unsigned height, cstr path )
+// save: unsigned error = lodepng::encode( cstr path, byte vector, unsigned width, unsigned height, channel count enum, bit depth )
+#include "../ImageHandling/LodePNG/lodepng.h"
+
+// stb_image
+// stb_image_write
+
+// fpng
+
 
 // wrapper for TinyOBJLoader
 #include "../TinyOBJLoader/objLoader.h"
@@ -99,7 +108,6 @@ using json = nlohmann::json;
 //   Because the german law knows no public domain in the usual sense,
 //   this code is licensed under the CC0 license
 //   http://creativecommons.org/publicdomain/zero/1.0/
-//
 // Valid from 1000 to 40000 K (and additionally 0 for pure full white)
 inline glm::vec3 get_color_for_temp( double temperature ) {
 	// Values from:

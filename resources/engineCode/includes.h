@@ -58,25 +58,8 @@ constexpr int MSAACount = 1;
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-
-// Image Handling Libs
-
-// Lode Vandevenne's LodePNG PNG Load/Save lib
-// key functions:
-	// load: unsigned error = lodepng::decode( byte vector, unsigned width, unsigned height, cstr path )
-	// save: unsigned error = lodepng::encode( cstr path, byte vector, unsigned width, unsigned height, channel count enum, bit depth )
-#include "../ImageHandling/LodePNG/lodepng.h"
-
-// Sean Barrett's load, save, resize libs - need corresponding define in the stb/impl.cc file, before their inclusion,
-	// which is done by the time compilation hits this point - they can be straight included, here, as follows:
-#include "../ImageHandling/stb/stb_image.h"					// stb_image - https://github.com/nothings/stb/blob/master/stb_image.h
-#include "../ImageHandling/stb/stb_image_write.h"		// stb_image_write - https://github.com/nothings/stb/blob/master/stb_image_write.h
-#include "../ImageHandling/stb/stb_image_resize.h"	// stb_image_resize - https://github.com/nothings/stb/blob/master/stb_image_resize.h
-// they are public domain licensed, source available at links
-
-// Rich Geldrich's fpng - public domain, https://github.com/richgel999/fpng
-#include "../ImageHandling/fpng/fpng.h"
-
+// image load/save/resize wrapper
+#include "image.h"
 
 // wrapper for TinyOBJLoader
 #include "../TinyOBJLoader/objLoader.h"

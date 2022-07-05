@@ -22,17 +22,18 @@ void engine::createWindowAndContext() {
 	SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, MSAACount );
 
 	// query the screen resolution
-	SDL_DisplayMode dm;
-	SDL_GetDesktopDisplayMode( 0, &dm );
-	totalScreenWidth = dm.w;
-	totalScreenHeight = dm.h;
+	// SDL_DisplayMode dm;
+	// SDL_GetDesktopDisplayMode( 0, &dm );
+	// totalScreenWidth = dm.w;
+	// totalScreenHeight = dm.h;
 
 	cout << T_GREEN << "done." << RESET << endl;
 
 	cout << T_BLUE << "    Creating window" << RESET << " .................................. ";
 	// auto flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS;
 	auto flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
-	window = SDL_CreateWindow( "NQADE", 0, 0, dm.w, dm.h, flags );
+	// window = SDL_CreateWindow( "NQADE", 0, 0, dm.w, dm.h, flags );
+	window = SDL_CreateWindow( "NQADE", 0, 0, WIDTH, HEIGHT, flags );
 
 	// if init takes some time, don't show the window before it's done
 	SDL_ShowWindow( window );
@@ -63,9 +64,9 @@ void engine::createWindowAndContext() {
 	// int x,y,n;
 	// unsigned char *data = stbi_load( "resources/noise/blueNoise.png", &x, &y, &n, 0 );
 
-	std::vector< uint8_t > out;
-	uint32_t width, height, channels_in_file, desired_channels = 4;
-	int check = fpng::fpng_decode_file( std::string("resources/noise/blueNoise.png").c_str(), out, width, height, channels_in_file, desired_channels );
+	// std::vector< uint8_t > out;
+	// uint32_t width, height, channels_in_file, desired_channels = 4;
+	// int check = fpng::fpng_decode_file( std::string("resources/noise/blueNoise.png").c_str(), out, width, height, channels_in_file, desired_channels );
 }
 
 
@@ -138,12 +139,11 @@ void engine::imguiSetup() {
 	ImGui_ImplOpenGL3_Init( glsl_version );
 
 	// initial value for clear color
-	clearColor = ImVec4( 0.295f, 0.295f, 0.295f, 0.5f );
-
+	// clearColor = ImVec4( 0.295f, 0.295f, 0.295f, 0.5f );
+	clearColor = ImVec4( 0.0f, 0.0f, 0.0f, 1.0f );
 	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
 	glClear( GL_COLOR_BUFFER_BIT );
 	SDL_GL_SwapWindow( window ); // show clear color
-
 
 	// setting custom font, if desired
 	// io.Fonts->AddFontFromFileTTF("resources/fonts/star_trek/titles/TNG_Title.ttf", 16);

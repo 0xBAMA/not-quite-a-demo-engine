@@ -66,6 +66,7 @@ void engine::drawTextEditor() {
 							editor.GetLanguageDefinition().mName.c_str(), fileToEdit );
 
 	editor.Render( "Editor" );
+	HelpMarker( "dummy helpmarker to get rid of unused warning" );
 	ImGui::End();
 }
 

@@ -25,8 +25,14 @@ bool engine::mainLoop() {
 
 void engine::clear() {
 	// clear the screen
-	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w ); // from hsv picker
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	ImGuiIO &io = ImGui::GetIO();
+	const int width = ( int ) io.DisplaySize.x;
+	const int height = ( int ) io.DisplaySize.y;
+	// prevent -1, -1 being passed on first frame, since ImGui hasn't rendered yet
+	glViewport(0, 0, width > 0 ? width : WIDTH, height > 0 ? height : HEIGHT );
 }
 
 void engine::mainDisplay() {

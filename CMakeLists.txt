@@ -75,4 +75,4 @@ add_executable( exe
 	resources/ImageHandling/LodePNG/lodepng.cc
 	resources/TinyOBJLoader/objLoader.cc )
 
-target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 stdc++fs FastNoise CompilerFlags )
+target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 STB_ImageUtilsWrapper stdc++fs FastNoise CompilerFlags )

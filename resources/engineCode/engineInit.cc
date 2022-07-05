@@ -59,6 +59,9 @@ void engine::createWindowAndContext() {
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << endl;
+
+	// int x,y,n;
+	// unsigned char *data = stbi_load("resources/noise/blueNoise.png", &x, &y, &n, 0);
 }
 
 

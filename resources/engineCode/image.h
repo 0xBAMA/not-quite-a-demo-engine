@@ -78,8 +78,8 @@ public:
 	}
 
 	bool Load ( std::string path, backend loader = FPNG ) {
-		// TODO: check the extension, if not equal to .png, set loader = STB
-		if ( path.substr( path.find_last_of( "." ) + 1 ) != "png" ) loader = STB;
+		// stb can load non-png, others cannot
+		if ( path.substr( path.find_last_of( "." ) ) != ".png" ) loader = STB;
 		switch ( loader ) {
 			case FPNG:		return Load_fpng( path );
 			case STB:			return Load_stb( path );

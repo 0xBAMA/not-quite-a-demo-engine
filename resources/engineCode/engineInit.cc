@@ -60,13 +60,6 @@ void engine::createWindowAndContext() {
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << endl;
-
-	// int x,y,n;
-	// unsigned char *data = stbi_load( "resources/noise/blueNoise.png", &x, &y, &n, 0 );
-
-	// std::vector< uint8_t > out;
-	// uint32_t width, height, channels_in_file, desired_channels = 4;
-	// int check = fpng::fpng_decode_file( std::string("resources/noise/blueNoise.png").c_str(), out, width, height, channels_in_file, desired_channels );
 }
 
 

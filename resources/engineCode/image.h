@@ -22,12 +22,20 @@
 #include <vector>
 #include <random>
 #include <string>
+#include <iostream>
 
 // adding additional backends is as simple as adding an enum, writing the corresponding load/save implementation
 enum backend {
 	FPNG = 0,
 	STB = 1,
 	LODEPNG = 2
+};
+
+struct rgba {
+	uint8_t r = 0;
+	uint8_t g = 0;
+	uint8_t b = 0;
+	uint8_t a = 0;
 };
 
 class Image {
@@ -70,7 +78,8 @@ public:
 	}
 
 	bool Load ( std::string path, backend loader = FPNG ) {
-		// check the extension, if not equal to .png, set loader = STB
+		// TODO: check the extension, if not equal to .png, set loader = STB
+		if ( path.substr( path.find_last_of( "." ) + 1 ) != "png" ) loader = STB;
 		switch ( loader ) {
 			case FPNG:		return Load_fpng( path );
 			case STB:			return Load_stb( path );
@@ -81,7 +90,6 @@ public:
 	}
 
 	bool Save ( std::string path, backend loader = FPNG ) {
-		// check the extension, if not equal to .png, set loader = STB
 		switch ( loader ) {
 			case FPNG:		return Save_fpng( path );
 			case STB:			return Save_stb( path );
@@ -91,48 +99,99 @@ public:
 		return false;
 	}
 
+	void CropTo ( int x, int y ) {
+		// take this image data, and trim it, creating another image that is:
+			// the original image data, within the bounds of the image data
+			// black, 0 alpha, outside that bounds
+	}
+
 	void Resize ( float scaleFactor ) {
 		// tbd, uses stb_image_resize
+	}
+
+	rgba GetAtXY ( int x, int y ) {
+		rgba temp; // initialized with zeroes
+		unsigned int index = ( x + y * width ) * numChannels;
+		if ( index + 4 <= data.size() ) {
+			temp.r = data[ index + 0 ];
+			temp.g = data[ index + 1 ];
+			temp.b = data[ index + 2 ];
+			temp.a = data[ index + 3 ];
+		}
+		return temp;
+	}
+
+	void SetAtXY ( int x, int y, rgba set ) {
+		unsigned int index = ( x + y * width ) * numChannels;
+		if ( index + 4 <= data.size() ) {
+			data[ index + 0 ] = set.r;
+			data[ index + 1 ] = set.g;
+			data[ index + 2 ] = set.b;
+			data[ index + 3 ] = set.a;
+		}
 	}
 
 	std::vector< uint8_t > data;
 	uint32_t width, height;
 
 	// primarily deal with 8-bit, RGBA
-	uint8_t bitDepth = 8;
-	uint8_t numChannels = 4;
+	uint32_t bitDepth = 8;
+	uint32_t numChannels = 4;
 
 private:
 // ==== FPNG =========================================
 	bool Load_fpng ( std::string path ) {
-
-		return false;
+		uint32_t desired_channels = numChannels;
+		int check = fpng::fpng_decode_file( path.c_str(), data, width, height, numChannels, desired_channels );
+		if ( !check )
+			return true;
+		else // probably add some error reporting at some point
+			return false;
 	}
-	bool Save_fpng ( std::string path ) {
 
-		return false;
+	bool Save_fpng ( std::string path ) {
+		return fpng::fpng_encode_image_to_file( path.c_str(), &data[ 0 ], width, height, uint32_t( numChannels ) );
 	}
 
 // ==== STB_Image / STB_Image_Write =================
 	// if extension is anything other than '.png', this is the only option
 	bool Load_stb ( std::string path ) {
-
-		return false;
+		int w = width;
+		int h = height;
+		int n = numChannels;
+		unsigned char *image = stbi_load( path.c_str(), &w, &h, &n, 0 );
+		data.resize( 0 );
+		data.reserve( width * height * numChannels );
+		for ( unsigned int i = 0; i < width * height * numChannels; i++ )
+			data.push_back( image[ i ] );
+		return true;
 	}
 
 	bool Save_stb ( std::string path ) {
-
-		return false;
+		// TODO: figure out return value semantics for error reporting, it's an int, I didn't read the header very closely
+		stbi_write_png( path.c_str(), width, height, 8, &data[ 0 ], width * numChannels );
+		return true;
 	}
 
 	// ==== LodePNG ======================================
 	bool Load_lodepng ( std::string path ) {
-
-		return false;
+		unsigned error = lodepng::decode( data, width, height, path.c_str() );
+		if ( !error )
+			return true;
+		else {
+			std::cout << "lodepng load error: " << lodepng_error_text( error ) << std::endl;
+			return false;
+		}
 	}
-	bool Save_lodepng ( std::string path ) {
 
-		return false;
+	bool Save_lodepng ( std::string path ) {
+		unsigned error = lodepng::encode( path.c_str(), data, width, height );
+		if ( !error )
+			return true;
+		else {
+			std::cout << "lodepng load error: " << lodepng_error_text( error ) << std::endl;
+			return false;
+		}
 	}
 };
 

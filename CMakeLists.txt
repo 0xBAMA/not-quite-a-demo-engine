@@ -61,6 +61,8 @@ target_compile_options( BigInt PUBLIC -Wno-deprecated )
 add_library( STB_ImageUtilsWrapper
 	resources/ImageHandling/stb/impl.cc )
 
+add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/ImageHandling/fpng )
+
 add_library( CompilerFlags INTERFACE )
 target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -ldl )
 
@@ -75,4 +77,4 @@ add_executable( exe
 	resources/ImageHandling/LodePNG/lodepng.cc
 	resources/TinyOBJLoader/objLoader.cc )
 
-target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 STB_ImageUtilsWrapper stdc++fs FastNoise CompilerFlags )
+target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 STB_ImageUtilsWrapper fpng stdc++fs FastNoise CompilerFlags )

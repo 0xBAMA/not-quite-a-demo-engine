@@ -2,7 +2,7 @@
 
 void engine::startMessage() {
 	cout << endl << T_YELLOW << BOLD << "NQADE - Not Quite A Demo Engine" << endl;
-	cout << " By Jon Baker ( 2020 - 2021 ) " << RESET << endl;
+	cout << " By Jon Baker ( 2020 - 2022 ) " << RESET << endl;
 	cout << "  https://jbaker.graphics/ " << endl << endl;
 }
 
@@ -61,7 +61,11 @@ void engine::createWindowAndContext() {
 	cout << T_GREEN << "done." << RESET << endl;
 
 	// int x,y,n;
-	// unsigned char *data = stbi_load("resources/noise/blueNoise.png", &x, &y, &n, 0);
+	// unsigned char *data = stbi_load( "resources/noise/blueNoise.png", &x, &y, &n, 0 );
+
+	std::vector< uint8_t > out;
+	uint32_t width, height, channels_in_file, desired_channels = 4;
+	int check = fpng::fpng_decode_file( std::string("resources/noise/blueNoise.png").c_str(), out, width, height, channels_in_file, desired_channels );
 }
 
 

@@ -58,10 +58,13 @@ constexpr int MSAACount = 1;
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-// LodePNG PNG Load/Save lib
+
+// Image Handling Libs
+
+// Lode Vandevenne's LodePNG PNG Load/Save lib
 // key functions:
-// load: unsigned error = lodepng::decode( byte vector, unsigned width, unsigned height, cstr path )
-// save: unsigned error = lodepng::encode( cstr path, byte vector, unsigned width, unsigned height, channel count enum, bit depth )
+	// load: unsigned error = lodepng::decode( byte vector, unsigned width, unsigned height, cstr path )
+	// save: unsigned error = lodepng::encode( cstr path, byte vector, unsigned width, unsigned height, channel count enum, bit depth )
 #include "../ImageHandling/LodePNG/lodepng.h"
 
 // Sean Barrett's load, save, resize libs - need corresponding define in the stb/impl.cc file, before their inclusion,
@@ -72,6 +75,7 @@ constexpr int MSAACount = 1;
 // they are public domain licensed, source available at links
 
 // Rich Geldrich's fpng - public domain, https://github.com/richgel999/fpng
+#include "../ImageHandling/fpng/fpng.h"
 
 
 // wrapper for TinyOBJLoader

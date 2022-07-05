@@ -48,7 +48,7 @@ target_link_libraries( imgui PUBLIC sdl2 opengl )
 target_compile_options( imgui PUBLIC -I/usr/include/SDL2 )
 target_compile_definitions( imgui PUBLIC -D IMGUI_IMPL_OPENGL_LOADER_GL3W -D_REENTRANT )
 
-# this is the bigint library to suppor the VAT code
+# this is the bigint library to support the VAT code
 add_library( BigInt
 	resources/noise/VAT/BigInt/BigUnsigned.cc
 	resources/noise/VAT/BigInt/BigInteger.cc
@@ -57,6 +57,9 @@ add_library( BigInt
 	resources/noise/VAT/BigInt/BigIntegerUtils.cc )
 
 target_compile_options( BigInt PUBLIC -Wno-deprecated )
+
+add_library( STB_ImageUtilsWrapper
+	resources/ImageHandling/stb/impl.cc )
 
 add_library( CompilerFlags INTERFACE )
 target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -ldl )

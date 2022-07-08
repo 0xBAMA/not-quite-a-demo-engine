@@ -84,14 +84,16 @@ public:
 
 	bool Load ( std::string path, backend loader = FPNG ) {
 		// stb can load non-png, others cannot
+		bool result = false;
 		if ( path.substr( path.find_last_of( "." ) ) != ".png" ) loader = STB;
 		switch ( loader ) {
-			case FPNG:		return Load_fpng( path );
-			case STB:			return Load_stb( path );
-			case LODEPNG: return Load_lodepng( path );
+			case FPNG:		result = Load_fpng( path ); 		break;
+			case STB:		result = Load_stb( path ); 		break;
+			case LODEPNG:	result = Load_lodepng( path ); 	break;
 			default: break;
 		}
-		return false;
+		if ( !result ) std::cout << "Image::Load Failed" << std::endl;
+		return result;
 	}
 
 	bool Save ( std::string path, backend loader = FPNG ) {
@@ -192,19 +194,25 @@ private:
 	bool Load_stb ( std::string path ) {
 		int w = width;
 		int h = height;
-		int n = numChannels;
-		unsigned char *image = stbi_load( path.c_str(), &w, &h, &n, 0 );
+		int n = 0;
+		unsigned char *image = stbi_load( path.c_str(), &w, &h, &n, STBI_rgb_alpha );
 		data.resize( 0 );
-		data.reserve( width * height * numChannels );
-		for ( unsigned int i = 0; i < width * height * numChannels; i++ )
-			data.push_back( image[ i ] );
+		width = ( uint32_t ) w;
+		height = ( uint32_t ) h;
+		const unsigned int numPixels = width * height;
+		data.reserve( numPixels * numChannels );
+		for ( unsigned int i = 0; i < numPixels; i++ ) {
+			data.push_back( image[ i * 4 + 0 ] );
+			data.push_back( image[ i * 4 + 1 ] );
+			data.push_back( image[ i * 4 + 2 ] );
+			data.push_back( n == 4 ? image[ i * 4 + 3 ] : 255 );
+		}
 		return true;
 	}
 
 	bool Save_stb ( std::string path ) {
 		// TODO: figure out return value semantics for error reporting, it's an int, I didn't read the header very closely
-		stbi_write_png( path.c_str(), width, height, 8, &data[ 0 ], width * numChannels );
-		return true;
+		return stbi_write_png( path.c_str(), width, height, 8, &data[ 0 ], width * numChannels );
 	}
 
 	// ==== LodePNG ======================================

@@ -62,7 +62,7 @@ void engine::createWindowAndContext() {
 	cout << T_GREEN << "done." << RESET << endl;
 
 	// Image testImage( std::string( "resources/noise/blueNoise.png" ), LODEPNG );
-	Image testImage( std::string( "test.png" ), LODEPNG );
+	Image testImage( std::string( "test.jpg" ), LODEPNG );
 	testImage.Resize( 7.3f );
 	testImage.Save( "testRescale.png" );
 }

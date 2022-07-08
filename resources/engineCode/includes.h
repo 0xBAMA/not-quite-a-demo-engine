@@ -58,8 +58,8 @@ constexpr int MSAACount = 1;
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-// image load/save/resize wrapper
-#include "image.h"
+// image load/save/resize/access/manipulation wrapper
+#include "../ImageHandling/image.h"
 
 // wrapper for TinyOBJLoader
 #include "../TinyOBJLoader/objLoader.h"

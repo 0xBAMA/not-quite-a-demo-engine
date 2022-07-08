@@ -33,10 +33,10 @@ namespace fpng
 	// ---- Compression
 	enum
 	{
-		// Enables computing custom Huffman tables for each file, instead of using the custom global tables. 
+		// Enables computing custom Huffman tables for each file, instead of using the custom global tables.
 		// Results in roughly 6% smaller files on average, but compression is around 40% slower.
-		FPNG_ENCODE_SLOWER = 1, 
-		
+		FPNG_ENCODE_SLOWER = 1,
+
 		// Only use raw Deflate blocks (no compression at all). Intended for testing.
 		FPNG_FORCE_UNCOMPRESSED = 2,
 	};
@@ -44,7 +44,7 @@ namespace fpng
 	// Fast PNG encoding. The resulting file can be decoded either using a standard PNG decoder or by the fpng_decode_memory() function below.
 	// pImage: pointer to RGB or RGBA image pixels, R first in memory, B/A last.
 	// w/h - image dimensions. Image's row pitch in bytes must is w*num_chans.
-	// num_chans must be 3 or 4. 
+	// num_chans must be 3 or 4.
 	bool fpng_encode_image_to_memory(const void* pImage, uint32_t w, uint32_t h, uint32_t num_chans, std::vector<uint8_t>& out_buf, uint32_t flags = 0);
 
 #ifndef FPNG_NO_STDIO
@@ -53,11 +53,11 @@ namespace fpng
 #endif
 
 	// ---- Decompression
-		
+
 	enum
 	{
 		FPNG_DECODE_SUCCESS = 0,				// file is a valid PNG file and written by FPNG and the decode succeeded
-		
+
 		FPNG_DECODE_NOT_FPNG,					// file is a valid PNG file, but it wasn't written by FPNG so you should try decoding it with a general purpose PNG decoder
 
 		FPNG_DECODE_INVALID_ARG,				// invalid function parameter
@@ -80,11 +80,11 @@ namespace fpng
 	// If fpng_get_info() or fpng_decode_memory() returns FPNG_DECODE_NOT_FPNG, you should decode the PNG by falling back to a general purpose decoder.
 	//
 	// fpng_get_info() parses the PNG header and iterates through all chunks to determine if it's a file written by FPNG, but does not decompress the actual image data so it's relatively fast.
-	// 
+	//
 	// pImage, image_size: Pointer to PNG image data and its size
 	// width, height: output image's dimensions
 	// channels_in_file: will be 3 or 4
-	// 
+	//
 	// Returns FPNG_DECODE_SUCCESS on success, otherwise one of the failure codes above.
 	// If FPNG_DECODE_NOT_FPNG is returned, you must decompress the file with a general purpose PNG decoder.
 	// If another error occurs, the file is likely corrupted or invalid, but you can still try to decompress the file with another decoder (which will likely fail).
@@ -97,11 +97,11 @@ namespace fpng
 	// out: Output 24/32bpp image buffer
 	// width, height: output image's dimensions
 	// channels_in_file: will be 3 or 4
-	// desired_channels: must be 3 or 4 
-	// 
-	// If the image is 24bpp and 32bpp is requested, the alpha values will be set to 0xFF. 
+	// desired_channels: must be 3 or 4
+	//
+	// If the image is 24bpp and 32bpp is requested, the alpha values will be set to 0xFF.
 	// If the image is 32bpp and 24bpp is requested, the alpha values will be discarded.
-	// 
+	//
 	// Returns FPNG_DECODE_SUCCESS on success, otherwise one of the failure codes above.
 	// If FPNG_DECODE_NOT_FPNG is returned, you must decompress the file with a general purpose PNG decoder.
 	// If another error occurs, the file is likely corrupted or invalid, but you can still try to decompress the file with another decoder (which will likely fail).

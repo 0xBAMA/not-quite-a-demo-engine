@@ -12,8 +12,8 @@
 
 // Sean Barrett's public domain load, save, resize libs - need corresponding define in the stb/impl.cc file, before their inclusion,
 	// which is done by the time compilation hits this point - they can be straight included, here, as follows:
-#include "../ImageHandling/stb/stb_image.h"					// stb_image - https://github.com/nothings/stb/blob/master/stb_image.h
-#include "../ImageHandling/stb/stb_image_write.h"		// stb_image_write - https://github.com/nothings/stb/blob/master/stb_image_write.h
+#include "../ImageHandling/stb/stb_image.h"			// stb_image - https://github.com/nothings/stb/blob/master/stb_image.h
+#include "../ImageHandling/stb/stb_image_write.h"	// stb_image_write - https://github.com/nothings/stb/blob/master/stb_image_write.h
 #include "../ImageHandling/stb/stb_image_resize.h"	// stb_image_resize - https://github.com/nothings/stb/blob/master/stb_image_resize.h
 
 #include <vector>
@@ -110,6 +110,25 @@ public:
 		// take this image data, and trim it, creating another image that is:
 			// the original image data, within the bounds of the image data
 			// black, 0 alpha, outside that bounds
+
+		std::vector< uint8_t > newValues;
+		newValues.resize( x * y * numChannels );
+		for ( int yy = 0; yy < y; yy++ ) {
+			for ( int xx = 0; xx < x; xx++ ) {
+				rgba sample = GetAtXY( xx, yy );
+				int index = 4 * ( xx + x * yy );
+				newValues[ index + 0 ] = sample.r;
+				newValues[ index + 1 ] = sample.g;
+				newValues[ index + 2 ] = sample.b;
+				newValues[ index + 3 ] = sample.a;
+			}
+		}
+		data.resize( x * y * numChannels );
+		for ( unsigned int i = 0; i < newValues.size(); i++ ) {
+			data[ i ] = newValues[ i ];
+		}
+		width = x;
+		height = y;
 	}
 
 	void Resize ( float scaleFactor ) {
@@ -145,8 +164,8 @@ public:
 
 	rgba GetAtXY ( int x, int y ) {
 		rgba temp; // initialized with zeroes
-		unsigned int index = ( x + y * width ) * numChannels;
-		if ( index + 4 <= data.size() ) {
+		int index = ( x + y * int( width ) ) * numChannels;
+		if ( index + 4 <= int( data.size() ) && index >= 0 && x < int( width ) && x >= 0 && y < int( height ) && y >= 0 ) {
 			temp.r = data[ index + 0 ];
 			temp.g = data[ index + 1 ];
 			temp.b = data[ index + 2 ];

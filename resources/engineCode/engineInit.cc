@@ -63,7 +63,8 @@ void engine::createWindowAndContext() {
 
 	// Image testImage( std::string( "resources/noise/blueNoise.png" ), LODEPNG );
 	Image testImage( std::string( "test.jpg" ), LODEPNG );
-	testImage.Resize( 7.3f );
+	testImage.Resize( 1.3f );
+	testImage.CropTo( 1000, 2000 );
 	testImage.Save( "testRescale.png" );
 }
 

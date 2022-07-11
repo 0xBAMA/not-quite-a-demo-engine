@@ -21,19 +21,31 @@ void engine::createWindowAndContext() {
 	SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,       8 );
 	SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, MSAACount );
 
-	// query the screen resolution
-	// SDL_DisplayMode dm;
-	// SDL_GetDesktopDisplayMode( 0, &dm );
-	// totalScreenWidth = dm.w;
-	// totalScreenHeight = dm.h;
 
 	cout << T_GREEN << "done." << RESET << endl;
 
 	cout << T_BLUE << "    Creating window" << RESET << " .................................. ";
-	// auto flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS;
-	auto flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
-	// window = SDL_CreateWindow( "NQADE", 0, 0, dm.w, dm.h, flags );
-	window = SDL_CreateWindow( "NQADE", 0, 0, WIDTH, HEIGHT, flags );
+
+	int windowInitMode = 0;
+	int flags;
+	switch ( windowInitMode ) {
+		case 0: // little window, using WIDTH/HEIGHT defines in includes.h
+			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
+			window = SDL_CreateWindow( "NQADE", 0, 0, WIDTH, HEIGHT, flags );
+			break;
+
+		case 1: // fullscreen borderless
+			// first, query the screen resolution
+			SDL_DisplayMode dm;
+			SDL_GetDesktopDisplayMode( 0, &dm );
+			totalScreenWidth = dm.w;
+			totalScreenHeight = dm.h;
+			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS;
+			window = SDL_CreateWindow( "NQADE", 0, 0, dm.w, dm.h, flags );
+			break;
+
+			// other modes?
+	}
 
 	// if init takes some time, don't show the window before it's done
 	SDL_ShowWindow( window );

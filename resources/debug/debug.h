@@ -33,7 +33,7 @@ void MessageCallback( GLenum source,
 						( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type, message );
 }
 
-void glDebugEnable() {
+void GlDebugEnable() {
 	//DEBUG ENABLE
 	glEnable              ( GL_DEBUG_OUTPUT );
 	glDebugMessageCallback( MessageCallback, 0 );      //getting a seg fault here, I think

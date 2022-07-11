@@ -5,10 +5,10 @@
 
 class engine {
 public:
-	engine()  { init(); }
-	~engine() { quit(); }
+	engine()  { Init(); }
+	~engine() { Quit(); }
 
-	bool mainLoop(); // called from main
+	bool MainLoop(); // called from main
 
 private:
 	// application handles + basic data
@@ -24,27 +24,27 @@ private:
 	GLuint displayVAO;
 
 	// initialization
-	void init();
-	void startMessage();
-	void createWindowAndContext();
-	void displaySetup();
-	void computeShaderCompile();
-	void imguiSetup();
+	void Init ();
+	void StartMessage ();
+	void CreateWindowAndContext ();
+	void DisplaySetup ();
+	void ComputeShaderCompile ();
+	void ImguiSetup ();
 
 	// main loop functions
-	void mainDisplay();
-	void handleEvents();
-	void clear();
-	void imguiPass();
-	void imguiFrameStart();
-	void imguiFrameEnd();
-	void drawTextEditor();
-	void quitConf( bool *open );
+	void MainDisplay ();
+	void HandleEvents ();
+	void Clear ();
+	void ImguiPass ();
+	void ImguiFrameStart ();
+	void ImguiFrameEnd ();
+	void DrawTextEditor ();
+	void QuitConf ( bool *open );
 
 	// shutdown procedures
-	void imguiQuit();
+	void ImguiQuit ();
 	void SDLQuit();
-	void quit();
+	void Quit();
 
 	// program flags
 	bool quitConfirm = false;

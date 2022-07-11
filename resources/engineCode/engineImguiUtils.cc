@@ -1,6 +1,6 @@
 #include "engine.h"
 
-void engine::quitConf( bool *open ) {
+void engine::QuitConf ( bool *open ) {
 	if ( *open ) {
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
 		// create centered window
@@ -23,7 +23,7 @@ void engine::quitConf( bool *open ) {
 	}
 }
 
-static void HelpMarker( const char *desc ) {
+static void HelpMarker ( const char *desc ) {
 	ImGui::TextDisabled( "(?)" );
 	if ( ImGui::IsItemHovered() ) {
 		ImGui::BeginTooltip();
@@ -35,7 +35,7 @@ static void HelpMarker( const char *desc ) {
 }
 
 
-void engine::drawTextEditor() {
+void engine::DrawTextEditor () {
 	ImGui::Begin( "Editor", NULL, 0 );
 	static TextEditor editor;
 	// static auto lang = TextEditor::LanguageDefinition::CPlusPlus();
@@ -70,14 +70,14 @@ void engine::drawTextEditor() {
 	ImGui::End();
 }
 
-void engine::imguiFrameStart() {
+void engine::ImguiFrameStart () {
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame( window );
 	ImGui::NewFrame();
-	}
+}
 
-	void engine::imguiFrameEnd() {
+void engine::ImguiFrameEnd () {
 	// get it ready to put on the screen
 	ImGui::Render();
 

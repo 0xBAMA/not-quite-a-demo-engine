@@ -1,12 +1,12 @@
 #include "engine.h"
 
-void engine::startMessage() {
+void engine::StartMessage () {
 	cout << endl << T_YELLOW << BOLD << "NQADE - Not Quite A Demo Engine" << endl;
 	cout << " By Jon Baker ( 2020 - 2022 ) " << RESET << endl;
 	cout << "  https://jbaker.graphics/ " << endl << endl;
 }
 
-void engine::createWindowAndContext() {
+void engine::CreateWindowAndContext () {
 	cout << T_BLUE << "    Initializing SDL2" << RESET << " ................................ ";
 	if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
 		cout << "Error: " << SDL_GetError() << endl;
@@ -83,7 +83,7 @@ void engine::createWindowAndContext() {
 	// testImage.Save( "testRescale.png" );
 }
 
-void engine::displaySetup() {
+void engine::DisplaySetup () {
 	// some info on your current platform
 	const GLubyte *renderer = glGetString( GL_RENDERER );	// get renderer string
 	const GLubyte *version = glGetString( GL_VERSION );	// version as a string
@@ -133,12 +133,12 @@ void engine::displaySetup() {
 	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 }
 
-void engine::computeShaderCompile() {
+void engine::ComputeShaderCompile () {
 	// compile any compute shaders here, store handles in engine class member function variables
 }
 
 
-void engine::imguiSetup() {
+void engine::ImguiSetup () {
 	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ............................ ";
 
 	// Setup Dear ImGui context

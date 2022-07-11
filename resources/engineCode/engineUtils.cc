@@ -1,29 +1,29 @@
 #include "engine.h"
 
-bool engine::mainLoop() {
+bool engine::MainLoop () {
 	// compute passes here
 		// invoke any shaders you want to use to do work on the GPU
 
 	// clear the screen and depth buffer
-	clear();
+	Clear();
 
 	// fullscreen triangle copying the image
-	mainDisplay();
+	MainDisplay();
 
 	// do all the gui stuff
-	imguiPass();
+	ImguiPass();
 
 	// swap the double buffers to present
 	SDL_GL_SwapWindow( window );
 
 	// handle all events
-	handleEvents();
+	HandleEvents();
 
 	// break main loop when pQuit turns true
 	return pQuit;
 }
 
-void engine::clear() {
+void engine::Clear () {
 	// clear the screen
 	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -35,7 +35,7 @@ void engine::clear() {
 	glViewport(0, 0, width > 0 ? width : WIDTH, height > 0 ? height : HEIGHT );
 }
 
-void engine::mainDisplay() {
+void engine::MainDisplay () {
 	// texture display
 	ImGuiIO &io = ImGui::GetIO();
 	glUseProgram( displayShader );
@@ -44,9 +44,9 @@ void engine::mainDisplay() {
 	glDrawArrays( GL_TRIANGLES, 0, 3 );
 }
 
-void engine::imguiPass() {
+void engine::ImguiPass () {
 	// start the imgui frame
-	imguiFrameStart();
+	ImguiFrameStart();
 
 	// show the demo window
 	static bool showDemoWindow = true;
@@ -54,14 +54,14 @@ void engine::imguiPass() {
 		ImGui::ShowDemoWindow( &showDemoWindow );
 
 	// show quit confirm window
-	quitConf( &quitConfirm );
+	QuitConf( &quitConfirm );
 
 	// finish up the imgui stuff and put it in the framebuffer
-	imguiFrameEnd();
+	ImguiFrameEnd();
 }
 
 
-void engine::handleEvents() {
+void engine::HandleEvents () {
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) ) {
 		// imgui event handling

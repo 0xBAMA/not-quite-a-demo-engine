@@ -61,11 +61,14 @@ void engine::createWindowAndContext() {
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << endl;
 
+	//Testing Image Functions
 	// Image testImage( std::string( "resources/noise/blueNoise.png" ), LODEPNG );
-	Image testImage( std::string( "test.jpg" ), LODEPNG );
-	testImage.Resize( 1.3f );
-	testImage.CropTo( 1000, 2000 );
-	testImage.Save( "testRescale.png" );
+	// cout << "Resizing image" << endl << std::flush;
+	// testImage.Resize( 1.3f );
+	// cout << "Cropping image" << endl << std::flush;
+	// testImage.CropTo( 1000, 2000 );
+	// cout << "Saving" << endl << std::flush;
+	// testImage.Save( "testRescale.png" );
 }
 
 void engine::displaySetup() {

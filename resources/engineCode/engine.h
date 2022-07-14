@@ -8,7 +8,7 @@ public:
 	engine()  { Init(); }
 	~engine() { Quit(); }
 
-	bool MainLoop(); // called from main
+	bool MainLoop (); // called from main
 
 private:
 	// application handles + basic data
@@ -17,6 +17,10 @@ private:
 	SDL_GLContext GLcontext;
 	int totalScreenWidth, totalScreenHeight;
 	ImVec4 clearColor;
+
+	// Blue Noise Image + texure
+	GLuint blueNoiseTexture;
+	Image blueNoiseImage{ "resources/noise/blueNoise.png", LODEPNG };
 
 	// OpenGL data
 	GLuint displayTexture;
@@ -35,6 +39,7 @@ private:
 	void MainDisplay ();
 	void HandleEvents ();
 	void Clear ();
+	void ComputePasses ();
 	void ImguiPass ();
 	void ImguiFrameStart ();
 	void ImguiFrameEnd ();
@@ -43,13 +48,12 @@ private:
 
 	// shutdown procedures
 	void ImguiQuit ();
-	void SDLQuit();
-	void Quit();
+	void SDLQuit ();
+	void Quit ();
 
 	// program flags
 	bool quitConfirm = false;
 	bool pQuit = false;
-
 };
 
 #endif

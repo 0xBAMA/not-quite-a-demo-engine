@@ -43,17 +43,17 @@ void engine::DrawTextEditor () {
 	editor.SetLanguageDefinition( lang );
 
 	auto cpos = editor.GetCursorPosition();
-	// editor.SetPalette(TextEditor::GetLightPalette());
+	// editor.SetPalette( TextEditor::GetLightPalette() );
 	editor.SetPalette( TextEditor::GetDarkPalette() );
-	// editor.SetPalette(TextEditor::GetRetroBluePalette());
+	// editor.SetPalette( TextEditor::GetRetroBluePalette() );
 
-	static const char *fileToEdit = "resources/engineCode/shaders/blit.vs.glsl";
-	std::ifstream t( fileToEdit );
 	static bool loaded = false;
+	static const char *fileToEdit = "resources/engineCode/shaders/blit.vs.glsl";
 	if ( !loaded ) {
+		std::ifstream t ( fileToEdit );
 		editor.SetLanguageDefinition( lang );
 		if ( t.good() ) {
-			editor.SetText( std::string( ( std::istreambuf_iterator<char>(t)), std::istreambuf_iterator< char >() ) );
+			editor.SetText( std::string( ( std::istreambuf_iterator< char >( t ) ), std::istreambuf_iterator< char >() ) );
 			loaded = true;
 		}
 	}

@@ -1,11 +1,13 @@
 #include "engine.h"
 
 bool engine::MainLoop () {
-	// compute passes here
-		// invoke any shaders you want to use to do work on the GPU
 
 	// clear the screen and depth buffer
 	Clear();
+
+	// compute passes here
+		// invoke any shaders you want to use to do work on the GPU
+	ComputePasses();
 
 	// fullscreen triangle copying the image
 	MainDisplay();
@@ -21,6 +23,10 @@ bool engine::MainLoop () {
 
 	// break main loop when pQuit turns true
 	return pQuit;
+}
+
+void engine::ComputePasses () {
+
 }
 
 void engine::Clear () {
@@ -49,11 +55,11 @@ void engine::ImguiPass () {
 	ImguiFrameStart();
 
 	// show the demo window
-	static bool showDemoWindow = true;
+	static bool showDemoWindow = false;
 	if ( showDemoWindow )
 		ImGui::ShowDemoWindow( &showDemoWindow );
 
-	// show quit confirm window
+	// show quit confirm window, if triggered
 	QuitConf( &quitConfirm );
 
 	// finish up the imgui stuff and put it in the framebuffer
@@ -77,8 +83,10 @@ void engine::HandleEvents () {
 	// if ( state[ SDL_SCANCODE_UP ] )		cout << "Up Key Pressed";
 	// if ( state[ SDL_SCANCODE_DOWN ] )	cout << "Down Key Pressed";
 
+// think about some kind of mapping using std::unordered_map - better yet, write an unordered_map implementation
+
 //==============================================================================
-//this is the way that the event system used to work - I will keep this for quitConfirm handling
+//this is the way that the event system used to work - I will keep this for QuitConfirm handling
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) ) {
 		// imgui event handling
@@ -90,7 +98,7 @@ void engine::HandleEvents () {
 		if ( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( window ) )
 			pQuit = true;
 
-		if ( ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE) || ( event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1 ))
+		if ( ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE) || ( event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1 ) )
 			quitConfirm = !quitConfirm; // x1 is browser back on the mouse
 
 		if ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT )

@@ -61,6 +61,9 @@ constexpr int MSAACount = 1;
 // image load/save/resize/access/manipulation wrapper
 #include "../ImageHandling/image.h"
 
+// font rendering header
+#include "../fonts/fontRenderer/renderer.h"
+
 // wrapper for TinyOBJLoader
 #include "../TinyOBJLoader/objLoader.h"
 

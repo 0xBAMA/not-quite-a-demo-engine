@@ -22,6 +22,9 @@ private:
 	GLuint blueNoiseTexture;
 	Image blueNoiseImage{ "resources/noise/blueNoise.png", LODEPNG };
 
+	// text renderer framework
+	layerManager textRenderer;
+
 	// OpenGL data
 	GLuint displayTexture;
 	GLuint displayShader;

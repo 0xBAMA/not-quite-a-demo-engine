@@ -110,11 +110,12 @@ void engine::DisplaySetup () {
 
 
 	Image initial( WIDTH, HEIGHT, true );
-	initial.Resize( 3.3 );
-	initial.CropTo( WIDTH, HEIGHT );
-	Image initial2( initial.width, initial.height, &initial.data[ 0 ] );
-	// Image initial2( "duck.png", LODEPNG );
-	initial2.CropTo( WIDTH, HEIGHT );
+	// initial.Resize( 41.0 );
+	// cout << initial.width << " " << initial.height << endl;
+	// initial.Save( "testOutputBig.png" );
+	// initial.CropTo( WIDTH, HEIGHT );
+	// initial.Resize( 6.8 );
+	// initial.CropTo( WIDTH, HEIGHT );
 
 
 	// create the image textures
@@ -132,10 +133,11 @@ void engine::DisplaySetup () {
 	// buffer the image data to the GPU
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D, displayTexture );
-	// glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &imageData[ 0 ] );
-	// glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial2.data.data()[ 0 ] );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
 	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+
+	// initialize the text renderer
+	textRenderer.Init( WIDTH, HEIGHT );
 }
 
 void engine::ComputeShaderCompile () {

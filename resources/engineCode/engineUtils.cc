@@ -72,21 +72,25 @@ void engine::HandleEvents () {
 	//this is the other way to handle the input - check the state of the keys every frame
 		// key element here is that you can handle more than one at once - e.g. I can have
 		// simultaneous input from left and up, where the SDL_PollEvent method did not make
-		// these things available in the same scope
+		// these things available in the same scope - it creates a massive spew of input
+		// events when compared to the SDL_PollEvent method, so sometimes, that'll need to
+		// be considered ( framerate dependency, cooldown kind of logic )
 //==============================================================================
 // list of input indices/names: https://wiki.libsdl.org/SDL_Scancode
 //==============================================================================
 
 	const uint8_t *state = SDL_GetKeyboardState( NULL );
-	// if ( state[ SDL_SCANCODE_RIGHT ] )	cout << "Right Key Pressed";
-	// if ( state[ SDL_SCANCODE_LEFT ] )	cout << "Left Key Pressed";
-	// if ( state[ SDL_SCANCODE_UP ] )		cout << "Up Key Pressed";
-	// if ( state[ SDL_SCANCODE_DOWN ] )	cout << "Down Key Pressed";
+	// example usage to get rid of compiler warning about unused variable state
+		// look up the scancodes for desired keys
+	if ( state[ SDL_SCANCODE_RIGHT ] )	cout << "Right Key Pressed" << endl << std::flush;
+	if ( state[ SDL_SCANCODE_LEFT ] )		cout << "Left Key Pressed" << endl << std::flush;
+	if ( state[ SDL_SCANCODE_UP ] )			cout << "Up Key Pressed" << endl << std::flush;
+	if ( state[ SDL_SCANCODE_DOWN ] )		cout << "Down Key Pressed" << endl << std::flush;
 
 // think about some kind of mapping using std::unordered_map - better yet, write an unordered_map implementation
 
 //==============================================================================
-//this is the way that the event system used to work - I will keep this for QuitConfirm handling
+//this is the way that the event system used to work - I will keep this for QuitConfirm / force quit ( pQuit = true on return ) handling
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) ) {
 		// imgui event handling

@@ -5,7 +5,6 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#define STB_INCLUDE_IMPLEMENTATION
 #include "../../includes.h"
 
 #include <vector>

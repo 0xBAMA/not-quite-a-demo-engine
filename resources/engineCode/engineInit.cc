@@ -137,7 +137,7 @@ void engine::DisplaySetup () {
 	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
 	// initialize the text renderer
-	textRenderer.Init( WIDTH, HEIGHT );
+	textRenderer.Init( WIDTH, HEIGHT, CShader( "resources/engineCode/shaders/font.cs.glsl" ).Program );
 }
 
 void engine::ComputeShaderCompile () {

@@ -3,15 +3,45 @@
 #ifndef FONTRENDERER_H
 #define FONTRENDERER_H
 
-class Layer {
+struct cChar {
+	unsigned char data[ 4 ] = { 255, 255, 255, 0 };
+	cChar() {}
+	cChar( unsigned char c ) {
+		data[ 3 ] = c;
+	}
+	cChar( glm::ivec3 color, unsigned char c ) {
+		data[ 0 ] = color.x;
+		data[ 1 ] = color.y;
+		data[ 2 ] = color.z;
+		data[ 3 ] = c;
+	}
+};
 
+class Layer {
+public:
+	Layer ( int w, int h ) : width( w ), height( h ) {
+		Resize( w, h );
+	}
+
+	void Resize ( int w, int h ) {
+		if ( bufferBase != nullptr ) { free( bufferBase ); }
+		bufferBase = ( cChar * ) malloc( sizeof( cChar ) * w * h );
+	}
+
+	void Draw () {
+		// dispatch the compute shader
+	}
+
+	int width, height;
+	GLuint textureHandle;
+	bool bufferDirty;
+	cChar * bufferBase = nullptr;
 };
 
 class layerManager {
 public:
 	layerManager () {}
-
-	void Init ( int w, int h ) {
+	void Init ( int w, int h, GLuint shader ) {
 		width = w;
 		height = h;
 
@@ -20,23 +50,30 @@ public:
 		numBinsHeight = std::floor( height / 16 );
 
 		// currently just two layers, background and foreground
-		layers.resize( 2 );
+		layers.push_back( Layer( numBinsWidth, numBinsHeight ) );
+		layers.push_back( Layer( numBinsWidth, numBinsHeight ) );
 
-		// compile the shader
+		// get the compiled shader
+		fontWriteShader = shader;
+	}
 
-		// get the uniform handles
-
-		// allocate the textures
-
+	void Draw () {
+		glUseProgram( fontWriteShader );
+		// bind the appropriate textures ( atlas + write target )
+		for ( auto layer : layers ) {
+			layer.Draw(); // data texture is bound internal to this function
+		}
 	}
 
 	int width, height;
 	int numBinsWidth;
 	int numBinsHeight;
 
-	GLuint writeTargetTexture;
+	GLuint fontWriteShader;
 	GLuint atlasTexture;
+	GLuint writeTargetTexture;
 
+	// allocation of the textures happens in Layer()
 	std::vector< Layer > layers;
 };
 

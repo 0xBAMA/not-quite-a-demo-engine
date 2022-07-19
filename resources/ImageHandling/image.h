@@ -134,6 +134,7 @@ public:
 	void FlipHorizontal () {
 		// back up the existing state of the image
 		std::vector< uint8_t > oldData;
+		oldData.reserve( width * height * 4 );
 		for ( auto c : data ) {
 			oldData.push_back( c );
 		}
@@ -153,6 +154,7 @@ public:
 	void FlipVertical () {
 		// back up the existing state of the image
 		std::vector< uint8_t > oldData;
+		oldData.reserve( width * height * 4 );
 		for ( auto c : data ) {
 			oldData.push_back( c );
 		}

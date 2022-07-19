@@ -132,11 +132,41 @@ public:
 	}
 
 	void FlipHorizontal () {
-
+		// back up the existing state of the image
+		std::vector< uint8_t > oldData;
+		for ( auto c : data ) {
+			oldData.push_back( c );
+		}
+		// flip it
+		data.resize( 0 );
+		data.reserve( width * height * 4 );
+		for ( unsigned int y = 0; y < height; y++ ) {
+			for ( unsigned int x = 0; x < width; x++ ) {
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 0 ] );
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 1 ] );
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 2 ] );
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 3 ] );
+			}
+		}
 	}
 
 	void FlipVertical () {
-
+		// back up the existing state of the image
+		std::vector< uint8_t > oldData;
+		for ( auto c : data ) {
+			oldData.push_back( c );
+		}
+		// flip it
+		data.resize( 0 );
+		data.reserve( width * height * 4 );
+		for ( unsigned int y = 0; y < height; y++ ) {
+			for ( unsigned int x = 0; x < width; x++ ) {
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 0 ] );
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 1 ] );
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 2 ] );
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 3 ] );
+			}
+		}
 	}
 
 	void Resize ( float scaleFactor ) {

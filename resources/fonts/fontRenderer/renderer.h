@@ -55,9 +55,21 @@ public:
 
 		// get the compiled shader
 		fontWriteShader = shader;
+
+		// generate the altas texture - only ever needed in the context of layerManager
+		Image fontAtlas( "resources/fonts/fontRenderer/whiteOnClear.png", LODEPNG );
+		// fontAtlas.FlipHorizontal();
+		fontAtlas.FlipVertical();
+
+		glGenTextures( 1, &atlasTexture );
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, atlasTexture );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, fontAtlas.width, fontAtlas.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &fontAtlas.data.data()[ 0 ] );
+		glBindImageTexture( 1, atlasTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+
 	}
 
-	void Draw () {
+	void Draw ( GLuint writeTarget ) {
 		glUseProgram( fontWriteShader );
 		// bind the appropriate textures ( atlas + write target )
 		for ( auto layer : layers ) {
@@ -71,7 +83,6 @@ public:
 
 	GLuint fontWriteShader;
 	GLuint atlasTexture;
-	GLuint writeTargetTexture;
 
 	// allocation of the textures happens in Layer()
 	std::vector< Layer > layers;

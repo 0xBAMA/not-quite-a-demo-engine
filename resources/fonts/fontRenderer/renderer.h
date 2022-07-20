@@ -28,8 +28,10 @@ public:
 		bufferBase = ( cChar * ) malloc( sizeof( cChar ) * w * h );
 	}
 
-	void Draw () {
-		// dispatch the compute shader
+	void Draw () { // bind the data texture and dispatch the compute shader
+
+		// this is actually very sexy - workgroup is 8x16, same as a glyph's dimensions
+		glDispatchCompute( width, height, 1 );
 	}
 
 	int width, height;
@@ -58,22 +60,22 @@ public:
 
 		// generate the altas texture - only ever needed in the context of layerManager
 		Image fontAtlas( "resources/fonts/fontRenderer/whiteOnClear.png", LODEPNG );
-		// fontAtlas.FlipHorizontal();
-		fontAtlas.FlipVertical();
+		fontAtlas.FlipVertical(); // for some reason loading upside down
 
+		// font atlas GPU setup
 		glGenTextures( 1, &atlasTexture );
-		glActiveTexture( GL_TEXTURE0 );
+		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, atlasTexture );
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, fontAtlas.width, fontAtlas.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &fontAtlas.data.data()[ 0 ] );
-		glBindImageTexture( 1, atlasTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-
 	}
 
 	void Draw ( GLuint writeTarget ) {
 		glUseProgram( fontWriteShader );
-		// bind the appropriate textures ( atlas + write target )
+		// bind the appropriate textures ( atlas( 0 ) + write target( 2 ) )
+		glBindImageTexture( 0, atlasTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+		glBindImageTexture( 2, writeTarget, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 		for ( auto layer : layers ) {
-			layer.Draw(); // data texture is bound internal to this function
+			layer.Draw(); // data texture( 1 ) is bound internal to this function, since it is unique to each layer
 		}
 	}
 

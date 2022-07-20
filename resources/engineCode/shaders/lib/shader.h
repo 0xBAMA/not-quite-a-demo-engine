@@ -60,7 +60,7 @@ public:
 		// 2. Compile shaders
 		GLuint vertex, fragment;
 		GLint success;
-		GLchar infoLog[512];
+		GLchar infoLog[ 2048 ];
 
 		// Vertex Shader
 		vertex = glCreateShader( GL_VERTEX_SHADER );
@@ -122,7 +122,7 @@ class CShader { //very similar to above, but for compute shader instead of verte
 		// 2. Compile shaders
 		GLuint shader;
 		GLint success;
-		GLchar infoLog[ 512 ];
+		GLchar infoLog[ 2048 ];
 
 		// Vertex Shader
 		shader = glCreateShader( GL_COMPUTE_SHADER );
@@ -178,7 +178,7 @@ public:
 
 		// 2. Compile shaders
 		GLuint shader;
-		GLchar infoLog[ 512 ];
+		GLchar infoLog[ 2048 ];
 		cout << "compile stage start" << endl << std::flush;
 
 		// Compute Shader

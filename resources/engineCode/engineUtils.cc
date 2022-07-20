@@ -26,7 +26,7 @@ bool engine::MainLoop () {
 }
 
 void engine::ComputePasses () {
-
+	textRenderer.Draw( displayTexture );
 }
 
 void engine::Clear () {
@@ -42,6 +42,9 @@ void engine::Clear () {
 }
 
 void engine::MainDisplay () {
+	// bind the display texture
+	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+
 	// texture display
 	ImGuiIO &io = ImGui::GetIO();
 	glUseProgram( displayShader );

@@ -13,10 +13,10 @@ void main () {
 	// where to reference the fontAtlas' glyph ( uv ), for the given character ID
 	uvec2 loc = uvec2( invokeLoc.x % 8, invokeLoc.y % 16);
 
-	// figure out which glyph is being used
+	// figure out which glyph is being used by reading the data texture ( +its color )
 
-	// sample the atlas texture
+	// sample the atlas texture to get the sample on the glyph for this pixel
 
 	// if nonzero alpha, write to the write target
-	imageStore( writeTarget, ivec2( invokeLoc ), uvec4( 255, 0, 0, 255 ) );
+	imageStore( writeTarget, ivec2( invokeLoc ), uvec4( 255, bin.x * 5, bin.y * 5, 255 ) );
 }

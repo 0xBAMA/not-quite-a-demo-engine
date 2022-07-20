@@ -3,6 +3,43 @@
 #ifndef FONTRENDERER_H
 #define FONTRENDERER_H
 
+// double bar frame
+#define TOP_LEFT_DOUBLE_CORNER			201
+#define TOP_RIGHT_DOUBLE_CORNER			187
+#define BOTTOM_LEFT_DOUBLE_CORNER		200
+#define BOTTOM_RIGHT_DOUBLE_CORNER	188
+#define VERTICAL_DOUBLE							186
+#define HORIZONTAL_DOUBLE						205
+
+// single bar frame
+#define TOP_LEFT_SINGLE_CORNER			218
+#define TOP_RIGHT_SINGLE_CORNER			191
+#define BOTTOM_LEFT_SINGLE_CORNER		192
+#define BOTTOM_RIGHT_SINGLE_CORNER	217
+#define VERTICAL_SINGLE							179
+#define HORIZONTAL_SINGLE						196
+
+// curly scroll thingy
+#define CURLY_SCROLL_TOP						244
+#define CURLY_SCROLL_BOTTOM					245
+#define CURLY_SCROLL_MIDDLE					179
+
+// percentage fill blocks
+#define FILL_0											32
+#define FILL_25											176
+#define FILL_50											177
+#define FILL_75											178
+#define FILL_100										219
+
+// some colors
+#define GOLD	glm::ivec3( 191, 146,  23 )
+#define GREEN	glm::ivec3( 100, 186,  20 )
+#define BLUE	glm::ivec3(  50, 103, 184 )
+#define WHITE	glm::ivec3( 245, 245, 245 )
+#define GREY	glm::ivec3( 169, 169, 169 )
+#define BLACK	glm::ivec3(  16,  16,  16 )
+
+
 struct cChar {
 	unsigned char data[ 4 ] = { 255, 255, 255, 0 };
 	cChar() {}
@@ -21,20 +58,190 @@ class Layer {
 public:
 	Layer ( int w, int h ) : width( w ), height( h ) {
 		Resize( w, h );
+
+		glGenTextures( 1, &textureHandle );
+		DrawRandomChars( 1000 ); // marks bufferDirty, so it will be resent
 	}
 
 	void Resize ( int w, int h ) {
 		if ( bufferBase != nullptr ) { free( bufferBase ); }
 		bufferBase = ( cChar * ) malloc( sizeof( cChar ) * w * h );
+		ClearBuffer();
 	}
 
-	void Draw () { // bind the data texture and dispatch the compute shader
+	void Resend () {
+		glActiveTexture( GL_TEXTURE2 );
+		glBindTexture( GL_TEXTURE_2D, textureHandle );
+		if ( bufferDirty ) {
+			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bufferBase );
+			bufferDirty = false;
+		}
+	}
+
+	void Draw () { // bind the data texture and dispatch
+		if ( bufferDirty ) {
+			Resend();
+		}
+
+		// bind the data texture to slot 1
+		glBindImageTexture( 1, textureHandle, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
 		// this is actually very sexy - workgroup is 8x16, same as a glyph's dimensions
 		glDispatchCompute( width, height, 1 );
 	}
 
-	int width, height;
+	void ClearBuffer () {
+		size_t numBytes = sizeof( cChar ) * width * height;
+		memset( ( void * ) bufferBase, 0, numBytes );
+	}
+
+	cChar GetCharAt ( glm::uvec2 position ) {
+		if ( position.x < width && position.y < height ) // >= 0 is implicit with unsigned
+			return *( bufferBase + sizeof( cChar ) * ( position.x + position.y * width ) );
+		else
+			return cChar();
+	}
+
+	void WriteCharAt ( glm::uvec2 position, cChar c ) {
+		if ( position.x < width && position.y < height ) {
+			int index = position.x + position.y * width;
+			bufferBase[ index ] = c;
+		}
+	}
+
+	void WriteString ( glm::uvec2 min, glm::uvec2 max, std::string str, glm::ivec3 color ) {
+		bufferDirty = true;
+		glm::uvec2 cursor = min;
+		for ( auto c : str ) {
+			if ( c == '\t' ) {
+				cursor.x += 2;
+			} else if ( c == '\n' ) {
+				cursor.y++;
+				cursor.x = min.x;
+				if ( cursor.y >= max.y ) {
+					break;
+				}
+			} else if ( c == 0 ) { // null character, don't draw anything - can use 32 aka space to overwrite with blank
+				cursor.x++;
+			} else {
+				WriteCharAt( cursor, cChar( color, ( unsigned char )( c ) ) );
+				cursor.x++;
+			}
+			if ( cursor.x >= max.x ) {
+				cursor.y++;
+				cursor.x = min.x;
+				if ( cursor.y >= max.y ) {
+					break;
+				}
+			}
+		}
+	}
+
+	void WriteCCharVector ( glm::uvec2 min, glm::uvec2 max, std::vector< cChar > vec ) {
+		bufferDirty = true;
+		glm::uvec2 cursor = min;
+		for ( unsigned int i = 0; i < vec.size(); i++ ) {
+			if ( vec[ i ].data[ 4 ] == '\t' ) {
+				cursor.x += 2;
+			} else if ( vec[ i ].data[ 4 ] == '\n' ) {
+				cursor.y++;
+				cursor.x = min.x;
+				if ( cursor.y >= max.y ) {
+					break;
+				}
+			} else if ( vec[ i ].data[ 4 ] == 0 ) { // special no-write character
+				cursor.x++;
+			} else {
+				WriteCharAt( cursor, vec[ i ] );
+				cursor.x++;
+			}
+			if ( cursor.x >= max.x ) {
+				cursor.y++;
+				cursor.x = min.x;
+				if ( cursor.y >= max.y ) {
+					break;
+				}
+			}
+		}
+	}
+
+	void DrawRandomChars ( int n ) {
+		bufferDirty = true;
+		std::random_device r;
+		std::seed_seq s{ r(), r(), r(), r(), r(), r(), r(), r(), r() };
+		auto gen = std::mt19937_64( s );
+		std::uniform_int_distribution< unsigned char > cDist( 0, 255 );
+		std::uniform_int_distribution< unsigned int > xDist( 0, width - 1 );
+		std::uniform_int_distribution< unsigned int > yDist( 0, height - 1 );
+		for ( int i = 0; i < n; i++ )
+			WriteCharAt( glm::uvec2( xDist( gen ), yDist( gen ) ), cChar( glm::ivec3( cDist( gen ), cDist( gen ), cDist( gen ) ), cDist( gen ) ) );
+	}
+
+	void DrawDoubleFrame ( glm::uvec2 min, glm::uvec2 max, glm::ivec3 color ) {
+		bufferDirty = true;
+		WriteCharAt( min, cChar( color, TOP_LEFT_DOUBLE_CORNER ) );
+		WriteCharAt( glm::uvec2( max.x, min.y ), cChar( color, TOP_RIGHT_DOUBLE_CORNER ) );
+		WriteCharAt( glm::uvec2( min.x, max.y ), cChar( color, BOTTOM_LEFT_DOUBLE_CORNER ) );
+		WriteCharAt( max, cChar( color, BOTTOM_RIGHT_DOUBLE_CORNER ) );
+		for( unsigned int x = min.x + 1; x < max.x; x++  ){
+			WriteCharAt( glm::uvec2( x, min.y ), cChar( color, HORIZONTAL_DOUBLE ) );
+			WriteCharAt( glm::uvec2( x, max.y ), cChar( color, HORIZONTAL_DOUBLE ) );
+		}
+		for( unsigned int y = min.y + 1; y < max.y; y++  ){
+			WriteCharAt( glm::uvec2( min.x, y ), cChar( color, VERTICAL_DOUBLE ) );
+			WriteCharAt( glm::uvec2( max.x, y ), cChar( color, VERTICAL_DOUBLE ) );
+		}
+	}
+
+	void DrawSingleFrame ( glm::uvec2 min, glm::uvec2 max, glm::ivec3 color ) {
+		bufferDirty = true;
+		WriteCharAt( min, cChar( color, TOP_LEFT_SINGLE_CORNER ) );
+		WriteCharAt( glm::uvec2( max.x, min.y ), cChar( color, TOP_RIGHT_SINGLE_CORNER ) );
+		WriteCharAt( glm::uvec2( min.x, max.y ), cChar( color, BOTTOM_LEFT_SINGLE_CORNER ) );
+		WriteCharAt( max, cChar( color, BOTTOM_RIGHT_SINGLE_CORNER ) );
+		for( unsigned int x = min.x + 1; x < max.x; x++  ){
+			WriteCharAt( glm::uvec2( x, min.y ), cChar( color, HORIZONTAL_SINGLE ) );
+			WriteCharAt( glm::uvec2( x, max.y ), cChar( color, HORIZONTAL_SINGLE ) );
+		}
+		for( unsigned int y = min.y + 1; y < max.y; y++  ){
+			WriteCharAt( glm::uvec2( min.x, y ), cChar( color, VERTICAL_SINGLE ) );
+			WriteCharAt( glm::uvec2( max.x, y ), cChar( color, VERTICAL_SINGLE ) );
+		}
+	}
+
+	void DrawCurlyScroll ( glm::uvec2 start, unsigned int length, glm::ivec3 color ) {
+		bufferDirty = true;
+		WriteCharAt( start, cChar( color, CURLY_SCROLL_TOP ) );
+		for ( unsigned int i = 1; i < length; i++ ) {
+			WriteCharAt( start + glm::uvec2( 0, i ), cChar ( color, CURLY_SCROLL_MIDDLE ) );
+		}
+		WriteCharAt( start + glm::uvec2( 0, length ), cChar( color, CURLY_SCROLL_BOTTOM ) );
+	}
+
+	void DrawRectRandom ( glm::uvec2 min, glm::uvec2 max, glm::ivec3 color ) {
+		bufferDirty = true;
+		std::random_device r;
+		std::seed_seq s{ r(), r(), r(), r(), r(), r(), r(), r(), r() };
+		auto gen = std::mt19937_64( s );
+		std::uniform_int_distribution< unsigned char > fDist( 0, 4 );
+		const unsigned char fills[ 5 ] = { FILL_0, FILL_25, FILL_50, FILL_75, FILL_100 };
+
+		for( unsigned int x = min.x; x <= max.x; x++ ) {
+			for( unsigned int y = min.y; y <= max.y; y++ ) {
+				WriteCharAt( glm::uvec2( x, y ), cChar( color, fills[ fDist( gen ) ] ) );
+			}
+		}
+	}
+
+	void DrawRectConstant ( glm::uvec2 min, glm::uvec2 max, cChar c ) {
+		for( unsigned int x = min.x; x <= max.x; x++ ) {
+			for( unsigned int y = min.y; y <= max.y; y++ ) {
+				WriteCharAt( glm::uvec2( x, y ), c );
+			}
+		}
+	}
+
+	unsigned int width, height;
 	GLuint textureHandle;
 	bool bufferDirty;
 	cChar * bufferBase = nullptr;

@@ -134,12 +134,13 @@ void engine::DisplaySetup () {
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
 	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
-	// initialize the text renderer
-	textRenderer.Init( WIDTH, HEIGHT, CShader( "resources/engineCode/shaders/font.cs.glsl" ).Program );
 }
 
 void engine::ComputeShaderCompile () {
-	// compile any compute shaders here, store handles in engine class member function variables
+	// initialize the text renderer
+	textRenderer.Init( WIDTH, HEIGHT, CShader( "resources/engineCode/shaders/font.cs.glsl" ).Program );
+
+	// any other compute shaders you want
 }
 
 

@@ -25,6 +25,8 @@ using std::cerr;
 using std::flush;
 using std::endl;
 
+#define NUM_CHARS_REPORT 4096
+
 class Shader {
 public:
 	GLuint Program;
@@ -60,7 +62,7 @@ public:
 		// 2. Compile shaders
 		GLuint vertex, fragment;
 		GLint success;
-		GLchar infoLog[ 2048 ];
+		GLchar infoLog[ NUM_CHARS_REPORT ];
 
 		// Vertex Shader
 		vertex = glCreateShader( GL_VERTEX_SHADER );
@@ -70,7 +72,7 @@ public:
 		// Print compile errors if any
 		glGetShaderiv( vertex, GL_COMPILE_STATUS, &success );
 		if ( !success ) {
-			glGetShaderInfoLog( vertex, 512, NULL, infoLog );
+			glGetShaderInfoLog( vertex, NUM_CHARS_REPORT, NULL, infoLog );
 			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 		}
 
@@ -95,7 +97,7 @@ public:
 		// Print linking errors if any
 		glGetProgramiv( this->Program, GL_LINK_STATUS, &success );
 		if ( !success ) {
-			glGetProgramInfoLog( this->Program, 512, NULL, infoLog );
+			glGetProgramInfoLog( this->Program, NUM_CHARS_REPORT, NULL, infoLog );
 			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 		}
 
@@ -122,7 +124,7 @@ class CShader { //very similar to above, but for compute shader instead of verte
 		// 2. Compile shaders
 		GLuint shader;
 		GLint success;
-		GLchar infoLog[ 2048 ];
+		GLchar infoLog[ NUM_CHARS_REPORT ];
 
 		// Vertex Shader
 		shader = glCreateShader( GL_COMPUTE_SHADER );
@@ -132,7 +134,7 @@ class CShader { //very similar to above, but for compute shader instead of verte
 		// Print compile errors if any
 		glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
 		if ( !success ) {
-			glGetShaderInfoLog( shader, 512, NULL, infoLog );
+			glGetShaderInfoLog( shader, NUM_CHARS_REPORT, NULL, infoLog );
 			std::cout << "ERROR::SHADER::COMPUTE::COMPILATION_FAILED\n" << infoLog << std::endl;
 		}
 
@@ -178,7 +180,7 @@ public:
 
 		// 2. Compile shaders
 		GLuint shader;
-		GLchar infoLog[ 2048 ];
+		GLchar infoLog[ NUM_CHARS_REPORT ];
 		cout << "compile stage start" << endl << std::flush;
 
 		// Compute Shader
@@ -193,7 +195,7 @@ public:
 		glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
 		if ( !success ) {
 		// report compilation failure + error
-			glGetShaderInfoLog( shader, 512, NULL, infoLog );
+			glGetShaderInfoLog( shader, NUM_CHARS_REPORT, NULL, infoLog );
 			ss << "Compilation Failed: " << infoLog;
 			return;
 		} else {

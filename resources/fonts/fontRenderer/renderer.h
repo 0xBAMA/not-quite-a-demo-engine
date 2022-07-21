@@ -58,18 +58,7 @@ class Layer {
 public:
 	Layer ( int w, int h ) : width( w ), height( h ) {
 		Resize( w, h );
-
 		glGenTextures( 1, &textureHandle );
-		// DrawRandomChars( 1000 ); // marks bufferDirty, so it will be resent
-
-		// WriteString( glm::uvec2( 0, 0 ), glm::uvec2( 100, 0 ), std::string( "this is a string, 1234567890 and you know it" ), GOLD );
-
-		std::string fps( "60.00 fps" );
-		std::string ms( "16.666 ms" );
-
-
-		WriteString( glm::uvec2( width - 1 - fps.length(), 1 ), glm::uvec2( width, 1 ), fps, GOLD );
-		WriteString( glm::uvec2( width - 1 - ms.length(), 0 ), glm::uvec2( width, 0 ), ms, GOLD );
 	}
 
 	void Resize ( int w, int h ) {
@@ -243,6 +232,7 @@ public:
 	}
 
 	void DrawRectConstant ( glm::uvec2 min, glm::uvec2 max, cChar c ) {
+		bufferDirty = true;
 		for( unsigned int x = min.x; x <= max.x; x++ ) {
 			for( unsigned int y = min.y; y <= max.y; y++ ) {
 				WriteCharAt( glm::uvec2( x, y ), c );
@@ -283,6 +273,18 @@ public:
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, atlasTexture );
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, fontAtlas.width, fontAtlas.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &fontAtlas.data.data()[ 0 ] );
+	}
+
+	void Update ( float ms ) {
+		// std::string fps( "60.00 fps " );
+		// std::string ms( "16.666 ms " );
+		// WriteString( glm::uvec2( width - fps.length(), 1 ), glm::uvec2( width, 1 ), fps, WHITE );
+		// WriteString( glm::uvec2( width - ms.length(), 0 ), glm::uvec2( width, 0 ), ms, WHITE );
+
+		std::stringstream ss;
+		ss << "  total: " << std::setw( 6 ) << std::setprecision( 4 ) << std::fixed << ms * 1000.0 << "ms";
+		layers[ 0 ].DrawRectConstant( glm::uvec2( layers[ 0 ].width - ss.str().length(), 0 ), glm::uvec2( layers[ 0 ].width, 0 ), cChar( BLACK, FILL_100 ) );
+		layers[ 1 ].WriteString( glm::uvec2( layers[ 1 ].width - ss.str().length(), 0 ), glm::uvec2( layers[ 1 ].width, 0 ), ss.str(), WHITE );
 	}
 
 	void Draw ( GLuint writeTarget ) {

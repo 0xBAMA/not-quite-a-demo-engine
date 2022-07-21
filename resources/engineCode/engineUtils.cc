@@ -26,6 +26,7 @@ bool engine::MainLoop () {
 }
 
 void engine::ComputePasses () {
+	textRenderer.Update( ImGui::GetIO().DeltaTime );
 	textRenderer.Draw( displayTexture );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }

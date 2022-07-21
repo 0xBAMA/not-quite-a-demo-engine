@@ -92,14 +92,14 @@ constexpr int MSAACount = 1;
 #include "../JSON/json.hpp"
 using json = nlohmann::json;
 
-#define WIDTH 640
-#define HEIGHT 480
+// #define WIDTH 640
+// #define HEIGHT 480
 
 // #define WIDTH 1280
 // #define HEIGHT 720
 
-// #define WIDTH 1920
-// #define HEIGHT 1080
+#define WIDTH 1920
+#define HEIGHT 1080
 
 // Function to get color temperature from shadertoy user BeRo
 // from the author:

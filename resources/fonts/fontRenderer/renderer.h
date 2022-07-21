@@ -275,14 +275,16 @@ public:
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, fontAtlas.width, fontAtlas.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &fontAtlas.data.data()[ 0 ] );
 	}
 
-	void Update ( float ms ) {
+	void Update ( float seconds ) {
 		// std::string fps( "60.00 fps " );
 		// std::string ms( "16.666 ms " );
 		// WriteString( glm::uvec2( width - fps.length(), 1 ), glm::uvec2( width, 1 ), fps, WHITE );
 		// WriteString( glm::uvec2( width - ms.length(), 0 ), glm::uvec2( width, 0 ), ms, WHITE );
 
+		float ms = seconds * 1000.0;
+
 		std::stringstream ss;
-		ss << "  total: " << std::setw( 6 ) << std::setprecision( 4 ) << std::fixed << ms * 1000.0 << "ms";
+		ss << " total: " << std::setw( 10 ) << std::setfill( ' ' ) << std::setprecision( 4 ) << std::fixed << ms << "ms";
 		layers[ 0 ].DrawRectConstant( glm::uvec2( layers[ 0 ].width - ss.str().length(), 0 ), glm::uvec2( layers[ 0 ].width, 0 ), cChar( BLACK, FILL_100 ) );
 		layers[ 1 ].WriteString( glm::uvec2( layers[ 1 ].width - ss.str().length(), 0 ), glm::uvec2( layers[ 1 ].width, 0 ), ss.str(), WHITE );
 	}

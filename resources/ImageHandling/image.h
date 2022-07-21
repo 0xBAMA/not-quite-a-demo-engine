@@ -53,6 +53,7 @@ public:
 			std::uniform_int_distribution< uint8_t > dist( 0, 255 );
 			for ( auto it = data.begin(); it != data.end(); it++ ) {
 				*it = dist( gen );
+				// *it = 255;
 			}
 		}
 	}

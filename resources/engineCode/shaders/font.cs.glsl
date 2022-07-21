@@ -4,9 +4,12 @@ layout( binding = 0, rgba8ui ) uniform uimage2D fontAtlas;
 layout( binding = 1, rgba8ui ) uniform uimage2D dataTexture;
 layout( binding = 2, rgba8ui ) uniform uimage2D writeTarget;
 
-ivec2 getCurrentGlyphBase( uint index ) {
+ivec2 getCurrentGlyphBase( int index ) {
 	// 16x16 array of glyphs, each of which is 8x16 pixels
-	return ivec2( 0 );
+	ivec2 location;
+	location.x = 8 * ( index % 16 );
+	location.y = 239 - 16 * ( index / 16 );
+	return location;
 }
 
 void main () {
@@ -23,11 +26,14 @@ void main () {
 
 	// dataTexRead.xyz is the desired color
 	// dataTexRead.a is the index 0-255 of the current glyph
+	ivec2 atlasReadLocation = getCurrentGlyphBase( int( dataTexRead.a ) ) + loc;
 
 	// sample the atlas texture to get the sample on the glyph for this pixel
-	// uvec4 color = imageLoad( fontAtlas, ivec2( invokeLoc ) );
-	uvec4 color = dataTexRead;
+	uvec4 color = imageLoad( fontAtlas, ivec2( atlasReadLocation ) );
+	color.rgb = dataTexRead.rgb;
 
 	// if nonzero alpha, write to the write target
-	if ( color.a > 0 ) imageStore( writeTarget, invokeLoc, color );
+	if ( color.a != 0 ) {
+		imageStore( writeTarget, invokeLoc, color );
+	}
 }

@@ -27,6 +27,7 @@ bool engine::MainLoop () {
 
 void engine::ComputePasses () {
 	textRenderer.Draw( displayTexture );
+	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }
 
 void engine::Clear () {

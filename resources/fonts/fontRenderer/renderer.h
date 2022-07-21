@@ -60,7 +60,16 @@ public:
 		Resize( w, h );
 
 		glGenTextures( 1, &textureHandle );
-		DrawRandomChars( 1000 ); // marks bufferDirty, so it will be resent
+		// DrawRandomChars( 1000 ); // marks bufferDirty, so it will be resent
+
+		// WriteString( glm::uvec2( 0, 0 ), glm::uvec2( 100, 0 ), std::string( "this is a string, 1234567890 and you know it" ), GOLD );
+
+		std::string fps( "60.00 fps" );
+		std::string ms( "16.666 ms" );
+
+
+		WriteString( glm::uvec2( width - 1 - fps.length(), 1 ), glm::uvec2( width, 1 ), fps, GOLD );
+		WriteString( glm::uvec2( width - 1 - ms.length(), 0 ), glm::uvec2( width, 0 ), ms, GOLD );
 	}
 
 	void Resize ( int w, int h ) {

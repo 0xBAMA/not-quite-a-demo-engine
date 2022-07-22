@@ -27,6 +27,8 @@ using std::endl;
 
 #define NUM_CHARS_REPORT 4096
 
+// TODO: this header just needs to be completely rewritten
+
 class Shader {
 public:
 	GLuint Program;
@@ -105,10 +107,6 @@ public:
 		glDeleteShader( vertex );
 		glDeleteShader( fragment );
 	}
-	// Uses the current shader
-	void Use ( ) {
-		glUseProgram( this->Program );
-	}
 };
 
 
@@ -152,11 +150,6 @@ class CShader { //very similar to above, but for compute shader instead of verte
 		// Delete the shaders as they're linked into our program now and no longer necessery
 		glDeleteShader( shader );
 		free( cstrCode );
-	}
-
-	// Uses the current shader
-	void Use ( ) {
-		glUseProgram( this->Program );
 	}
 };
 

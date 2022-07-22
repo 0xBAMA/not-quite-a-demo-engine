@@ -264,5 +264,59 @@ vec3 jodieReinhard2ElectricBoogaloo(const vec3 color){
     return mix(clampedColor, white, x);
 }
 
-// TODO: add the switch statement back, and some function
-	// vec3 tonemap( int, vec3 ) which takes the original color and a picking value, and returns the tonemapped value
+vec3 tonemap( int tonemapMode, vec3 col ) {
+	switch ( tonemapMode ) {
+			case 0: // None (Linear)
+					break;
+			case 1: // ACES (Narkowicz 2015)
+					col.xyz = cheapo_aces_approx( col.xyz );
+					break;
+			case 2: // Unreal Engine 3
+					col.xyz = pow( tonemap_unreal3( col.xyz ), vec3( 2.8 ) );
+					break;
+			case 3: // Unreal Engine 4
+					col.xyz = aces_fitted( col.xyz );
+					break;
+			case 4: // Uncharted 2
+					col.xyz = uncharted2( col.xyz );
+					break;
+			case 5: // Gran Turismo
+					col.xyz = tonemap_uchimura( col.xyz );
+					break;
+			case 6: // Modified Gran Turismo
+					col.xyz = tonemap_uchimura2( col.xyz );
+					break;
+			case 7: // Rienhard
+					col.xyz = rienhard( col.xyz );
+					break;
+			case 8: // Modified Rienhard
+					col.xyz = rienhard2( col.xyz );
+					break;
+			case 9: // jt_tonemap
+					col.xyz = jt_toneMap( col.xyz );
+					break;
+			case 10: // robobo1221s
+					col.xyz = robobo1221sTonemap( col.xyz );
+					break;
+			case 11: // robo
+					col.xyz = roboTonemap( col.xyz );
+					break;
+			case 12: // jodieRobo
+					col.xyz = jodieRoboTonemap( col.xyz );
+					break;
+			case 13: // jodieRobo2
+					col.xyz = jodieRobo2ElectricBoogaloo( col.xyz );
+					break;
+			case 14: // jodieReinhard
+					col.xyz = jodieReinhardTonemap( col.xyz );
+					break;
+			case 15: // jodieReinhard2
+					col.xyz = jodieReinhard2ElectricBoogaloo( col.xyz );
+					break;
+	}
+	return col;
+}
+
+vec3 gammaCorrect ( float gammaValue, vec3 col ) {
+	return pow( col, vec3( 1.0 / gammaValue ) );
+}

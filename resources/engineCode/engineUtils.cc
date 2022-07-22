@@ -3,22 +3,21 @@
 bool engine::MainLoop () {
 
 	// clear the screen and depth buffer
-	Clear();
+	Clear(); // if I just disable depth testing, this can disappear
 
-	// compute passes here
-		// invoke any shaders you want to use to do work on the GPU
+	// multistage update of displayTexture
 	ComputePasses();
 
-	// fullscreen triangle copying the image
+	// fullscreen triangle copying the displayTexture to the screen
 	MainDisplay();
 
 	// do all the gui stuff
 	ImguiPass();
 
-	// swap the double buffers to present
+	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
 	SDL_GL_SwapWindow( window );
 
-	// handle all events
+	// handle keyboard/mouse events
 	HandleEvents();
 
 	// break main loop when pQuit turns true
@@ -26,6 +25,32 @@ bool engine::MainLoop () {
 }
 
 void engine::ComputePasses () {
+// dummy draw
+	// set up environment ( 0:blue noise, 1: accumulator )
+	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+
+	// blablah draw something into accumulatorTexture
+		// ...
+
+// postprocessing
+	// set up environment ( 0:accumulator, 1:display )
+	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+
+	// shader for color grading ( color temp adjust, contrast, etc )
+		// ...
+
+	// shader for tonemapping
+		// ...
+
+	// shader to dithering
+		// ...
+
+	// others
+		// ...
+
+	// text rendering timestamp, as final step - texture binds handled internally
 	textRenderer.Update( ImGui::GetIO().DeltaTime );
 	textRenderer.Draw( displayTexture );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );

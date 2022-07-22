@@ -15,7 +15,8 @@ private:
 	// windowHandler w;
 	SDL_Window * window;
 	SDL_GLContext GLcontext;
-	int totalScreenWidth, totalScreenHeight;
+	int totalScreenWidth;
+	int totalScreenHeight;
 	ImVec4 clearColor;
 
 	// Blue Noise Image + texure
@@ -26,6 +27,7 @@ private:
 	layerManager textRenderer;
 
 	// OpenGL data
+	GLuint accumulatorTexture;
 	GLuint displayTexture;
 	GLuint displayShader;
 	GLuint displayVAO;

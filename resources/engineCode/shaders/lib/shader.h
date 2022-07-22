@@ -146,7 +146,7 @@ class CShader { //very similar to above, but for compute shader instead of verte
 		// Print linking errors if any
 		glGetProgramiv( this->Program, GL_LINK_STATUS, &success );
 		if ( !success ) {
-			glGetProgramInfoLog( this->Program, 512, NULL, infoLog );
+			glGetProgramInfoLog( this->Program, NUM_CHARS_REPORT, NULL, infoLog );
 			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 		}
 		// Delete the shaders as they're linked into our program now and no longer necessery
@@ -218,7 +218,7 @@ public:
 		glGetProgramiv( this->Program, GL_LINK_STATUS, &success );
 		if ( !success ) {
 			// report linking failure + error
-			glGetProgramInfoLog( this->Program, 512, NULL, infoLog );
+			glGetProgramInfoLog( this->Program, NUM_CHARS_REPORT, NULL, infoLog );
 			ss << "Linking Failed: " << infoLog;
 		} else {
 			// report linking successful

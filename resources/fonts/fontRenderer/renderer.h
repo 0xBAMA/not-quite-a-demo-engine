@@ -281,19 +281,18 @@ public:
 		// WriteString( glm::uvec2( width - fps.length(), 1 ), glm::uvec2( width, 1 ), fps, WHITE );
 		// WriteString( glm::uvec2( width - ms.length(), 0 ), glm::uvec2( width, 0 ), ms, WHITE );
 
-// little bit of input smoothing, average over NUM_FRAMES_SMOOTHING frames
-		#define NUM_FRAMES_SMOOTHING 20
-		float ms = seconds * 1000.0;
+// little bit of input smoothing, average over NUM_FRAMES_SMOOTHING frames - implementation needs work
+		#define NUM_FRAMES_SMOOTHING 5
+		float ms = seconds * 1000.0f;
 		static std::deque< float > msHistory;
 		msHistory.push_back( ms );
 		if ( msHistory.size() > NUM_FRAMES_SMOOTHING ) {
 			msHistory.pop_front();
 		}
-		for ( unsigned int i = 0; i < NUM_FRAMES_SMOOTHING && i < msHistory.size(); i++ ) {
-			ms += msHistory[ i ];
+		ms = 0.0f;
+		for ( unsigned int i = 0; i < msHistory.size(); i++ ) {
+			ms += ( msHistory[ i ] / msHistory.size() );
 		}
-		ms /= msHistory.size();
-
 
 		std::stringstream ss;
 		ss << " total: " << std::setw( 10 ) << std::setfill( ' ' ) << std::setprecision( 4 ) << std::fixed << ms << "ms";

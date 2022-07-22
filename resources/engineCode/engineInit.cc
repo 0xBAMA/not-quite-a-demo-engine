@@ -26,24 +26,34 @@ void engine::CreateWindowAndContext () {
 
 	cout << T_BLUE << "    Creating window" << RESET << " .................................. ";
 
-	int windowInitMode = 0;
+	// prep for window creation
 	int flags;
+	SDL_DisplayMode dm;
+	SDL_GetDesktopDisplayMode( 0, &dm );
+
+	// different window configurations
+	int windowInitMode = 2;
 	switch ( windowInitMode ) {
 		case 0: // little window, using WIDTH/HEIGHT defines in includes.h
 			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
-			// totalScreenWidth = WIDTH;
-			// totalScreenHeight = HEIGHT;
+			totalScreenWidth = WIDTH;
+			totalScreenHeight = HEIGHT;
 			window = SDL_CreateWindow( "NQADE", 0, 0, WIDTH, HEIGHT, flags );
 			break;
 
 		case 1: // fullscreen borderless
 			// first, query the screen resolution
-			SDL_DisplayMode dm;
-			SDL_GetDesktopDisplayMode( 0, &dm );
 			totalScreenWidth = dm.w;
 			totalScreenHeight = dm.h;
 			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS;
 			window = SDL_CreateWindow( "NQADE", 0, 0, dm.w, dm.h, flags );
+			break;
+
+		case 2: // borderless floating
+			totalScreenWidth = dm.w - 100;
+			totalScreenHeight = dm.h - 100;
+			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS;
+			window = SDL_CreateWindow( "NQADE", 50, 50, totalScreenWidth, totalScreenHeight, flags );
 			break;
 
 			// other modes?
@@ -62,10 +72,12 @@ void engine::CreateWindowAndContext () {
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 	GLcontext = SDL_GL_CreateContext( window );
 	SDL_GL_MakeCurrent( window, GLcontext );
+
 	SDL_GL_SetSwapInterval( 1 ); // Enable vsync
+	// SDL_GL_SetSwapInterval( 0 ); // Disables vsync
 
 	// load OpenGL functions
-	if ( gl3wInit() != 0 ) cout << "Failed to initialize OpenGL loader!" << endl;
+	if ( gl3wInit() != 0 ) { cout << "Failed to initialize OpenGL loader!" << endl; abort(); }
 
 	// basic OpenGL Config
 	glEnable( GL_DEPTH_TEST );
@@ -93,54 +105,39 @@ void engine::DisplaySetup () {
 	// create the shader for the triangles to cover the screen
 	displayShader = Shader( "resources/engineCode/shaders/blit.vs.glsl", "resources/engineCode/shaders/blit.fs.glsl" ).Program;
 
-	// have to have dummy call to this - core requires a VAO bound when calling glDrawArrays, otherwise it complains
+	// have to have dummy call to this - OpenGL core spec requires a VAO bound when calling glDrawArrays, otherwise it complains
 	glGenVertexArrays( 1, &displayVAO );
 
-	// // replace this with real image data
-	// std::vector<uint8_t> imageData;
-	// imageData.resize( WIDTH * HEIGHT * 4 );
-	//
-	// // fill with random values
-	// std::default_random_engine gen;
-	// std::uniform_int_distribution<uint8_t> dist( 150, 255 );
-	// std::uniform_int_distribution<uint8_t> dist2( 12, 45 );
-	//
-	// for ( auto it = imageData.begin(); it != imageData.end(); it++ )
-	// 	*it = dist( gen );
-
-
-	Image initial( WIDTH, HEIGHT, true );
-	// initial.Resize( 41.0 );
-	// cout << initial.width << " " << initial.height << endl;
-	// initial.Save( "testOutputBig.png" );
-	// initial.CropTo( WIDTH, HEIGHT );
-	// initial.Resize( 6.8 );
-	// initial.CropTo( WIDTH, HEIGHT );
-
-
 	// create the image textures
+	Image initial( WIDTH, HEIGHT, true );
+	glGenTextures( 1, &accumulatorTexture );
+	glActiveTexture( GL_TEXTURE3 );
+	glBindTexture( GL_TEXTURE_2D, accumulatorTexture );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
+
 	glGenTextures( 1, &displayTexture );
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D, displayTexture );
-
-	// texture parameters
 	bool linearFilter = true;
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, linearFilter ? GL_LINEAR : GL_NEAREST );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linearFilter ? GL_LINEAR : GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-
-	// buffer the image data to the GPU
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
-	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
+	// blue noise image on the GPU
+	glGenTextures( 1, &blueNoiseTexture );
+	glActiveTexture( GL_TEXTURE4 );
+	glBindTexture( GL_TEXTURE_2D, blueNoiseTexture );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data.data()[ 0 ] );
 }
 
 void engine::ComputeShaderCompile () {
 	// initialize the text renderer
-	textRenderer.Init( WIDTH, HEIGHT, CShader( "resources/engineCode/shaders/font.cs.glsl" ).Program );
+	textRenderer.Init( WIDTH, HEIGHT, CShader( "resources/fonts/fontRenderer/font.cs.glsl" ).Program );
 
 	// any other compute shaders you want
+
 }
 
 

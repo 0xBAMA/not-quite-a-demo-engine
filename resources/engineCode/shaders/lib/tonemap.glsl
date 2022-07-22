@@ -263,3 +263,6 @@ vec3 jodieReinhard2ElectricBoogaloo(const vec3 color){
         /(mappedLuma - channelMax);
     return mix(clampedColor, white, x);
 }
+
+// TODO: add the switch statement back, and some function
+	// vec3 tonemap( int, vec3 ) which takes the original color and a picking value, and returns the tonemapped value

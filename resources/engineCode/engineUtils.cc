@@ -31,18 +31,19 @@ void engine::ComputePasses () {
 	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
 	// blablah draw something into accumulatorTexture
-		// ...
+	glUseProgram( dummyDrawShader );
+	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
+	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 // postprocessing
 	// set up environment ( 0:accumulator, 1:display )
 	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
-	// shader for color grading ( color temp adjust, contrast, etc )
-		// ...
-
-	// shader for tonemapping
-		// ...
+	// shader for color grading ( color temp, contrast, etc ) + tonemapping
+	glUseProgram( tonemapShader );
+	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
+	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 	// shader to dithering
 		// ...
@@ -50,9 +51,9 @@ void engine::ComputePasses () {
 	// others
 		// ...
 
-	// text rendering timestamp, as final step - texture binds handled internally
+	// text rendering timestamp, as final step - required texture binds are handled internally
 	textRenderer.Update( ImGui::GetIO().DeltaTime );
-	textRenderer.Draw( displayTexture );
+	textRenderer.Draw( displayTexture ); // displayTexture is the writeTarget
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }
 

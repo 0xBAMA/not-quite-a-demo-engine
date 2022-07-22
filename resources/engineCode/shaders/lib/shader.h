@@ -119,7 +119,7 @@ class CShader { //very similar to above, but for compute shader instead of verte
 	CShader ( const char *Path, bool verbose=false ) {
 		char includeError[ 256 ];
 		char * inject = nullptr;
-		char *cstrCode = stb_include_file( Path, inject, const_cast< char* >( "resources/engine_code/shaders/lib" ), includeError );
+		char *cstrCode = stb_include_file( Path, inject, const_cast< char* >( "resources/engineCode/shaders/lib" ), includeError );
 
 		// 2. Compile shaders
 		GLuint shader;
@@ -176,7 +176,7 @@ public:
 		char includeError[ 256 ];
 		char * inject = nullptr;
 		char * filename = nullptr;
-		char * cstrCode = stb_include_string( &text[ 0 ], inject, const_cast< char* >( "resources/engine_code/shaders/lib" ), filename, includeError );
+		char * cstrCode = stb_include_string( &text[ 0 ], inject, const_cast< char* >( "resources/engineCode/shaders/lib" ), filename, includeError );
 
 		// 2. Compile shaders
 		GLuint shader;

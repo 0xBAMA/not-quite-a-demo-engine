@@ -32,7 +32,7 @@ void engine::CreateWindowAndContext () {
 	SDL_GetDesktopDisplayMode( 0, &dm );
 
 	// different window configurations
-	int windowInitMode = 2;
+	int windowInitMode = 0;
 	switch ( windowInitMode ) {
 		case 0: // little window, using WIDTH/HEIGHT defines in includes.h
 			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
@@ -126,6 +126,7 @@ void engine::DisplaySetup () {
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
 
 	// blue noise image on the GPU
+	Image blueNoiseImage{ "resources/noise/blueNoise.png", LODEPNG };
 	glGenTextures( 1, &blueNoiseTexture );
 	glActiveTexture( GL_TEXTURE4 );
 	glBindTexture( GL_TEXTURE_2D, blueNoiseTexture );
@@ -136,8 +137,11 @@ void engine::ComputeShaderCompile () {
 	// initialize the text renderer
 	textRenderer.Init( WIDTH, HEIGHT, CShader( "resources/fonts/fontRenderer/font.cs.glsl" ).Program );
 
-	// any other compute shaders you want
+	// something to put data in the accumulator texture
+	dummyDrawShader = CShader( "resources/engineCode/shaders/dummyDraw.cs.glsl" ).Program;
 
+	// tonemapping shader
+	tonemapShader = CShader( "resources/engineCode/shaders/tonemap.cs.glsl" ).Program;
 }
 
 

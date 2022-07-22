@@ -19,18 +19,17 @@ private:
 	int totalScreenHeight;
 	ImVec4 clearColor;
 
-	// Blue Noise Image + texure
-	GLuint blueNoiseTexture;
-	Image blueNoiseImage{ "resources/noise/blueNoise.png", LODEPNG };
-
 	// text renderer framework
 	layerManager textRenderer;
 
 	// OpenGL data
+	GLuint blueNoiseTexture;
 	GLuint accumulatorTexture;
 	GLuint displayTexture;
 	GLuint displayShader;
 	GLuint displayVAO;
+	GLuint dummyDrawShader;
+	GLuint tonemapShader;
 
 	// initialization
 	void Init ();

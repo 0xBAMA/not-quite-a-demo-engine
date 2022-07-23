@@ -87,32 +87,40 @@ void engine::HandleEvents () {
 //==============================================================================
 
 	const uint8_t *state = SDL_GetKeyboardState( NULL );
-	// example usage to get rid of compiler warning about unused variable state
-		// look up the scancodes for desired keys
 	if ( state[ SDL_SCANCODE_RIGHT ] )	cout << "Right Key Pressed" << endl << flush;
-	if ( state[ SDL_SCANCODE_LEFT ] )		cout << "Left Key Pressed" << endl << flush;
-	if ( state[ SDL_SCANCODE_UP ] )			cout << "Up Key Pressed" << endl << flush;
-	if ( state[ SDL_SCANCODE_DOWN ] )		cout << "Down Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_LEFT ] )	cout << "Left Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_UP ] )		cout << "Up Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_DOWN ] )	cout << "Down Key Pressed" << endl << flush;
 
-// think about some kind of mapping using std::unordered_map - better yet, write an unordered_map implementation
+
+	// add a check for releasing escape here
+	// add a check for pressing mouse button x1 ( browser back )
+		// both of which toggle the value of quitConfirm
+
 
 //==============================================================================
-//this is the way that the event system used to work - I will keep this for QuitConfirm / force quit ( pQuit = true on return ) handling
+// Need to keep this for QuitConfirm / force quit ( pQuit = true on return ) handling
+// In particular - checking for window close and the SDL_QUIT event can't really be
+//  determined via the keyboard state, and then imgui needs it too
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) ) {
 		// imgui event handling
 		ImGui_ImplSDL2_ProcessEvent( &event );
 
-		if ( event.type == SDL_QUIT )
-			pQuit = true;
+		// swap out the multiple if statements for a big chained boolean setting the value of pQuit
+		pQuit = ( event.type == SDL_QUIT ) || ( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( window ) ) || ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT );
 
-		if ( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( window ) )
-			pQuit = true;
+		// and all this can go
+		// if ( event.type == SDL_QUIT )
+			// pQuit = true;
 
-		if ( ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE) || ( event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1 ) )
-			quitConfirm = !quitConfirm; // x1 is browser back on the mouse
+		// if ( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( window ) )
+			// pQuit = true;
 
-		if ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT )
-			pQuit = true; // force quit on shift+esc ( bypasses confirm window )
+		// if ( ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE) || ( event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1 ) )
+		// 	quitConfirm = !quitConfirm; // x1 is browser back on the mouse
+
+		// if ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT )
+			// pQuit = true; // force quit on shift+esc ( bypasses confirm window )
 	}
 }

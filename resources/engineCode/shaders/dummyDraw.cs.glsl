@@ -5,11 +5,11 @@ layout( binding = 1, rgba8ui ) uniform uimage2D accumulatorTexture;
 
 void main () {
 	// basic XOR pattern
-	uint x = uint( gl_GlobalInvocationID.x ) % 256;
-	uint y = uint( gl_GlobalInvocationID.y ) % 256;
+	ivec2 writeLoc = ivec2( gl_GlobalInvocationID.xy );
+	uint x = uint( writeLoc.x ) % 256;
+	uint y = uint( writeLoc.y ) % 256;
 	uvec3 result = uvec3( x ^ y );
 
-	ivec2 writeLoc = ivec2( gl_GlobalInvocationID.xy );
-
+	// write the data to the image
 	imageStore( accumulatorTexture, writeLoc, uvec4( result, 255 ) );
 }

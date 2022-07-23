@@ -1,6 +1,5 @@
 #ifndef ENGINE
 #define ENGINE
-
 #include "includes.h"
 
 class engine {
@@ -42,7 +41,7 @@ private:
 	// main loop functions
 	void MainDisplay ();
 	void HandleEvents ();
-	void Clear ();
+	void ClearColorAndDepth ();
 	void ComputePasses ();
 	void ImguiPass ();
 	void ImguiFrameStart ();
@@ -59,5 +58,4 @@ private:
 	bool quitConfirm = false;
 	bool pQuit = false;
 };
-
 #endif

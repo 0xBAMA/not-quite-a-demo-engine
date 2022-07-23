@@ -5,8 +5,10 @@ layout( binding = 1, rgba8ui ) uniform uimage2D displayTexture;
 #include "tonemap.glsl" // tonemapping curves
 
 // TODO: add uniform int for picking tonemapping curve + float for gamma
-const int tonemapPicker = 6;
+const int tonemapPicker = 6; // values are 0-15
 const float gamma =  1.0;
+
+// and then maybe the color temperature adjustment could be applied here
 
 void main () {
 	ivec2 loc = ivec2( gl_GlobalInvocationID.xy );

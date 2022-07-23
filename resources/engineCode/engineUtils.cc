@@ -1,27 +1,13 @@
 #include "engine.h"
 
 bool engine::MainLoop () {
-
-	// clear the screen and depth buffer
-	Clear(); // if I just disable depth testing, this can disappear
-
-	// multistage update of displayTexture
-	ComputePasses();
-
-	// fullscreen triangle copying the displayTexture to the screen
-	MainDisplay();
-
-	// do all the gui stuff
-	ImguiPass();
-
-	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
-	SDL_GL_SwapWindow( window );
-
-	// handle keyboard/mouse events
-	HandleEvents();
-
-	// break main loop when pQuit turns true
-	return pQuit;
+	ClearColorAndDepth();					// if I just disable depth testing, this can disappear
+	ComputePasses();							// multistage update of displayTexture
+	MainDisplay();								// fullscreen triangle copying the displayTexture to the screen
+	ImguiPass();									// do all the gui stuff
+	SDL_GL_SwapWindow( window );	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
+	HandleEvents();								// handle keyboard / mouse events
+	return pQuit;									// break main loop when pQuit turns true
 }
 
 void engine::ComputePasses () {
@@ -45,10 +31,10 @@ void engine::ComputePasses () {
 	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
-	// shader to dithering
+	// shader to apply dithering
 		// ...
 
-	// others
+	// other postprocessing
 		// ...
 
 	// text rendering timestamp, as final step - required texture binds are handled internally
@@ -57,7 +43,7 @@ void engine::ComputePasses () {
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }
 
-void engine::Clear () {
+void engine::ClearColorAndDepth () {
 	// clear the screen
 	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -70,31 +56,21 @@ void engine::Clear () {
 }
 
 void engine::MainDisplay () {
-	// bind the display texture
+	// bind the displayTexture and display its current state
 	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-
-	// texture display
-	ImGuiIO &io = ImGui::GetIO();
 	glUseProgram( displayShader );
 	glBindVertexArray( displayVAO );
+	ImGuiIO &io = ImGui::GetIO();
 	glUniform2f( glGetUniformLocation( displayShader, "resolution" ), io.DisplaySize.x, io.DisplaySize.y );
 	glDrawArrays( GL_TRIANGLES, 0, 3 );
 }
 
 void engine::ImguiPass () {
-	// start the imgui frame
-	ImguiFrameStart();
-
-	// show the demo window
-	static bool showDemoWindow = false;
-	if ( showDemoWindow )
-		ImGui::ShowDemoWindow( &showDemoWindow );
-
-	// show quit confirm window, if triggered
-	QuitConf( &quitConfirm );
-
-	// finish up the imgui stuff and put it in the framebuffer
-	ImguiFrameEnd();
+	ImguiFrameStart();													// start the imgui frame
+	if ( true )
+		ImGui::ShowDemoWindow( &showDemoWindow );	// show the demo window
+	QuitConf( &quitConfirm );										// show quit confirm window, if triggered
+	ImguiFrameEnd();														// finish up the imgui stuff and put it in the framebuffer
 }
 
 
@@ -113,10 +89,10 @@ void engine::HandleEvents () {
 	const uint8_t *state = SDL_GetKeyboardState( NULL );
 	// example usage to get rid of compiler warning about unused variable state
 		// look up the scancodes for desired keys
-	if ( state[ SDL_SCANCODE_RIGHT ] )	cout << "Right Key Pressed" << endl << std::flush;
-	if ( state[ SDL_SCANCODE_LEFT ] )		cout << "Left Key Pressed" << endl << std::flush;
-	if ( state[ SDL_SCANCODE_UP ] )			cout << "Up Key Pressed" << endl << std::flush;
-	if ( state[ SDL_SCANCODE_DOWN ] )		cout << "Down Key Pressed" << endl << std::flush;
+	if ( state[ SDL_SCANCODE_RIGHT ] )	cout << "Right Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_LEFT ] )		cout << "Left Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_UP ] )			cout << "Up Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_DOWN ] )		cout << "Down Key Pressed" << endl << flush;
 
 // think about some kind of mapping using std::unordered_map - better yet, write an unordered_map implementation
 

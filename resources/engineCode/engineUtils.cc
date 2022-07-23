@@ -86,14 +86,23 @@ void engine::HandleEvents () {
 // list of input indices/names: https://wiki.libsdl.org/SDL_Scancode
 //==============================================================================
 
-	int numKeys;
-	const uint8_t *state = SDL_GetKeyboardState( &numKeys );
+
+	const uint8_t *state = SDL_GetKeyboardState( NULL );
 	if ( state[ SDL_SCANCODE_RIGHT ] )	cout << "Right Key Pressed" << endl << flush;
 	if ( state[ SDL_SCANCODE_LEFT ] )	cout << "Left Key Pressed" << endl << flush;
 	if ( state[ SDL_SCANCODE_UP ] )		cout << "Up Key Pressed" << endl << flush;
 	if ( state[ SDL_SCANCODE_DOWN ] )	cout << "Down Key Pressed" << endl << flush;
 
-	cout << "there are " << numKeys << " keys" << endl << flush;
+// this was kind of a bust, not working correctly yet
+	// keyboard.Update();
+	// if ( keyboard.GetKeystate( SDL_SCANCODE_RIGHT ) == keyState::KEYDOWN )
+	// 	cout << "Right Key Pressed" << endl << flush;
+	// if ( keyboard.GetKeystate( SDL_SCANCODE_LEFT ) == keyState::KEYDOWN )
+	// 	cout << "Left Key Pressed" << endl << flush;
+	// if ( keyboard.GetKeystate( SDL_SCANCODE_UP ) == keyState::KEYDOWN )
+	// 	cout << "Up Key Pressed" << endl << flush;
+	// if ( keyboard.GetKeystate( SDL_SCANCODE_DOWN ) == keyState::KEYDOWN )
+	// 	cout << "Down Key Pressed" << endl << flush;
 
 	// add a check for releasing escape here
 	// add a check for pressing mouse button x1 ( browser back )
@@ -110,5 +119,7 @@ void engine::HandleEvents () {
 		ImGui_ImplSDL2_ProcessEvent( &event );
 		// swap out the multiple if statements for a big chained boolean setting the value of pQuit
 		pQuit = ( event.type == SDL_QUIT ) || ( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( window ) ) || ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT );
+
+
 	}
 }

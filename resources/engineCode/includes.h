@@ -61,6 +61,9 @@ constexpr int MSAACount = 1;
 // image load/save/resize/access/manipulation wrapper
 #include "../ImageHandling/image.h"
 
+// keyboard input handling
+// #include "inputHandler.h"
+
 // font rendering header
 #include "../fonts/fontRenderer/renderer.h"
 

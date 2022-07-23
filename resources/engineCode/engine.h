@@ -21,6 +21,9 @@ private:
 	// text renderer framework
 	layerManager textRenderer;
 
+	// keyboard input management
+	// inputHandler keyboard;
+
 	// OpenGL data
 	GLuint blueNoiseTexture;
 	GLuint accumulatorTexture;

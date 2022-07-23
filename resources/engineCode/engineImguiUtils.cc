@@ -4,7 +4,9 @@ void engine::QuitConf ( bool *open ) {
 	if ( *open ) {
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
 		// create centered window
-		ImGui::SetNextWindowPos( ImVec2( totalScreenWidth / 2 - 120, totalScreenHeight / 2 - 25 ) );
+		ImVec2 basePosition = ImGui::GetMainViewport()->Pos;
+		ImVec2 offset = ImVec2( totalScreenWidth / 2 - 120, totalScreenHeight / 2 - 25 );
+		ImGui::SetNextWindowPos( ImVec2( basePosition.x + offset.x, basePosition.y + offset.y ) );
 		ImGui::SetNextWindowSize( ImVec2( 230, 55 ) );
 		ImGui::Begin( "quit", open, flags );
 		ImGui::Text( "Are you sure you want to quit?" );

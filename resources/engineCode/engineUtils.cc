@@ -66,11 +66,11 @@ void engine::MainDisplay () {
 }
 
 void engine::ImguiPass () {
-	ImguiFrameStart();													// start the imgui frame
+	ImguiFrameStart();					// start the imgui frame
 	if ( true )
-		ImGui::ShowDemoWindow( &showDemoWindow );	// show the demo window
-	QuitConf( &quitConfirm );										// show quit confirm window, if triggered
-	ImguiFrameEnd();														// finish up the imgui stuff and put it in the framebuffer
+		ImGui::ShowDemoWindow();	// show the demo window
+	QuitConf( &quitConfirm );		// show quit confirm window, if triggered
+	ImguiFrameEnd();						// finish up the imgui stuff and put it in the framebuffer
 }
 
 

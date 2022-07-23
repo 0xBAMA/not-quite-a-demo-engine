@@ -33,6 +33,10 @@ private:
 	GLuint dummyDrawShader;
 	GLuint tonemapShader;
 
+	// tonemapping parameters + adjustment
+	colorGradeParameters tonemap;
+	void TonemapControlsWindow ();
+
 	// initialization
 	void Init ();
 	void StartMessage ();

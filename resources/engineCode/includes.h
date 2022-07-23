@@ -104,6 +104,12 @@ using json = nlohmann::json;
 #define WIDTH 1920
 #define HEIGHT 1080
 
+struct colorGradeParameters {
+	int tonemapMode = 6;
+	float gamma = 1.1f;
+	float colorTemp = 6500.0f;
+};
+
 // Function to get color temperature from shadertoy user BeRo
 // from the author:
 //   Color temperature (sRGB) stuff
@@ -112,7 +118,7 @@ using json = nlohmann::json;
 //   this code is licensed under the CC0 license
 //   http://creativecommons.org/publicdomain/zero/1.0/
 // Valid from 1000 to 40000 K (and additionally 0 for pure full white)
-inline glm::vec3 get_color_for_temp( double temperature ) {
+inline glm::vec3 GetColorForTemperature ( double temperature ) {
 	// Values from:
 	// http://blenderartists.org/forum/showthread.php?270332-OSL-Goodness&p=2268693&viewfull=1#post2268693
 	glm::mat3 m =

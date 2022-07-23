@@ -26,8 +26,11 @@ void engine::ComputePasses () {
 	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
-	// shader for color grading ( color temp, contrast, etc ) + tonemapping
+	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
 	glUseProgram( tonemapShader );
+	glUniform3fv( glGetUniformLocation( tonemapShader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
+	glUniform1i( glGetUniformLocation( tonemapShader, "tonemapMode" ), tonemap.tonemapMode );
+	glUniform1f( glGetUniformLocation( tonemapShader, "gamma" ), tonemap.gamma );
 	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
@@ -67,6 +70,7 @@ void engine::MainDisplay () {
 
 void engine::ImguiPass () {
 	ImguiFrameStart();					// start the imgui frame
+	TonemapControlsWindow();
 	if ( true )
 		ImGui::ShowDemoWindow();	// show the demo window
 	QuitConf( &quitConfirm );		// show quit confirm window, if triggered

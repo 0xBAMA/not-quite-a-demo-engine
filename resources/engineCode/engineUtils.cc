@@ -1,6 +1,7 @@
 #include "engine.h"
 
 bool engine::MainLoop () {
+	FrameMarkStart( "Main Loop" );
 	HandleEvents();								// handle keyboard / mouse events
 	ClearColorAndDepth();					// if I just disable depth testing, this can disappear
 	ComputePasses();							// multistage update of displayTexture
@@ -90,6 +91,8 @@ void engine::ImguiPass () {
 	if ( true )
 		ImGui::ShowDemoWindow();	// show the demo window
 	QuitConf( &quitConfirm );		// show quit confirm window, if triggered
+	static bool showMenu = true;
+	MenuLayout( &showMenu );
 	ImguiFrameEnd();						// finish up the imgui stuff and put it in the framebuffer
 }
 

@@ -55,7 +55,8 @@ private:
 	void ImguiFrameStart ();
 	void ImguiFrameEnd ();
 	void DrawTextEditor ();
-	void QuitConf ( bool *open );
+	void MenuLayout ( bool* open );
+	void QuitConf ( bool* open );
 
 	// shutdown procedures
 	void ImguiQuit ();

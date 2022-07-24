@@ -64,6 +64,9 @@ constexpr int MSAACount = 1;
 // keyboard input handling
 // #include "inputHandler.h"
 
+// tracy profiler annotation
+#include "../tracy/public/tracy/Tracy.hpp"
+
 // font rendering header
 #include "../fonts/fontRenderer/renderer.h"
 

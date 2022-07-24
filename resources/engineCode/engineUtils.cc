@@ -1,16 +1,19 @@
 #include "engine.h"
 
 bool engine::MainLoop () {
-	ClearColorAndDepth();					// if I just disable depth testing, this can disappear
+	HandleEvents();								// handle keyboard / mouse events
+	// ClearColorAndDepth();					// if I just disable depth testing, this can disappear
 	ComputePasses();							// multistage update of displayTexture
-	MainDisplay();								// fullscreen triangle copying the displayTexture to the screen
+	BlitToScreen();								// fullscreen triangle copying the displayTexture to the screen
 	ImguiPass();									// do all the gui stuff
 	SDL_GL_SwapWindow( window );	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
-	HandleEvents();								// handle keyboard / mouse events
+	FrameMark;										// tells tracy that this is the end of a frame
 	return pQuit;									// break main loop when pQuit turns true
 }
 
 void engine::ComputePasses () {
+	ZoneScoped;
+
 // dummy draw
 	// set up environment ( 0:blue noise, 1: accumulator )
 	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
@@ -45,6 +48,8 @@ void engine::ComputePasses () {
 }
 
 void engine::ClearColorAndDepth () {
+	ZoneScoped;
+
 	// clear the screen
 	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -57,12 +62,16 @@ void engine::ClearColorAndDepth () {
 }
 
 void engine::SendTonemappingParameters () {
+	ZoneScoped;
+
 	glUniform3fv( glGetUniformLocation( tonemapShader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
 	glUniform1i( glGetUniformLocation( tonemapShader, "tonemapMode" ), tonemap.tonemapMode );
 	glUniform1f( glGetUniformLocation( tonemapShader, "gamma" ), tonemap.gamma );
 }
 
-void engine::MainDisplay () {
+void engine::BlitToScreen () {
+	ZoneScoped;
+
 	// bind the displayTexture and display its current state
 	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 	glUseProgram( displayShader );
@@ -73,6 +82,8 @@ void engine::MainDisplay () {
 }
 
 void engine::ImguiPass () {
+	ZoneScoped;
+
 	ImguiFrameStart();					// start the imgui frame
 	TonemapControlsWindow();
 	if ( true )
@@ -81,40 +92,14 @@ void engine::ImguiPass () {
 	ImguiFrameEnd();						// finish up the imgui stuff and put it in the framebuffer
 }
 
-
 void engine::HandleEvents () {
-
-	//this is the other way to handle the input - check the state of the keys every frame
-		// key element here is that you can handle more than one at once - e.g. I can have
-		// simultaneous input from left and up, where the SDL_PollEvent method did not make
-		// these things available in the same scope - it creates a massive spew of input
-		// events when compared to the SDL_PollEvent method, so sometimes, that'll need to
-		// be considered ( framerate dependency, cooldown kind of logic )
-//==============================================================================
-// list of input indices/names: https://wiki.libsdl.org/SDL_Scancode
-//==============================================================================
-
+	ZoneScoped;
 
 	const uint8_t *state = SDL_GetKeyboardState( NULL );
 	if ( state[ SDL_SCANCODE_RIGHT ] )	cout << "Right Key Pressed" << endl << flush;
-	if ( state[ SDL_SCANCODE_LEFT ] )	cout << "Left Key Pressed" << endl << flush;
-	if ( state[ SDL_SCANCODE_UP ] )		cout << "Up Key Pressed" << endl << flush;
-	if ( state[ SDL_SCANCODE_DOWN ] )	cout << "Down Key Pressed" << endl << flush;
-
-// this was kind of a bust, not working correctly yet
-	// keyboard.Update();
-	// if ( keyboard.GetKeystate( SDL_SCANCODE_RIGHT ) == keyState::KEYDOWN )
-	// 	cout << "Right Key Pressed" << endl << flush;
-	// if ( keyboard.GetKeystate( SDL_SCANCODE_LEFT ) == keyState::KEYDOWN )
-	// 	cout << "Left Key Pressed" << endl << flush;
-	// if ( keyboard.GetKeystate( SDL_SCANCODE_UP ) == keyState::KEYDOWN )
-	// 	cout << "Up Key Pressed" << endl << flush;
-	// if ( keyboard.GetKeystate( SDL_SCANCODE_DOWN ) == keyState::KEYDOWN )
-	// 	cout << "Down Key Pressed" << endl << flush;
-
-	// add a check for releasing escape here
-	// add a check for pressing mouse button x1 ( browser back )
-		// both of which toggle the value of quitConfirm
+	if ( state[ SDL_SCANCODE_LEFT ] )		cout << "Left Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_UP ] )			cout << "Up Key Pressed" << endl << flush;
+	if ( state[ SDL_SCANCODE_DOWN ] )		cout << "Down Key Pressed" << endl << flush;
 
 //==============================================================================
 // Need to keep this for pQuit handling ( force quit )
@@ -122,13 +107,14 @@ void engine::HandleEvents () {
 //  via the keyboard state, and then imgui needs it too, so can't completely kill the event
 //  polling loop - maybe eventually I'll find a solution for this
 	SDL_Event event;
+	SDL_PumpEvents();
 	while ( SDL_PollEvent( &event ) ) {
 		// imgui event handling
 		ImGui_ImplSDL2_ProcessEvent( &event );
 		// swap out the multiple if statements for a big chained boolean setting the value of pQuit
 		pQuit = ( event.type == SDL_QUIT ) || ( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( window ) ) || ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT );
-
+		// this has to stay because it doesn't seem like ImGui::IsKeyReleased is stable enough to use
 		if ( ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE ) || ( event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1 )  )
-			quitConfirm = !quitConfirm; // x1 is browser back on the mouse
+			quitConfirm = !quitConfirm;
 	}
 }

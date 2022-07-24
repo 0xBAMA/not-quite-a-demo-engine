@@ -31,6 +31,11 @@ target_link_libraries( opengl INTERFACE OpenGL::GL )
 # FastNoise2
 add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/noise/FastNoise2 )
 
+# Tracy Profiler
+option(TRACY_ENABLE "" ON)
+option(TRACY_ON_DEMAND "" ON)
+add_subdirectory( resources/tracy )
+
 # this is for ImGUI
 add_library( imgui
 	resources/ImGUI/imgui_impl_sdl.cc
@@ -68,6 +73,7 @@ target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc
 
 # this builds the final executable
 add_executable( exe
+	resources/tracy/public/TracyClient.cpp
 	resources/noise/perlin.cc
 	resources/engineCode/main.cc
 	resources/engineCode/engine.cc
@@ -77,4 +83,4 @@ add_executable( exe
 	resources/ImageHandling/LodePNG/lodepng.cc
 	resources/TinyOBJLoader/objLoader.cc )
 
-target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 STB_ImageUtilsWrapper fpng stdc++fs FastNoise CompilerFlags )
+target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 STB_ImageUtilsWrapper fpng stdc++fs FastNoise Tracy::TracyClient CompilerFlags )

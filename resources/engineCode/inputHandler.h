@@ -2,6 +2,26 @@
 #define INPUT_H
 #include "includes.h"
 
+//this is the other way to handle the input - check the state of the keys every frame
+	// key element here is that you can handle more than one at once - e.g. I can have
+	// simultaneous input from left and up, where the SDL_PollEvent method did not make
+	// these things available in the same scope - it creates a massive spew of input
+	// events when compared to the SDL_PollEvent method, so sometimes, that'll need to
+	// be considered ( framerate dependency, cooldown kind of logic )
+//==============================================================================
+// list of input indices/names: https://wiki.libsdl.org/SDL_Scancode
+//==============================================================================
+
+// this goes in the event loop - was kind of a bust, not working correctly yet
+// keyboard.Update();
+// if ( keyboard.GetKeystate( SDL_SCANCODE_RIGHT ) == keyState::KEYDOWN )
+// 	cout << "Right Key Pressed" << endl << flush;
+// if ( keyboard.GetKeystate( SDL_SCANCODE_LEFT ) == keyState::KEYDOWN )
+// 	cout << "Left Key Pressed" << endl << flush;
+// if ( keyboard.GetKeystate( SDL_SCANCODE_UP ) == keyState::KEYDOWN )
+// 	cout << "Up Key Pressed" << endl << flush;
+// if ( keyboard.GetKeystate( SDL_SCANCODE_DOWN ) == keyState::KEYDOWN )
+// 	cout << "Down Key Pressed" << endl << flush;
 
 enum class keyState {
 	KEYDOWN,

@@ -80,9 +80,9 @@ void engine::CreateWindowAndContext () {
 	if ( gl3wInit() != 0 ) { cout << "Failed to initialize OpenGL loader!" << endl; abort(); }
 
 	// basic OpenGL Config
-	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_LINE_SMOOTH );
-	glPointSize( 3.0 );
+	// glEnable( GL_DEPTH_TEST );
+	// glEnable( GL_LINE_SMOOTH );
+	// glPointSize( 3.0 );
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << endl;

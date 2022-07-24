@@ -47,7 +47,7 @@ private:
 	void ImguiSetup ();
 
 	// main loop functions
-	void MainDisplay ();
+	void BlitToScreen ();
 	void HandleEvents ();
 	void ClearColorAndDepth ();
 	void ComputePasses ();

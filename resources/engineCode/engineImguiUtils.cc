@@ -2,25 +2,28 @@
 
 void engine::QuitConf ( bool *open ) {
 	if ( *open ) {
-		ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
-		// create centered window
-		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-		ImGui::SetNextWindowPos( center, 0, ImVec2( 0.5f, 0.5f ) );
-		ImGui::SetNextWindowSize( ImVec2( 230, 55 ) );
-		ImGui::Begin( "quit", open, flags );
-		ImGui::Text( "Are you sure you want to quit?" );
-		ImGui::Text( "  " );
-		ImGui::SameLine();
-		// button to cancel -> set this window's bool to false
-		if ( ImGui::Button( " Cancel " ) )
-			*open = false;
-		ImGui::SameLine();
-		ImGui::Text("      ");
-		ImGui::SameLine();
-		// button to quit -> set pquit to true
-		if ( ImGui::Button( " Quit " ) )
-			pQuit = true;
-		ImGui::End();
+		ImGui::OpenPopup( "Quit Confirm" );
+		if ( ImGui::BeginPopupModal( "Quit Confirm", NULL, 0 ) ) {
+			ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
+			// create centered window
+			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+			ImGui::SetNextWindowPos( center, 0, ImVec2( 0.5f, 0.5f ) );
+			ImGui::SetNextWindowSize( ImVec2( 230, 55 ) );
+			ImGui::Begin( "quit", open, flags );
+			ImGui::Text( "Are you sure you want to quit?" );
+			ImGui::Text( "  " );
+			ImGui::SameLine();
+			// button to cancel -> set this window's bool to false
+			if ( ImGui::Button( " Cancel " ) )
+				*open = false;
+			ImGui::SameLine();
+			ImGui::Text("      ");
+			ImGui::SameLine();
+			// button to quit -> set pquit to true
+			if ( ImGui::Button( " Quit " ) )
+				pQuit = true;
+			ImGui::End();
+		}
 	}
 }
 

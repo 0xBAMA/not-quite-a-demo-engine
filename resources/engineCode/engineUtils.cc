@@ -2,7 +2,7 @@
 
 bool engine::MainLoop () {
 	HandleEvents();								// handle keyboard / mouse events
-	// ClearColorAndDepth();					// if I just disable depth testing, this can disappear
+	ClearColorAndDepth();					// if I just disable depth testing, this can disappear
 	ComputePasses();							// multistage update of displayTexture
 	BlitToScreen();								// fullscreen triangle copying the displayTexture to the screen
 	ImguiPass();									// do all the gui stuff
@@ -52,7 +52,8 @@ void engine::ClearColorAndDepth () {
 
 	// clear the screen
 	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	// glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT );
 
 	ImGuiIO &io = ImGui::GetIO();
 	const int width = ( int ) io.DisplaySize.x;

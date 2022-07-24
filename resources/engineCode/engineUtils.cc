@@ -28,9 +28,7 @@ void engine::ComputePasses () {
 
 	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
 	glUseProgram( tonemapShader );
-	glUniform3fv( glGetUniformLocation( tonemapShader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
-	glUniform1i( glGetUniformLocation( tonemapShader, "tonemapMode" ), tonemap.tonemapMode );
-	glUniform1f( glGetUniformLocation( tonemapShader, "gamma" ), tonemap.gamma );
+	SendTonemappingParameters();
 	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
@@ -56,6 +54,12 @@ void engine::ClearColorAndDepth () {
 	const int height = ( int ) io.DisplaySize.y;
 	// prevent -1, -1 being passed on first frame, since ImGui hasn't rendered yet
 	glViewport(0, 0, width > 0 ? width : WIDTH, height > 0 ? height : HEIGHT );
+}
+
+void engine::SendTonemappingParameters () {
+	glUniform3fv( glGetUniformLocation( tonemapShader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
+	glUniform1i( glGetUniformLocation( tonemapShader, "tonemapMode" ), tonemap.tonemapMode );
+	glUniform1f( glGetUniformLocation( tonemapShader, "gamma" ), tonemap.gamma );
 }
 
 void engine::MainDisplay () {

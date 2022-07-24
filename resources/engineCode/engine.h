@@ -36,6 +36,7 @@ private:
 	// tonemapping parameters + adjustment
 	colorGradeParameters tonemap;
 	void TonemapControlsWindow ();
+	void SendTonemappingParameters ();
 
 	// initialization
 	void Init ();

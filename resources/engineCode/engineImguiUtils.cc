@@ -2,14 +2,11 @@
 
 void engine::QuitConf ( bool *open ) {
 	if ( *open ) {
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos( center, 0, ImVec2( 0.5f, 0.5f ) );
+		ImGui::SetNextWindowSize( ImVec2( 230, 55 ) );
 		ImGui::OpenPopup( "Quit Confirm" );
-		if ( ImGui::BeginPopupModal( "Quit Confirm", NULL, 0 ) ) {
-			ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
-			// create centered window
-			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-			ImGui::SetNextWindowPos( center, 0, ImVec2( 0.5f, 0.5f ) );
-			ImGui::SetNextWindowSize( ImVec2( 230, 55 ) );
-			ImGui::Begin( "quit", open, flags );
+		if ( ImGui::BeginPopupModal( "Quit Confirm", NULL, ImGuiWindowFlags_NoDecoration ) ) {
 			ImGui::Text( "Are you sure you want to quit?" );
 			ImGui::Text( "  " );
 			ImGui::SameLine();
@@ -22,7 +19,6 @@ void engine::QuitConf ( bool *open ) {
 			// button to quit -> set pquit to true
 			if ( ImGui::Button( " Quit " ) )
 				pQuit = true;
-			ImGui::End();
 		}
 	}
 }

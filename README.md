@@ -14,6 +14,7 @@
 - OpenGL Debug callback for error/warning reporting
 - [Dear ImGui Docking Branch](https://github.com/ocornut/imgui/tree/docking) + [ImGuiColorTextEdit](https://github.com/BalazsJako/ImGuiColorTextEdit)
 	- Setup to spawn platform windows
+- Fast text renderer overlay applied as a post process, currently used for reporting of main loop timing but I eventually want to extend it to a drop down in engine terminal a la [guake](http://guake-project.org/), renderer is loosely based on / inspired by [this implementation](https://jmickle66666666.github.io/blog/techart/2019/12/18/bitmap-font-renderer.html).
 
 
 **Noise**

@@ -2,7 +2,7 @@
 
 # Setup
 - Requires `libsdl2-dev` on Ubuntu.
-- Make sure to recurse submodules to pull in FastNoise2 code - `git submodule update --init --recursive`, alternatively just run scripts/init.sh to do the same thing.
+- Make sure to recurse submodules to pull in FastNoise2, tracy, and hoard-of-bitfonts code - `git submodule update --init --recursive`, alternatively just run scripts/init.sh to do the same thing.
 - Run scripts/build.sh in order to build on Ubuntu. It just automates the building of the executable and moves it to the root directory, as files are referenced relative to that location, and then deletes the build folder (if called with the "clean" option).
 
 

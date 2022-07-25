@@ -31,4 +31,4 @@
 - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
 - [Brent Werness' Voxel Automata Terrain ( VAT )](https://bitbucket.org/BWerness/voxel-automata-terrain/src/master/), converted from processing to C++
 	- BigInt library required by the VAT implementation ( to replace java/processing BigInt )
-- [Tracy](https://github.com/wolfpld/tracy) profiler integration
+- [Tracy](https://github.com/wolfpld/tracy) profiler integration ( client mode )

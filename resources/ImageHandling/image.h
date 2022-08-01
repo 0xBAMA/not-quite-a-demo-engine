@@ -45,7 +45,7 @@ public:
 	}
 
 	Image ( int x, int y, bool randomize = false ) : width( x ), height( y ) {
-		data.resize( width * height * numChannels );
+		data.resize( width * height * numChannels, 0 );
 		if ( randomize ) {
 			std::random_device r;
 			std::seed_seq s{ r(), r(), r(), r(), r(), r(), r(), r(), r() };
@@ -60,7 +60,7 @@ public:
 
 	Image ( std::string path, backend loader = LODEPNG ) {
 		if ( !Load( path, loader ) ) {
-			std::cout << "image load failed" << std::endl << std::flush;
+			std::cout << "image load failed with path " << path << std::endl << std::flush;
 		}
 	}
 

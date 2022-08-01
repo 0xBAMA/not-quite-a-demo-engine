@@ -1,7 +1,8 @@
 #include "engine.h"
 
 bool engine::MainLoop () {
-	FrameMarkStart( "Main Loop" );
+	ZoneScoped;
+	
 	HandleEvents();								// handle keyboard / mouse events
 	ClearColorAndDepth();					// if I just disable depth testing, this can disappear
 	ComputePasses();							// multistage update of displayTexture

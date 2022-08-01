@@ -225,6 +225,42 @@ public:
 		}
 	}
 
+	void LumaSortByRows () {
+		for ( unsigned int entry = 0; entry < height; entry++ ) {
+			struct {
+				bool operator()( rgba a, rgba b ) const {
+					// compute luma and compare
+					float ra = ( a.r / 255.0 );
+					float rb = ( b.r / 255.0 );
+
+					float ga = ( a.g / 255.0 );
+					float gb = ( b.g / 255.0 );
+
+					float ba = ( a.b / 255.0 );
+					float bb = ( b.b / 255.0 );
+
+					float lumaA = sqrt( 0.299 * ra * ra + 0.587 * ga * ga + 0.114 * ba * ba );
+					float lumaB = sqrt( 0.299 * rb * rb + 0.587 * gb * gb + 0.114 * bb * bb );
+					return lumaA < lumaB;
+				}
+			} customLess;
+
+			// collect the colors
+			std::vector< rgba > row;
+			for ( unsigned int x = 0; x < width; x++ )
+				if ( GetAtXY( x, entry ).a == 0 ) {
+					break;
+				} else {
+					row.push_back( GetAtXY( x, entry ) );
+				}
+
+			// sort them and put them back
+			std::sort( row.begin(), row.end(), customLess );
+			for ( unsigned int x = 0; x < row.size(); x++ )
+				SetAtXY( x, entry, row[ x ] );
+		}
+	}
+
 	std::vector< uint8_t > data;
 	uint32_t width, height;
 

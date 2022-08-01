@@ -225,26 +225,49 @@ public:
 		}
 	}
 
-	void LumaSortByRows () {
+	enum class sortCriteria {
+		red, green, blue, luma
+	};
+
+	struct {
+		bool operator()( rgba a, rgba b ) const {
+			// compute luma and compare
+			float ra = ( a.r / 255.0 );
+			float rb = ( b.r / 255.0 );
+
+			float ga = ( a.g / 255.0 );
+			float gb = ( b.g / 255.0 );
+
+			float ba = ( a.b / 255.0 );
+			float bb = ( b.b / 255.0 );
+
+			float lumaA = sqrt( 0.299 * ra * ra + 0.587 * ga * ga + 0.114 * ba * ba );
+			float lumaB = sqrt( 0.299 * rb * rb + 0.587 * gb * gb + 0.114 * bb * bb );
+			return lumaA < lumaB;
+		}
+	} lumaLess;
+
+	// color channel comparisons
+	struct {
+		bool operator()( rgba a, rgba b ) const {
+			return a.r < b.r;
+		}
+	} redLess;
+
+	struct {
+		bool operator()( rgba a, rgba b ) const {
+			return a.g < b.g;
+		}
+	} greenLess;
+
+	struct {
+		bool operator()( rgba a, rgba b ) const {
+			return a.b < b.b;
+		}
+	} blueLess;
+
+	void SortByRows ( sortCriteria howWeSortin ) {
 		for ( unsigned int entry = 0; entry < height; entry++ ) {
-			struct {
-				bool operator()( rgba a, rgba b ) const {
-					// compute luma and compare
-					float ra = ( a.r / 255.0 );
-					float rb = ( b.r / 255.0 );
-
-					float ga = ( a.g / 255.0 );
-					float gb = ( b.g / 255.0 );
-
-					float ba = ( a.b / 255.0 );
-					float bb = ( b.b / 255.0 );
-
-					float lumaA = sqrt( 0.299 * ra * ra + 0.587 * ga * ga + 0.114 * ba * ba );
-					float lumaB = sqrt( 0.299 * rb * rb + 0.587 * gb * gb + 0.114 * bb * bb );
-					return lumaA < lumaB;
-				}
-			} customLess;
-
 			// collect the colors
 			std::vector< rgba > row;
 			for ( unsigned int x = 0; x < width; x++ )
@@ -255,35 +278,22 @@ public:
 				}
 
 			// sort them and put them back
-			std::sort( row.begin(), row.end(), customLess );
+			switch ( howWeSortin ) {
+				case sortCriteria::luma:	std::sort( row.begin(), row.end(), lumaLess );	break;
+				case sortCriteria::red:		std::sort( row.begin(), row.end(), redLess );		break;
+				case sortCriteria::green:	std::sort( row.begin(), row.end(), greenLess );	break;
+				case sortCriteria::blue:	std::sort( row.begin(), row.end(), blueLess );	break;
+			}
 			for ( unsigned int x = 0; x < row.size(); x++ )
 				SetAtXY( x, entry, row[ x ] );
 		}
 	}
 
-	void LumaSortByCols () {
+	void SortByCols ( sortCriteria howWeSortin ) {
 		for ( unsigned int entry = 0; entry < width; entry++ ) {
-			struct {
-				bool operator()( rgba a, rgba b ) const {
-					// compute luma and compare
-					float ra = ( a.r / 255.0 );
-					float rb = ( b.r / 255.0 );
-
-					float ga = ( a.g / 255.0 );
-					float gb = ( b.g / 255.0 );
-
-					float ba = ( a.b / 255.0 );
-					float bb = ( b.b / 255.0 );
-
-					float lumaA = sqrt( 0.299 * ra * ra + 0.587 * ga * ga + 0.114 * ba * ba );
-					float lumaB = sqrt( 0.299 * rb * rb + 0.587 * gb * gb + 0.114 * bb * bb );
-					return lumaA < lumaB;
-				}
-			} customLess;
-
 			// collect the colors
 			std::vector< rgba > col;
-			for ( unsigned int y = 0; y < height; y++ )
+			for ( unsigned int y = 0; y < width; y++ )
 				if ( GetAtXY( entry, y ).a == 0 ) {
 					break;
 				} else {
@@ -291,10 +301,25 @@ public:
 				}
 
 			// sort them and put them back
-			std::sort( col.begin(), col.end(), customLess );
+			switch ( howWeSortin ) {
+				case sortCriteria::luma:	std::sort( col.begin(), col.end(), lumaLess );	break;
+				case sortCriteria::red:		std::sort( col.begin(), col.end(), redLess );		break;
+				case sortCriteria::green:	std::sort( col.begin(), col.end(), greenLess );	break;
+				case sortCriteria::blue:	std::sort( col.begin(), col.end(), blueLess );	break;
+			}
 			for ( unsigned int y = 0; y < col.size(); y++ )
 				SetAtXY( entry, y, col[ y ] );
 		}
+	}
+
+
+
+	void LumaSortByRows () {
+		SortByRows( sortCriteria::luma );
+	}
+
+	void LumaSortByCols () {
+		SortByCols( sortCriteria::luma );
 	}
 
 	std::vector< uint8_t > data;

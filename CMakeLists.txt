@@ -45,7 +45,7 @@ add_library( imgui
 	resources/ImGUI/imgui_draw.cc
 	resources/ImGUI/imgui_widgets.cc
 	resources/ImGUI/imgui_tables.cc
-	resources/ImGUI/imgui_gl3w.c
+	resources/ImGUI/imgui_gl3w.cc
 	resources/ImGUI/TextEditor.cc )
 
 target_link_libraries( imgui PUBLIC sdl2 opengl )

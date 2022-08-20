@@ -74,7 +74,7 @@ static string GetStringForEnum ( GLenum shaderType ) {
 /*==============================================================================
 Create and compile shader and report any errors - return shader handle
 ==============================================================================*/
-static GLuint ShaderCompile ( char * source, GLenum shaderType ) {
+static GLuint ShaderCompile ( const char * source, GLenum shaderType ) {
 	GLuint shader = glCreateShader( shaderType );
 	glShaderSource( shader, 1, &source, NULL );
 	glCompileShader( shader );
@@ -119,8 +119,8 @@ public:
 		string codeV = ProcessIncludeString( LoadStringFromFile( pathV ) );
 		string codeF = ProcessIncludeString( LoadStringFromFile( pathF ) );
 		// compile it
-		GLuint shaderV = ShaderCompile( const_cast<char*>( codeV.c_str() ), GL_VERTEX_SHADER );
-		GLuint shaderF = ShaderCompile( const_cast<char*>( codeF.c_str() ), GL_FRAGMENT_SHADER );
+		GLuint shaderV = ShaderCompile( codeV.c_str(), GL_VERTEX_SHADER );
+		GLuint shaderF = ShaderCompile( codeF.c_str(), GL_FRAGMENT_SHADER );
 		AttachAndLink( shaderHandle, { shaderV, shaderF } );
 	}
 };
@@ -143,7 +143,7 @@ public:
 		case shaderSource::fromString:
 			// compile with "input" treated as the program source
 			input = ProcessIncludeString( input );
-			GLuint shaderC = ShaderCompile( const_cast<char*>( input.c_str() ), GL_COMPUTE_SHADER );
+			GLuint shaderC = ShaderCompile( input.c_str(), GL_COMPUTE_SHADER );
 			AttachAndLink( shaderHandle, { shaderC } );
 			break;
 		}

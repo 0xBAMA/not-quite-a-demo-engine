@@ -139,7 +139,8 @@ public:
 		switch ( source ) {
 		case shaderSource::fromFile:
 			// input becomes the shader source, loaded from the path
-			input = LoadStringFromFile( input );// fall through to next case
+			input = LoadStringFromFile( input );
+			[[fallthrough]];
 		case shaderSource::fromString:
 			// compile with "input" treated as the program source
 			input = ProcessIncludeString( input );

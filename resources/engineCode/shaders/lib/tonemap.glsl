@@ -2,7 +2,7 @@
 // tonemapping stuff
 // APPROX
 // --------------------------
-vec3 ACESFilm ( vec3 v ) {
+vec3 CheapACES ( vec3 v ) {
 	v *= 0.6f;
 	float a = 2.51f;
 	float b = 0.03f;

@@ -312,8 +312,6 @@ public:
 		}
 	}
 
-
-
 	void LumaSortByRows () {
 		SortByRows( sortCriteria::luma );
 	}
@@ -328,6 +326,26 @@ public:
 	// primarily deal with 8-bit, RGBA
 	uint32_t bitDepth = 8;
 	uint32_t numChannels = 4;
+
+	rgba AverageColor () {
+		float sums[ 4 ] = { 0, 0, 0, 0 };
+		for( unsigned int y = 0; y < height; y++ ) {
+			for( unsigned int x = 0; x < width; x++ ) {
+				rgba val = GetAtXY( x, y );
+				sums[ 0 ] += val.r / 255.0;
+				sums[ 1 ] += val.g / 255.0;
+				sums[ 2 ] += val.b / 255.0;
+				sums[ 3 ] += val.a / 255.0;
+			}
+		}
+		const float numPixels = width * height;
+		rgba result;
+		result.r = ( sums[ 0 ] / numPixels ) * 255;
+		result.g = ( sums[ 1 ] / numPixels ) * 255;
+		result.b = ( sums[ 2 ] / numPixels ) * 255;
+		result.a = ( sums[ 3 ] / numPixels ) * 255;
+		return result;
+	}
 
 private:
 

@@ -87,17 +87,6 @@ void engine::CreateWindowAndContext () {
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << endl;
 
-
-	// cout << "testing image" << endl;
-	// Image testImage( "test.jpg", STB );
-	// cout << "average color is: " << endl;
-	// rgba value = testImage.AverageColor();
-	// cout << "r: " << int( value.r ) << endl;
-	// cout << "g: " << int( value.g ) << endl;
-	// cout << "b: " << int( value.b ) << endl;
-	// cout << "a: " << int( value.a ) << endl << endl;
-
-
 }
 
 void engine::DisplaySetup () {

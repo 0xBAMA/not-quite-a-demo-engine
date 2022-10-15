@@ -61,6 +61,9 @@ constexpr int MSAACount = 1;
 // image load/save/resize/access/manipulation wrapper
 #include "../ImageHandling/image.h"
 
+// simple std::chrono wrapper
+#include "timer.h"
+
 // keyboard input handling
 // #include "inputHandler.h"
 

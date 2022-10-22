@@ -98,6 +98,10 @@ constexpr int MSAACount = 1;
 #include "../JSON/json.hpp"
 using json = nlohmann::json;
 
+// tinyXML2 XML parser
+#include "../tinyXML2/tinyxml2.h"
+using XMLDocument = tinyxml2::XMLDocument;
+
 // #define WIDTH 640
 // #define HEIGHT 480
 

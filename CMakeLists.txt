@@ -60,11 +60,11 @@ add_library( BigInt
 	resources/noise/VAT/BigInt/BigIntegerAlgorithms.cc
 	resources/noise/VAT/BigInt/BigUnsignedInABase.cc
 	resources/noise/VAT/BigInt/BigIntegerUtils.cc )
-
 target_compile_options( BigInt PUBLIC -Wno-deprecated )
 
-add_library( STB_ImageUtilsWrapper
-	resources/ImageHandling/stb/impl.cc )
+add_library( tinyXML2 resources/tinyXML2/tinyxml2.cc )
+
+add_library( STB_ImageUtilsWrapper resources/ImageHandling/stb/impl.cc )
 
 add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/ImageHandling/fpng )
 
@@ -83,4 +83,4 @@ add_executable( exe
 	resources/ImageHandling/LodePNG/lodepng.cc
 	resources/TinyOBJLoader/objLoader.cc )
 
-target_link_libraries( exe PUBLIC imgui BigInt opengl sdl2 STB_ImageUtilsWrapper fpng stdc++fs FastNoise Tracy::TracyClient CompilerFlags )
+target_link_libraries( exe PUBLIC imgui BigInt tinyXML2 opengl sdl2 STB_ImageUtilsWrapper fpng stdc++fs FastNoise Tracy::TracyClient CompilerFlags )

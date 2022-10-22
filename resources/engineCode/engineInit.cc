@@ -1,15 +1,15 @@
 #include "engine.h"
 
 void engine::StartMessage () {
-	cout << endl << T_YELLOW << BOLD << "NQADE - Not Quite A Demo Engine" << endl;
-	cout << " By Jon Baker ( 2020 - 2022 ) " << RESET << endl;
-	cout << "  https://jbaker.graphics/ " << endl << endl;
+	cout << endl << T_YELLOW << BOLD << "NQADE - Not Quite A Demo Engine" << newline;
+	cout << " By Jon Baker ( 2020 - 2022 ) " << RESET << newline;
+	cout << "  https://jbaker.graphics/ " << newline << newline;
 }
 
 void engine::CreateWindowAndContext () {
 	cout << T_BLUE << "    Initializing SDL2" << RESET << " ................................ ";
 	if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
-		cout << "Error: " << SDL_GetError() << endl;
+		cout << "Error: " << SDL_GetError() << newline;
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,       1 );
 	SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
@@ -22,7 +22,7 @@ void engine::CreateWindowAndContext () {
 	SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, MSAACount );
 
 
-	cout << T_GREEN << "done." << RESET << endl;
+	cout << T_GREEN << "done." << RESET << newline;
 
 	cout << T_BLUE << "    Creating window" << RESET << " .................................. ";
 
@@ -62,11 +62,11 @@ void engine::CreateWindowAndContext () {
 	// if init takes some time, don't show the window before it's done
 	SDL_ShowWindow( window );
 
-	cout << T_GREEN << "done." << RESET << endl;
+	cout << T_GREEN << "done." << RESET << newline;
 
 	cout << T_BLUE << "    Setting up OpenGL context" << RESET << " ........................ ";
 	// initialize OpenGL 4.3 + GLSL version 430
-	SDL_GL_SetAttribute( SDL_GLhttps://github.com/0xBAMA/not-quite-a-demo-engine.git_CONTEXT_FLAGS, 0 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
@@ -77,7 +77,7 @@ void engine::CreateWindowAndContext () {
 	// SDL_GL_SetSwapInterval( 0 ); // Disables vsync
 
 	// load OpenGL functions
-	if ( gl3wInit() != 0 ) { cout << "Failed to initialize OpenGL loader!" << endl; abort(); }
+	if ( gl3wInit() != 0 ) { cout << "Failed to initialize OpenGL loader!" << newline; abort(); }
 
 	// basic OpenGL Config
 	// glEnable( GL_DEPTH_TEST );
@@ -85,7 +85,7 @@ void engine::CreateWindowAndContext () {
 	// glPointSize( 3.0 );
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	cout << T_GREEN << "done." << RESET << endl;
+	cout << T_GREEN << "done." << RESET << newline;
 }
 
 void engine::DisplaySetup () {
@@ -95,11 +95,11 @@ void engine::DisplaySetup () {
 	const GLubyte *glslVersion = glGetString( GL_SHADING_LANGUAGE_VERSION );	// glsl version as a string
 	const GLubyte *vendor = glGetString( GL_VENDOR );		// vendor as a string
 
-	cout << T_BLUE << "    Platform Info :" << RESET << endl;
-	cout << T_RED << "      Vendor : " << T_CYAN << vendor << RESET << endl;
-	cout << T_RED << "      Renderer : " << T_CYAN << renderer << RESET << endl;
-	cout << T_RED << "      OpenGL version supported : " << T_CYAN << version << RESET << endl;
-	cout << T_RED << "      GLSL version supported : " << T_CYAN << glslVersion << RESET << endl << endl;
+	cout << T_BLUE << "    Platform Info :" << RESET << newline;
+	cout << T_RED << "      Vendor : " << T_CYAN << vendor << RESET << newline;
+	cout << T_RED << "      Renderer : " << T_CYAN << renderer << RESET << newline;
+	cout << T_RED << "      OpenGL version supported : " << T_CYAN << version << RESET << newline;
+	cout << T_RED << "      GLSL version supported : " << T_CYAN << glslVersion << RESET << newline << newline;
 
 	// create the shader for the triangles to cover the screen
 	displayShader = regularShader( "resources/engineCode/shaders/blit.vs.glsl", "resources/engineCode/shaders/blit.fs.glsl" ).shaderHandle;
@@ -271,5 +271,5 @@ void engine::ImguiSetup () {
 	colors[ ImGuiCol_ModalWindowDimBg ]
 		= ImVec4( 0.80f, 0.80f, 0.80f, 0.35f );
 
-	cout << T_GREEN << "done." << RESET << endl << endl;
+	cout << T_GREEN << "done." << RESET << newline << newline;
 }

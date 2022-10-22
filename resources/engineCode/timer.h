@@ -10,10 +10,10 @@ static auto tInit = NOW;
 static auto t = NOW;
 
 // set base time
-static void Tick () { t = NOW; }
+static inline void Tick () { t = NOW; }
 // get difference between base time and current time, return value in useconds
-static float Tock () { return USCAST( NOW - t ); }
+static inline float Tock () { return USCAST( NOW - t ); }
 // getting the time since the engine was started
-static float TotalTime () { return USCAST( NOW - tInit ); }
+static inline float TotalTime () { return USCAST( NOW - tInit ); }
 
 #endif

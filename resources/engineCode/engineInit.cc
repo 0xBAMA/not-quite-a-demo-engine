@@ -66,7 +66,7 @@ void engine::CreateWindowAndContext () {
 
 	cout << T_BLUE << "    Setting up OpenGL context" << RESET << " ........................ ";
 	// initialize OpenGL 4.3 + GLSL version 430
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
+	SDL_GL_SetAttribute( SDL_GLhttps://github.com/0xBAMA/not-quite-a-demo-engine.git_CONTEXT_FLAGS, 0 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );

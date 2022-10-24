@@ -10,19 +10,24 @@
 // Rich Geldrich's fpng - public domain, https://github.com/richgel999/fpng
 #include "../ImageHandling/fpng/fpng.h"
 
-// Sean Barrett's public domain load, save, resize libs - need corresponding define in the stb/impl.cc file, before their inclusion,
+// Sean Barrett's public domain load, save, resize libs - need corresponding define in the ./stb/impl.cc file, before their inclusion,
 	// which is done by the time compilation hits this point - they can be straight included, here, as follows:
-// stb_image - https://github.com/nothings/stb/blob/master/stb_image.h
+
+// https://github.com/nothings/stb/blob/master/stb_image.h
 #include "../ImageHandling/stb/stb_image.h"
-// stb_image_write - https://github.com/nothings/stb/blob/master/stb_image_write.h
+//  https://github.com/nothings/stb/blob/master/stb_image_write.h
 #include "../ImageHandling/stb/stb_image_write.h"
-// stb_image_resize - https://github.com/nothings/stb/blob/master/stb_image_resize.h
+// https://github.com/nothings/stb/blob/master/stb_image_resize.h
 #include "../ImageHandling/stb/stb_image_resize.h"
 
 #include <vector>
 #include <random>
 #include <string>
 #include <iostream>
+
+// considering templating this, or else just defining another couple classes
+	// I will need an equivalent float image type, and I will need 1 and 4 component buffers made from this type ( depth, color + alpha )
+
 
 // adding additional backends is as simple as adding an enum, writing the corresponding load/save implementation
 enum backend {

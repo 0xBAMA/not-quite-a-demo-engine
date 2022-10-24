@@ -60,10 +60,13 @@ constexpr int MSAACount = 1;
 #include <SDL2/SDL_opengl.h>
 
 // image load/save/resize/access/manipulation wrapper
-#include "../ImageHandling/image.h"
+#include "../ImageHandling/Image.h"
 
 // simple std::chrono wrapper
-#include "timer.h"
+#include "Timer.h"
+
+// software rasterizer reimplementation
+#include "../SoftRast/SoftRast.h"
 
 // keyboard input handling
 // #include "inputHandler.h"

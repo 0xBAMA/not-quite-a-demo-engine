@@ -43,6 +43,13 @@ struct rgba {
 	uint8_t a = 0;
 };
 
+struct rgbaF {
+	float r = 0.0f;
+	float g = 0.0f;
+	float b = 0.0f;
+	float a = 0.0f;
+};
+
 class Image {
 public:
 	Image () : width( 0 ), height( 0 ) {
@@ -130,7 +137,7 @@ public:
 			}
 		}
 		data.resize( x * y * numChannels );
-		for ( unsigned int i = 0; i < newValues.size(); i++ ) {
+		for ( uint32_t i = 0; i < newValues.size(); i++ ) {
 			data[ i ] = newValues[ i ];
 		}
 		width = x;
@@ -147,8 +154,8 @@ public:
 		// flip it
 		data.resize( 0 );
 		data.reserve( width * height * 4 );
-		for ( unsigned int y = 0; y < height; y++ ) {
-			for ( unsigned int x = 0; x < width; x++ ) {
+		for ( uint32_t y = 0; y < height; y++ ) {
+			for ( uint32_t x = 0; x < width; x++ ) {
 				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 0 ] );
 				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 1 ] );
 				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 2 ] );
@@ -167,8 +174,8 @@ public:
 		// flip it
 		data.resize( 0 );
 		data.reserve( width * height * 4 );
-		for ( unsigned int y = 0; y < height; y++ ) {
-			for ( unsigned int x = 0; x < width; x++ ) {
+		for ( uint32_t y = 0; y < height; y++ ) {
+			for ( uint32_t x = 0; x < width; x++ ) {
 				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 0 ] );
 				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 1 ] );
 				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 2 ] );
@@ -182,9 +189,9 @@ public:
 	 	int newY = std::floor( scaleFactor * float( height ) );
 
 		// do the resize
-		const unsigned int oldSize = width * height * numChannels;
+		const uint32_t oldSize = width * height * numChannels;
 		uint8_t * oldData = ( uint8_t * ) malloc( oldSize );
-		for ( unsigned int i = 0; i < oldSize; i++ ) {
+		for ( uint32_t i = 0; i < oldSize; i++ ) {
 			oldData[ i ] = data[ i ];
 		}
 
@@ -201,9 +208,9 @@ public:
 
 		// copy new data back to the data vector
 		data.resize( 0 );
-		const unsigned int newSize = width * height * numChannels;
+		const uint32_t newSize = width * height * numChannels;
 		data.reserve( newSize );
-		for ( unsigned int i = 0; i < newSize; i++ ) {
+		for ( uint32_t i = 0; i < newSize; i++ ) {
 			data.push_back( newData[ i ] );
 		}
 	}
@@ -221,7 +228,7 @@ public:
 	}
 
 	void SetAtXY ( int x, int y, rgba set ) {
-		unsigned int index = ( x + y * width ) * numChannels;
+		uint32_t index = ( x + y * width ) * numChannels;
 		if ( index + 4 <= data.size() ) {
 			data[ index + 0 ] = set.r;
 			data[ index + 1 ] = set.g;
@@ -272,10 +279,10 @@ public:
 	} blueLess;
 
 	void SortByRows ( sortCriteria howWeSortin ) {
-		for ( unsigned int entry = 0; entry < height; entry++ ) {
+		for ( uint32_t entry = 0; entry < height; entry++ ) {
 			// collect the colors
 			std::vector< rgba > row;
-			for ( unsigned int x = 0; x < width; x++ )
+			for ( uint32_t x = 0; x < width; x++ )
 				if ( GetAtXY( x, entry ).a == 0 ) {
 					break;
 				} else {
@@ -289,16 +296,16 @@ public:
 				case sortCriteria::green:	std::sort( row.begin(), row.end(), greenLess );	break;
 				case sortCriteria::blue:	std::sort( row.begin(), row.end(), blueLess );	break;
 			}
-			for ( unsigned int x = 0; x < row.size(); x++ )
+			for ( uint32_t x = 0; x < row.size(); x++ )
 				SetAtXY( x, entry, row[ x ] );
 		}
 	}
 
 	void SortByCols ( sortCriteria howWeSortin ) {
-		for ( unsigned int entry = 0; entry < width; entry++ ) {
+		for ( uint32_t entry = 0; entry < width; entry++ ) {
 			// collect the colors
 			std::vector< rgba > col;
-			for ( unsigned int y = 0; y < width; y++ )
+			for ( uint32_t y = 0; y < width; y++ )
 				if ( GetAtXY( entry, y ).a == 0 ) {
 					break;
 				} else {
@@ -312,7 +319,7 @@ public:
 				case sortCriteria::green:	std::sort( col.begin(), col.end(), greenLess );	break;
 				case sortCriteria::blue:	std::sort( col.begin(), col.end(), blueLess );	break;
 			}
-			for ( unsigned int y = 0; y < col.size(); y++ )
+			for ( uint32_t y = 0; y < col.size(); y++ )
 				SetAtXY( entry, y, col[ y ] );
 		}
 	}
@@ -334,8 +341,8 @@ public:
 
 	rgba AverageColor () {
 		float sums[ 4 ] = { 0, 0, 0, 0 };
-		for( unsigned int y = 0; y < height; y++ ) {
-			for( unsigned int x = 0; x < width; x++ ) {
+		for( uint32_t y = 0; y < height; y++ ) {
+			for( uint32_t x = 0; x < width; x++ ) {
 				rgba val = GetAtXY( x, y );
 				sums[ 0 ] += val.r / 255.0;
 				sums[ 1 ] += val.g / 255.0;
@@ -354,7 +361,9 @@ public:
 
 private:
 
-	void Clear () { data.resize( 0 ); width = 0; height = 0; };
+	void Reset () { data.resize( 0 ); width = 0; height = 0; };
+	void Clear () { data.resize( 0 ); };
+
 // ==== FPNG =========================================
 	bool Load_fpng ( std::string path ) {
 		uint32_t desired_channels = numChannels;
@@ -381,9 +390,9 @@ private:
 		data.resize( 0 );
 		width = ( uint32_t ) w;
 		height = ( uint32_t ) h;
-		const unsigned int numPixels = width * height;
+		const uint32_t numPixels = width * height;
 		data.reserve( numPixels * numChannels );
-		for ( unsigned int i = 0; i < numPixels; i++ ) {
+		for ( uint32_t i = 0; i < numPixels; i++ ) {
 			data.push_back( image[ i * 4 + 0 ] );
 			data.push_back( image[ i * 4 + 1 ] );
 			data.push_back( image[ i * 4 + 2 ] );
@@ -417,6 +426,259 @@ private:
 			return false;
 		}
 	}
+};
+
+class ImageF {
+public:
+	ImageF () : width( 0 ), height( 0 ) {
+		data.clear();
+	}
+
+	ImageF ( int x, int y, bool randomize = false ) : width( x ), height( y ) {
+		data.resize( width * height * numChannels, 0.0f );
+		if ( randomize ) {
+			std::random_device r;
+			std::seed_seq s{ r(), r(), r(), r(), r(), r(), r(), r(), r() };
+			auto gen = std::mt19937_64( s );
+			std::uniform_real_distribution< float > dist( 0.0f, 1.0f );
+			for ( auto it = data.begin(); it != data.end(); it++ ) {
+				*it = dist( gen );
+			}
+		}
+	}
+
+	ImageF ( std::string path, backend loader = LODEPNG ) {
+		Image temp( path, loader );
+		width = temp.width;
+		height = temp.height;
+		data.resize( width * height * numChannels );
+		for ( uint32_t y = 0; y < height; y++ ) {
+			for ( uint32_t x = 0; x < width; x++ ) {
+				rgba tempVal = temp.GetAtXY( x, y );
+				rgbaF tempValF;
+				tempValF.r = tempVal.r / 255.0;
+				tempValF.g = tempVal.g / 255.0;
+				tempValF.b = tempVal.b / 255.0;
+				tempValF.a = tempVal.a / 255.0;
+				SetAtXY( x, y, tempValF );
+			}
+		}
+	}
+
+	ImageF ( int x, int y, float* contents ) : width( x ), height( y ) {
+		data.resize( 0 );
+		const int numElements = x * y * 4;
+		data.reserve( numElements );
+		// use incoming ordering directly
+		for ( int i = 0; i < numElements; i++ ) {
+			data.push_back( contents[ i ] );
+		}
+	}
+
+	// will need a save function, to save higher bitrate, maybe 16 bit png? LodePNG will do it
+
+	void CropTo ( int x, int y ) {
+	// take this image data, and trim it, creating another image that is:
+		// the original image data, within the bounds of the image data
+		// black, 0 alpha, outside that bounds
+		std::vector< float > newValues;
+		newValues.resize( x * y * numChannels );
+		for ( int yy = 0; yy < y; yy++ ) {
+			for ( int xx = 0; xx < x; xx++ ) {
+				rgbaF sample = GetAtXY( xx, yy );
+				int index = 4 * ( xx + x * yy );
+				newValues[ index + 0 ] = sample.r;
+				newValues[ index + 1 ] = sample.g;
+				newValues[ index + 2 ] = sample.b;
+				newValues[ index + 3 ] = sample.a;
+			}
+		}
+		data.resize( x * y * numChannels );
+		for ( uint32_t i = 0; i < newValues.size(); i++ ) {
+			data[ i ] = newValues[ i ];
+		}
+		width = x;
+		height = y;
+	}
+
+	void FlipHorizontal () {
+		// back up the existing state of the image
+		std::vector< float > oldData;
+		oldData.reserve( width * height * 4 );
+		for ( auto c : data ) {
+			oldData.push_back( c );
+		}
+		// flip it
+		data.resize( 0 );
+		data.reserve( width * height * 4 );
+		for ( uint32_t y = 0; y < height; y++ ) {
+			for ( uint32_t x = 0; x < width; x++ ) {
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 0 ] );
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 1 ] );
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 2 ] );
+				data.push_back( oldData[ ( ( width - x - 1 ) + y * width ) * 4 + 3 ] );
+			}
+		}
+	}
+
+	void FlipVertical () {
+		// back up the existing state of the image
+		std::vector< float > oldData;
+		oldData.reserve( width * height * 4 );
+		for ( auto c : data ) {
+			oldData.push_back( c );
+		}
+		// flip it
+		data.resize( 0 );
+		data.reserve( width * height * 4 );
+		for ( uint32_t y = 0; y < height; y++ ) {
+			for ( uint32_t x = 0; x < width; x++ ) {
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 0 ] );
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 1 ] );
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 2 ] );
+				data.push_back( oldData[ ( x + ( height - y - 1 ) * width ) * 4 + 3 ] );
+			}
+		}
+	}
+
+	rgbaF GetAtXY ( uint32_t x, uint32_t y ) {
+		rgbaF temp; // initialized with zeroes
+		uint32_t index = ( x + y * width ) * numChannels;
+		if ( index + 4 <= data.size() && index >= 0 && x < width && x >= 0 && y < height && y >= 0 ) {
+			temp.r = data[ index + 0 ];
+			temp.g = data[ index + 1 ];
+			temp.b = data[ index + 2 ];
+			temp.a = data[ index + 3 ];
+		}
+		return temp;
+	}
+
+	void SetAtXY ( uint32_t x, uint32_t y, rgbaF set ) {
+		uint32_t index = ( x + y * width ) * numChannels;
+		if ( index + 4 <= data.size() ) {
+			data[ index + 0 ] = set.r;
+			data[ index + 1 ] = set.g;
+			data[ index + 2 ] = set.b;
+			data[ index + 3 ] = set.a;
+		}
+	}
+
+	enum class sortCriteria {
+		red, green, blue, luma
+	};
+
+	struct {
+		bool operator()( rgbaF a, rgbaF b ) const {
+			// compute luma and compare
+			float lumaA = sqrt( 0.299 * a.r * a.r + 0.587 * a.g * a.g + 0.114 * a.b * a.b );
+			float lumaB = sqrt( 0.299 * b.r * b.r + 0.587 * b.g * b.g + 0.114 * b.b * b.b );
+			return lumaA < lumaB;
+		}
+	} lumaLess;
+
+	// color channel comparisons
+	struct {
+		bool operator()( rgbaF a, rgbaF b ) const {
+			return a.r < b.r;
+		}
+	} redLess;
+
+	struct {
+		bool operator()( rgbaF a, rgbaF b ) const {
+			return a.g < b.g;
+		}
+	} greenLess;
+
+	struct {
+		bool operator()( rgbaF a, rgbaF b ) const {
+			return a.b < b.b;
+		}
+	} blueLess;
+
+	void SortByRows ( sortCriteria howWeSortin ) {
+		for ( uint32_t entry = 0; entry < height; entry++ ) {
+			// collect the colors
+			std::vector< rgbaF > row;
+			for ( uint32_t x = 0; x < width; x++ )
+				if ( GetAtXY( x, entry ).a == 0 ) {
+					break;
+				} else {
+					row.push_back( GetAtXY( x, entry ) );
+				}
+
+			// sort them and put them back
+			switch ( howWeSortin ) {
+				case sortCriteria::luma:	std::sort( row.begin(), row.end(), lumaLess );	break;
+				case sortCriteria::red:		std::sort( row.begin(), row.end(), redLess );	break;
+				case sortCriteria::green:	std::sort( row.begin(), row.end(), greenLess );	break;
+				case sortCriteria::blue:	std::sort( row.begin(), row.end(), blueLess );	break;
+			}
+			for ( uint32_t x = 0; x < row.size(); x++ )
+				SetAtXY( x, entry, row[ x ] );
+		}
+	}
+
+	void SortByCols ( sortCriteria howWeSortin ) {
+		for ( uint32_t entry = 0; entry < width; entry++ ) {
+			// collect the colors
+			std::vector< rgbaF > col;
+			for ( uint32_t y = 0; y < width; y++ )
+				if ( GetAtXY( entry, y ).a == 0 ) {
+					break;
+				} else {
+					col.push_back( GetAtXY( entry, y ) );
+				}
+
+			// sort them and put them back
+			switch ( howWeSortin ) {
+				case sortCriteria::luma:	std::sort( col.begin(), col.end(), lumaLess );	break;
+				case sortCriteria::red:		std::sort( col.begin(), col.end(), redLess );	break;
+				case sortCriteria::green:	std::sort( col.begin(), col.end(), greenLess );	break;
+				case sortCriteria::blue:	std::sort( col.begin(), col.end(), blueLess );	break;
+			}
+			for ( uint32_t y = 0; y < col.size(); y++ )
+				SetAtXY( entry, y, col[ y ] );
+		}
+	}
+
+	void LumaSortByRows () {
+		SortByRows( sortCriteria::luma );
+	}
+
+	void LumaSortByCols () {
+		SortByCols( sortCriteria::luma );
+	}
+
+	std::vector< float > data;
+	uint32_t width, height;
+
+	// primarily deal with 8-bit, RGBA
+	uint32_t bitDepth = 8;
+	uint32_t numChannels = 4;
+
+	rgba AverageColor () {
+		float sums[ 4 ] = { 0, 0, 0, 0 };
+		for( uint32_t y = 0; y < height; y++ ) {
+			for( uint32_t x = 0; x < width; x++ ) {
+				rgbaF val = GetAtXY( x, y );
+				sums[ 0 ] += val.r;
+				sums[ 1 ] += val.g;
+				sums[ 2 ] += val.b;
+				sums[ 3 ] += val.a;
+			}
+		}
+		const float numPixels = width * height;
+		rgba result;
+		result.r = ( sums[ 0 ] / numPixels );
+		result.g = ( sums[ 1 ] / numPixels );
+		result.b = ( sums[ 2 ] / numPixels );
+		result.a = ( sums[ 3 ] / numPixels );
+		return result;
+	}
+
+private:
+	void Reset () { data.resize( 0.0f ); width = 0; height = 0; };
+	void Clear () { data.resize( 0.0f ); };
 };
 
 #endif

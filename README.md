@@ -15,6 +15,7 @@
 - [Dear ImGui Docking Branch](https://github.com/ocornut/imgui/tree/docking) + [ImGuiColorTextEdit](https://github.com/BalazsJako/ImGuiColorTextEdit)
 	- Setup to spawn platform windows
 - Fast text renderer overlay applied as a post process, currently used for reporting of main loop timing but I eventually want to extend it to a drop down in engine terminal a la [guake](http://guake-project.org/), renderer is loosely based on / inspired by [this implementation](https://jmickle66666666.github.io/blog/techart/2019/12/18/bitmap-font-renderer.html).
+- WIP software rasterizer, SoftRast
 
 
 **Noise**
@@ -26,8 +27,9 @@
 **Utilities**
 - CMake build setup
 - [GLM](http://glm.g-truc.net/0.9.8/api/index.html) for vector and matrix types
-- Image wrapper for loading/saving/resizing/etc of images ( 4 channel, 8-bit default - fpng, stb, and lodepng backends )
+- Image wrapper for loading/saving/resizing/etc of images ( 4 channel, 8-bit default, WIP floating point support - fpng, stb, and lodepng backends )
 - JSON parsing using [nlohmann's single header implementation](https://github.com/nlohmann/json)
+- XML parsing using [TinyXML2](https://tinyxml2.docsforge.com/)
 - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
 - [Brent Werness' Voxel Automata Terrain ( VAT )](https://bitbucket.org/BWerness/voxel-automata-terrain/src/master/), converted from processing to C++
 	- BigInt library required by the VAT implementation ( to replace java/processing BigInt )

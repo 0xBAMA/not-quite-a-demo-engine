@@ -69,7 +69,7 @@ add_library( STB_ImageUtilsWrapper resources/ImageHandling/stb/impl.cc )
 add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/ImageHandling/fpng )
 
 add_library( CompilerFlags INTERFACE )
-target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -ldl )
+target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -ldl -Wno-maybe-uninitialized -Wno-unused-function ) # suppresses warnings for Tracy
 
 # this builds the final executable
 add_executable( exe

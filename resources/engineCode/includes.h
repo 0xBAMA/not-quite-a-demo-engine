@@ -26,6 +26,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::flush;
+using std::string;
 constexpr char newline = '\n';
 
 // pi definition - definitely sufficient precision

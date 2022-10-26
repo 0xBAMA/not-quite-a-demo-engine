@@ -40,9 +40,12 @@ static const mat3 rotation( vec3 a, float angle ) { //thanks to Neil Mendoza via
 				oc * a.z * a.x - a.y * s,   oc * a.y * a.z + a.x * s,  oc * a.z * a.z + c );
 }
 
-// something to reference texture, with or without interpolation - start with no interp for now
-
-// something to draw a model, using TinyOBJLoader wrapper + transform
+// Plans:
+	// something to wrap texture reference, with or without interpolation - start with no interp for now
+	// DrawModel, using TinyOBJLoader wrapper + transform
+	// wrapper for writing a pixel's color and depth values, and optionally alpha blending
+	// helper function for depth testing? it's already pretty short... tbd
+	// object for holding triangle parameters, to simplify passing - need positions, need texcoords, need normals
 
 class SoftRast {
 public:
@@ -73,7 +76,8 @@ public:
 		vec2 positionXY = vec2( position.x, position.y );
 		if ( glm::clamp( positionXY, vec2( 0.0f ), vec2( width, height ) ) == positionXY && // point is on screen
 			Depth.GetAtXY( uint32_t( position.x ), uint32_t( position.y ) ).r > position.z ) { // depth testing
-				// todo
+			Color.SetAtXY( position.x, position.y, RGBAFromVec4( color ) );
+			Depth.SetAtXY( position.x, position.y, { position.z, 0.0f, 0.0f, 0.0f } );
 		}
 	}
 
@@ -177,6 +181,10 @@ public:
 				}
 			}
 		}
+	}
+
+	void DrawModel ( string modelPath, mat3 transform ) {
+		// passing in transform means we can scale, rotate, etc, and keep the interface simple
 	}
 
 	// dimensions

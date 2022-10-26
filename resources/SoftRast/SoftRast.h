@@ -183,8 +183,9 @@ public:
 		}
 	}
 
-	void DrawModel ( string modelPath, mat3 transform ) {
+	void DrawModel ( string modelPath, string texturePath, mat3 transform ) {
 		// passing in transform means we can scale, rotate, etc, and keep the interface simple
+		
 	}
 
 	// dimensions

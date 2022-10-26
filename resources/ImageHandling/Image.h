@@ -43,11 +43,13 @@ struct rgba {
 	uint8_t a = 0;
 };
 
+constexpr float positiveMax = 10000.0f;
+
 struct rgbaF {
-	float r = 0.0f;
-	float g = 0.0f;
-	float b = 0.0f;
-	float a = 0.0f;
+	float r = positiveMax;
+	float g = positiveMax;
+	float b = positiveMax;
+	float a = positiveMax;
 };
 
 class Image {
@@ -215,10 +217,11 @@ public:
 		}
 	}
 
-	rgba GetAtXY ( int x, int y ) {
+	rgba GetAtXY ( uint32_t x, uint32_t y ) {
 		rgba temp; // initialized with zeroes
-		int index = ( x + y * int( width ) ) * numChannels;
-		if ( index + 4 <= int( data.size() ) && index >= 0 && x < int( width ) && x >= 0 && y < int( height ) && y >= 0 ) {
+		if ( x < 0 || x >= width || y < 0 || y >= height ) return temp;
+		uint32_t index = ( x + y * width ) * numChannels;
+		if ( index + 4 <= data.size() && index >= 0 && x < width && x >= 0 && y < height && y >= 0 ) {
 			temp.r = data[ index + 0 ];
 			temp.g = data[ index + 1 ];
 			temp.b = data[ index + 2 ];
@@ -227,7 +230,8 @@ public:
 		return temp;
 	}
 
-	void SetAtXY ( int x, int y, rgba set ) {
+	void SetAtXY ( uint32_t x, uint32_t y, rgba set ) {
+		if ( x < 0 || x >= width || y < 0 || y >= height ) return;
 		uint32_t index = ( x + y * width ) * numChannels;
 		if ( index + 4 <= data.size() ) {
 			data[ index + 0 ] = set.r;
@@ -435,7 +439,7 @@ public:
 	}
 
 	ImageF ( int x, int y, bool randomize = false ) : width( x ), height( y ) {
-		data.resize( width * height * numChannels, 0.0f );
+		data.resize( width * height * numChannels, positiveMax );
 		if ( randomize ) {
 			std::random_device r;
 			std::seed_seq s{ r(), r(), r(), r(), r(), r(), r(), r(), r() };
@@ -543,6 +547,7 @@ public:
 
 	rgbaF GetAtXY ( uint32_t x, uint32_t y ) {
 		rgbaF temp; // initialized with zeroes
+		if ( x < 0 || x >= width || y < 0 || y >= height ) return temp;
 		uint32_t index = ( x + y * width ) * numChannels;
 		if ( index + 4 <= data.size() && index >= 0 && x < width && x >= 0 && y < height && y >= 0 ) {
 			temp.r = data[ index + 0 ];
@@ -554,6 +559,7 @@ public:
 	}
 
 	void SetAtXY ( uint32_t x, uint32_t y, rgbaF set ) {
+		if ( x < 0 || x >= width || y < 0 || y >= height ) return;
 		uint32_t index = ( x + y * width ) * numChannels;
 		if ( index + 4 <= data.size() ) {
 			data[ index + 0 ] = set.r;

@@ -8,35 +8,29 @@
 //  vertices, normals, texcoords, index, material info
 void vertex_cb( void *user_data, float x, float y, float z, float w ) {
 	objLoader *t = reinterpret_cast< objLoader * >( user_data );
-	t->vertices.push_back( glm::vec4( x, y, z, w ) );
+	t->vertices.push_back( vec4( x, y, z, w ) );
 }
 
 void normal_cb( void *user_data, float x, float y, float z ) {
 	objLoader *t = reinterpret_cast< objLoader * >( user_data );
-	t->normals.push_back( glm::vec3( x, y, z ) );
+	t->normals.push_back( vec3( x, y, z ) );
 }
 
 void texcoord_cb( void *user_data, float x, float y, float z ) {
 	objLoader *t = reinterpret_cast< objLoader * >( user_data );
-	t->texcoords.push_back( glm::vec3( x, y, z ) );
+	t->texcoords.push_back( vec3( x, y, z ) );
 }
 
 void index_cb( void *user_data, tinyobj::index_t *indices, int num_indices ) {
 	objLoader *t = reinterpret_cast< objLoader * >( user_data );
 
 	if ( num_indices == 3 ) { // this is a triangle
-	// OBJ uses 1-indexing, convert to 0-indexing
-	t->triangleIndices.push_back( glm::ivec3( indices[ 0 ].vertex_index - 1,
-																						indices[ 1 ].vertex_index - 1,
-																						indices[ 2 ].vertex_index - 1 ) );
-	t->normalIndices.push_back( glm::ivec3( indices[ 0 ].normal_index - 1,
-																					indices[ 1 ].normal_index - 1,
-																					indices[ 2 ].normal_index - 1 ) );
-	t->texcoordIndices.push_back( glm::ivec3( indices[ 0 ].texcoord_index - 1,
-																						indices[ 1 ].texcoord_index - 1,
-																						indices[ 2 ].texcoord_index - 1 ) );
+		// OBJ uses 1-indexing, convert to 0-indexing
+		t->triangleIndices.push_back( ivec3( indices[ 0 ].vertex_index - 1, indices[ 1 ].vertex_index - 1, indices[ 2 ].vertex_index - 1 ) );
+		t->normalIndices.push_back( ivec3( indices[ 0 ].normal_index - 1, indices[ 1 ].normal_index - 1, indices[ 2 ].normal_index - 1 ) );
+		t->texcoordIndices.push_back( ivec3( indices[ 0 ].texcoord_index - 1, indices[ 1 ].texcoord_index - 1, indices[ 2 ].texcoord_index - 1 ) );
 	}
-	// lines, points have a different number of indicies
+	// lines, points, quads have a different number of indicies
 	//  might want to handle these
 }
 

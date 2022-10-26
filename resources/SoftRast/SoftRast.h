@@ -153,11 +153,16 @@ public:
 				depth += bc.y * p1.z;
 				depth += bc.z * p2.z;
 
-				if ( // interesting pattern, reject samples with certain ranges of the barycentric coords
-					( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 ) ||
-					( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.z, 0.5f ) > 0.1618 ) ||
-					( std::fmod( bc.z, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 )
-				) continue;
+				// will need to do this same barycentric interpolation of texcoords, normals, etc
+
+				// compute the color to write
+
+
+				// if ( // interesting pattern, reject samples with certain ranges of the barycentric coords
+				// 	( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 ) ||
+				// 	( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.z, 0.5f ) > 0.1618 ) ||
+				// 	( std::fmod( bc.z, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 )
+				// ) continue;
 
 				if ( Depth.GetAtXY( eval.x, eval.y ).r > depth ) {
 					// write color - start with bc as color, 1.0 alpha - eventually will need to blend with existing color buffer value

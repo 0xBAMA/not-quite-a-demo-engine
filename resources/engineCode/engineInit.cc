@@ -87,6 +87,61 @@ void engine::CreateWindowAndContext () {
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << newline;
 
+	// SoftRast s( WIDTH, WIDTH );
+	//
+	// const int iterations = 1;
+	// for ( int it = 0; it < iterations; it++ ) {
+	// 	const float phi = ( 1.0f + std::sqrt( 5.0f ) ) / 2.0f;
+	// 	const float scale = 0.5f;
+	// 	const vec3 offset = vec3( 0.0f, 0.0f, 0.0f );
+	// 	vec3 a, b, c, d, e, f, g, h, i, j, k, l;
+	// 	mat3 rot = rotation( vec3( 0.0f, 1.0f, 1.0f ), RemapRange( float( it ), 0.0f, float( iterations ), 1.0f, 3.0f ) ) * rotation( vec3( 1.0f, 1.0f, 0.0f ), RemapRange( float( it ), 0.0f, float( iterations ), 1.0f, 1.98f ) );
+	// 	a = rot * vec3( 0.0f, 1.0f * scale, phi * scale ) + offset;
+	// 	e = rot * vec3( 1.0f * scale, phi * scale, 0.0f ) + offset;
+	// 	i = rot * vec3( phi * scale, 0.0f, 1.0f * scale ) + offset;
+	// 	b = rot * vec3( 0.0f, 1.0f * scale, -phi * scale ) + offset;
+	// 	f = rot * vec3( -1.0f * scale, -phi * scale, 0.0f ) + offset;
+	// 	j = rot * vec3( phi * scale, 0.0f, -1.0f * scale ) + offset;
+	// 	c = rot * vec3( 0.0f, -1.0f * scale, phi * scale ) + offset;
+	// 	g = rot * vec3( -1.0f * scale, phi * scale, 0.0f ) + offset;
+	// 	k = rot * vec3( -phi * scale, 0.0f, 1.0f * scale ) + offset;
+	// 	d = rot * vec3( 0.0f, -1.0f * scale, -phi * scale ) + offset;
+	// 	h = rot * vec3( 1.0f * scale, -phi * scale, 0.0f ) + offset;
+	// 	l = rot * vec3( -phi * scale, 0.0f, -1.0f * scale ) + offset;
+	// 	const vec4 color( RemapRange( float( it ), 0.0f, float( iterations ), 0.1f, 0.8f ), RemapRange( float( it ), 0.0f, float( iterations ), 0.1f, 0.8f ), RemapRange( float( it ), 0.0f, float( iterations ), 0.1f, 0.8f ), 1.0f );
+	//
+	// 	s.DrawTriangle( a, g, e, color );
+	// 	s.DrawTriangle( a, i, e, color );
+	// 	s.DrawTriangle( a, c, i, color );
+	// 	s.DrawTriangle( a, c, k, color );
+	// 	s.DrawTriangle( a, g, k, color );
+	// 	s.DrawTriangle( l, b, g, color );
+	// 	s.DrawTriangle( l, g, k, color );
+	// 	s.DrawTriangle( l, f, k, color );
+	// 	s.DrawTriangle( l, d, f, color );
+	// 	s.DrawTriangle( l, d, b, color );
+	// 	s.DrawTriangle( k, f, c, color );
+	// 	s.DrawTriangle( f, h, c, color );
+	// 	s.DrawTriangle( h, i, c, color );
+	// 	s.DrawTriangle( e, j, i, color );
+	// 	s.DrawTriangle( b, g, e, color );
+	// 	s.DrawTriangle( f, h, d, color );
+	// 	s.DrawTriangle( d, h, j, color );
+	// 	s.DrawTriangle( d, b, j, color );
+	// 	s.DrawTriangle( b, j, e, color );
+	// 	s.DrawTriangle( h, i, j, color );
+	// }
+	//
+	// Image depthOutput( WIDTH, WIDTH );
+	// for ( uint32_t x = 0; x < WIDTH; x++ ) {
+	// 	for ( uint32_t y = 0; y < WIDTH; y++ ) {
+	// 		float d = s.Depth.GetAtXY( x, y ).r;
+	// 		uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
+	// 		depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );
+	// 	}
+	// }
+	// depthOutput.Save( "testDepth.png" );
+	// s.Color.Save( "test.png" );
 }
 
 void engine::DisplaySetup () {

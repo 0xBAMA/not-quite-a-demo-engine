@@ -53,6 +53,11 @@ public:
 		// init std::random generator as member variable, for picking blue noise sample point - then sweep along x or y to get low discrepancy sequence
 	}
 
+	vec4 BlueNoiseRef ( ivec2 loc ) {
+		rgba value = BlueNoise.GetAtXY( loc.x % BlueNoise.width, loc.y % BlueNoise.height );
+		return vec4( value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f );
+	}
+
 	const vec3 NDCToPixelCoords ( vec3 NDCCoord ) {
 		return vec3(
 			RemapRange( NDCCoord.x, -1.0f, 1.0f, 0.0f, float( width - 1.0f ) ),
@@ -143,28 +148,29 @@ public:
 		ivec2 eval;
 		for ( eval.x = bboxmin.x; eval.x <= bboxmax.x; eval.x++ ) {
 			for ( eval.y = bboxmin.y; eval.y <= bboxmax.y; eval.y++ ) {
-				// for( n ) jittered samples? tbd
-				vec3 bc = BarycentricCoords( p0, p1, p2, vec3( eval.x /* +jitter */, eval.y /* +jitter */, 0.0f ) );
+
+				// for( n ) jittered samples? tbd, will need to do something to get an alpha value from the n samples
+				vec4 jitter = BlueNoiseRef( eval );
+				vec3 bc = BarycentricCoords( p0, p1, p2, vec3( float( eval.x ) + jitter.x, float( eval.y ) + jitter.y, 0.0f ) );
 
 				if ( bc.x < 0 || bc.y < 0 || bc.z < 0 ) continue; // any barycentric coord being negative means degenerate triangle or sample point outside triangle
+
+				// if ( // interesting experiment, reject samples with certain ranges of the barycentric coords
+				// 	( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 ) ||
+				// 	( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.z, 0.5f ) > 0.1618 ) ||
+				// 	( std::fmod( bc.z, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 )
+				// ) continue;
 
 				float depth = 0.0f; // barycentric interpolation of depth
 				depth += bc.x * p0.z;
 				depth += bc.y * p1.z;
 				depth += bc.z * p2.z;
 
-				// will need to do this same barycentric interpolation of texcoords, normals, etc
-
-				// compute the color to write
-
-
-				// if ( // interesting pattern, reject samples with certain ranges of the barycentric coords
-				// 	( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 ) ||
-				// 	( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.z, 0.5f ) > 0.1618 ) ||
-				// 	( std::fmod( bc.z, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 )
-				// ) continue;
-
 				if ( Depth.GetAtXY( eval.x, eval.y ).r > depth ) {
+					// will need to do this same barycentric interpolation of texcoords, normals, etc with bc
+
+					// compute the color to write, texturing, etc, etc
+
 					// write color - start with bc as color, 1.0 alpha - eventually will need to blend with existing color buffer value
 					Color.SetAtXY( eval.x, eval.y, { uint8_t( bc.x * 255.0f ), uint8_t( bc.y * 255.0f ), uint8_t( bc.z * 255.0f ), 255 } );
 					Depth.SetAtXY( eval.x, eval.y, { depth, 0.0f, 0.0f, 0.0f } );

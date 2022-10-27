@@ -65,7 +65,7 @@ public:
 
 	vec4 BlueNoiseRef ( ivec2 loc ) {
 		rgba value = BlueNoise.GetAtXY( loc.x % BlueNoise.width, loc.y % BlueNoise.height );
-		return vec4( value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f );
+		return vec4( value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f ) - vec4( 0.5f );
 	}
 
 	Image currentTex;

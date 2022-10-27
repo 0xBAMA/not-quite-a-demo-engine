@@ -124,16 +124,18 @@ void engine::CreateWindowAndContext () {
 			}
 
 			cout << "model with " << m.objModel[ 0 ] << " and tex " << m.texPaths[ 0 ] << newline;
-			SoftRast s( WIDTH, WIDTH );
+			// SoftRast s( WIDTH, WIDTH );
+			SoftRast s( 640, 640 );
 			// s.DrawModel( "../Simulation Mode/High LoD/x2esr_day/" );
 
 			Tick();
 			s.DrawModel( m.objModel[ 0 ], m.texPaths[ 0 ], glm::mat3( 0.0042 ) * rotation( vec3( 1.0f, 0.0f, 1.0f ), 2.2f ) * rotation( vec3( 1.0f, 1.0f, 0.0f ), 1.1f ) * rotation( vec3( 0.0f, 1.0f, 0.0f ), 2.3f ) );
 			cout << newline << Tock() << " to render" << newline << newline;
 
-			Image depthOutput( WIDTH, WIDTH );
-			for ( uint32_t x = 0; x < WIDTH; x++ ) {
-				for ( uint32_t y = 0; y < WIDTH; y++ ) {
+			// Image depthOutput( WIDTH, WIDTH );
+			Image depthOutput( 640, 640 );
+			for ( uint32_t x = 0; x < depthOutput.width; x++ ) {
+				for ( uint32_t y = 0; y < depthOutput.height; y++ ) {
 					float d = s.Depth.GetAtXY( x, y ).r;
 					uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
 					depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );

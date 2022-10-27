@@ -2,7 +2,6 @@
 #define OBJLOAD
 
 #include "tiny_obj_loader.h"
-#include "../engineCode/includes.h"
 
 class objLoader {
 public:

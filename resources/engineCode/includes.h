@@ -76,9 +76,6 @@ using glm::mat4;
 // simple std::chrono wrapper
 #include "Timer.h"
 
-// software rasterizer reimplementation
-#include "../SoftRast/SoftRast.h"
-
 // keyboard input handling
 // #include "inputHandler.h"
 
@@ -90,6 +87,9 @@ using glm::mat4;
 
 // wrapper for TinyOBJLoader
 #include "../TinyOBJLoader/objLoader.h"
+
+// software rasterizer reimplementation
+#include "../SoftRast/SoftRast.h"
 
 // shader compilation wrapper
 #include "shaders/lib/shaderWrapper.h"

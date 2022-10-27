@@ -94,7 +94,7 @@ void engine::CreateWindowAndContext () {
 
 	std::vector< modelBatch > baseModels;
 
-	for ( const std::filesystem::directory_entry& file : std::filesystem::recursive_directory_iterator( "../Simulation Mode/" ) ) {
+	for ( const std::filesystem::directory_entry& file : std::filesystem::recursive_directory_iterator( "../SimulationMode/HighLoD" ) ) {
 		std::stringstream fn;
 		fn << file;
 		string fileName = fn.str();
@@ -105,21 +105,43 @@ void engine::CreateWindowAndContext () {
 			modelBatch m;
 			for ( const std::filesystem::directory_entry& fileInner : std::filesystem::recursive_directory_iterator( file ) ) {
 				if ( !fileInner.is_directory() ) {
-					if ( fileInner.path().extension().string() == ".TGA" ) {
+					if ( fileInner.path().extension().string() == ".png" ) {
 						m.texPaths.push_back( fileInner.path().string() );
+
+					} else if ( fileInner.path().extension().string() == ".TGA" ) {
+						// std::filesystem::path fileInnerE = fileInner;
+						// cout << "convert " << fileInner.path().string() << " " <<
+						// 	fileInnerE.replace_extension( ".png" ).string() << newline;
+
 					} else if ( fileInner.path().extension().string() == ".OBJ" ) {
 						m.objModel.push_back( fileInner.path().string() );
+
 					} else {
 						cout << "unexpected extension: " << fileInner.path().string() << newline;
+
 					}
 				}
-
-				// SoftRast s( WIDTH, WIDTH );
-				// s.DrawModel( "../Simulation Mode/High LoD/x2esr_day/" );
-				// depthOutput.Save( "testDepth.png" );
-				// s.Color.Save( "test.png" );
-
 			}
+
+			cout << "model with " << m.objModel[ 0 ] << " and tex " << m.texPaths[ 0 ] << newline;
+			SoftRast s( WIDTH, WIDTH );
+			// s.DrawModel( "../Simulation Mode/High LoD/x2esr_day/" );
+
+			Tick();
+			s.DrawModel( m.objModel[ 0 ], m.texPaths[ 0 ], glm::mat3( 0.0042 ) * rotation( vec3( 1.0f, 0.0f, 1.0f ), 2.2f ) * rotation( vec3( 1.0f, 1.0f, 0.0f ), 1.1f ) * rotation( vec3( 0.0f, 1.0f, 0.0f ), 2.3f ) );
+			cout << newline << Tock() << " to render" << newline << newline;
+
+			Image depthOutput( WIDTH, WIDTH );
+			for ( uint32_t x = 0; x < WIDTH; x++ ) {
+				for ( uint32_t y = 0; y < WIDTH; y++ ) {
+					float d = s.Depth.GetAtXY( x, y ).r;
+					uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
+					depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );
+				}
+			}
+			depthOutput.Save( "testDepth.png" );
+			s.Color.Save( "test.png" );
+			// break;
 			baseModels.push_back( m );
 		}
 	}

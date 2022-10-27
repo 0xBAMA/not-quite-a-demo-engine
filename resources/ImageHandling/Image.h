@@ -102,7 +102,7 @@ public:
 		if ( path.substr( path.find_last_of( "." ) ) != ".png" ) loader = STB;
 		Clear(); // remove existing data
 		switch ( loader ) {
-			case FPNG:		result = Load_fpng( path ); 		break;
+			case FPNG:		result = Load_fpng( path ); 	break;
 			case STB:		result = Load_stb( path ); 		break;
 			case LODEPNG:	result = Load_lodepng( path ); 	break;
 			default: break;

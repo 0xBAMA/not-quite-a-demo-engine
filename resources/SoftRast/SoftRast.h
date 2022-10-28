@@ -128,12 +128,12 @@ public:
 			// interpolated depth value
 			float depth = RemapRange( float( x ), float( x0 ), float( x1 ), z0, z1 );
 			if ( steep ) {
-				if ( Depth.GetAtXY( y, x ).r > depth ) {
+				if ( Depth.GetAtXY( y, x ).r >= depth ) {
 					Color.SetAtXY( y, x, RGBAFromVec4( color ) );
 					Depth.SetAtXY( y, x, { depth, 0.0f, 0.0f, 0.0f } );
 				}
 			} else {
-				if ( Depth.GetAtXY( x, y ).r > depth ) {
+				if ( Depth.GetAtXY( x, y ).r >= depth ) {
 					Color.SetAtXY( x, y, RGBAFromVec4( color ) );
 					Depth.SetAtXY( x, y, { depth, 0.0f, 0.0f, 0.0f } );
 				}
@@ -169,12 +169,13 @@ public:
 			bboxmax[ j ] = std::min( clamp[ j ], std::max( bboxmax[ j ], t.p2[ j ] ) );
 		}
 
+		const bool allowPrimitiveJitter = false;
 		ivec2 eval;
 		for ( eval.x = bboxmin.x; eval.x <= bboxmax.x; eval.x++ ) {
 			for ( eval.y = bboxmin.y; eval.y <= bboxmax.y; eval.y++ ) {
 
 				// for( n ) jittered samples? tbd, will need to do something to get an alpha value from the n samples
-				vec4 jitter = BlueNoiseRef( eval );
+				vec4 jitter = allowPrimitiveJitter ? BlueNoiseRef( eval ) : vec4( 0.0f );
 				vec3 bc = BarycentricCoords( t.p0, t.p1, t.p2, vec3( float( eval.x ) + jitter.x, float( eval.y ) + jitter.y, 0.0f ) );
 
 				if ( bc.x < 0 || bc.y < 0 || bc.z < 0 ) continue; // any barycentric coord being negative means degenerate triangle or sample point outside triangle
@@ -220,7 +221,7 @@ public:
 
 		LoadTex( texturePath );
 
-		cout << "image loaded " << currentTex.width << " by " << currentTex.height << newline;
+		// cout << "image loaded " << currentTex.width << " by " << currentTex.height << newline;
 
 		for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
 			vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
@@ -245,6 +246,33 @@ public:
 			// DrawTriangle ( p0x, p1x, p2x, vec4( 1.0f ) );
 			DrawTriangle ( t, vec4( 1.0f ) );
 		}
+
+		for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
+			vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
+			vec4 p1 = o.vertices[ int( o.triangleIndices[ i ].y ) ];
+			vec4 p2 = o.vertices[ int( o.triangleIndices[ i ].z ) ];
+			vec3 p0x( p0.x, p0.y, p0.z );
+			vec3 p1x( p1.x, p1.y, p1.z );
+			vec3 p2x( p2.x, p2.y, p2.z );
+
+			const vec3 offset = vec3( 0.0, 0.0, -0.01 );
+			p0x = ( transform * p0x ) + offset;
+			p1x = ( transform * p1x ) + offset;
+			p2x = ( transform * p2x ) + offset;
+
+			triangle t;
+			t.p0 = p0x;
+			t.p1 = p1x;
+			t.p2 = p2x;
+			t.tc0 = o.texcoords[ int( o.texcoordIndices[ i ].x ) ];
+			t.tc1 = o.texcoords[ int( o.texcoordIndices[ i ].y ) ];
+			t.tc2 = o.texcoords[ int( o.texcoordIndices[ i ].z ) ];
+
+			DrawLine ( p0x, p1x, vec4( 1.0f ) );
+			DrawLine ( p0x, p2x, vec4( 1.0f ) );
+			DrawLine ( p2x, p1x, vec4( 1.0f ) );
+		}
+
 	}
 
 	// dimensions

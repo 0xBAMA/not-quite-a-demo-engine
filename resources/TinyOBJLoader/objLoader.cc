@@ -99,11 +99,11 @@ void objLoader::LoadOBJ( std::string fileName ) {
 		std::cerr << "Failed to parse .obj at location " << fileName << std::endl;
 	}
 
-	cout << "vertex list length: " << vertices.size() << endl;
-	cout << "normal list length: " << normals.size() << endl;
-	cout << "texcoord list length: " << texcoords.size() << endl;
-
-	cout << "vertex index list length: " << triangleIndices.size() << endl;
-	cout << "normal index length: " << normalIndices.size() << endl;
-	cout << "texcoord index length: " << texcoordIndices.size() << endl;
+	// cout << "vertex list length: " << vertices.size() << endl;
+	// cout << "normal list length: " << normals.size() << endl;
+	// cout << "texcoord list length: " << texcoords.size() << endl;
+	//
+	// cout << "vertex index list length: " << triangleIndices.size() << endl;
+	// cout << "normal index length: " << normalIndices.size() << endl;
+	// cout << "texcoord index length: " << texcoordIndices.size() << endl;
 }

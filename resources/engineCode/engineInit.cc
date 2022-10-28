@@ -122,33 +122,41 @@ void engine::CreateWindowAndContext () {
 					}
 				}
 			}
-
-			cout << "model with " << m.objModel[ 0 ] << " and tex " << m.texPaths[ 0 ] << newline;
-			// SoftRast s( WIDTH, WIDTH );
-			SoftRast s( 640, 640 );
-			// s.DrawModel( "../Simulation Mode/High LoD/x2esr_day/" );
-
-			Tick();
-			s.DrawModel( m.objModel[ 0 ], m.texPaths[ 0 ], glm::mat3( 0.0042 ) * rotation( vec3( 1.0f, 0.0f, 1.0f ), 2.2f ) * rotation( vec3( 1.0f, 1.0f, 0.0f ), 1.1f ) * rotation( vec3( 0.0f, 1.0f, 0.0f ), 2.3f ) );
-			cout << newline << Tock() << " to render" << newline << newline;
-
-			// Image depthOutput( WIDTH, WIDTH );
-			Image depthOutput( 640, 640 );
-			for ( uint32_t x = 0; x < depthOutput.width; x++ ) {
-				for ( uint32_t y = 0; y < depthOutput.height; y++ ) {
-					float d = s.Depth.GetAtXY( x, y ).r;
-					uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
-					depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );
-				}
-			}
-			depthOutput.Save( "testDepth.png" );
-			s.Color.Save( "test.png" );
-			// break;
 			baseModels.push_back( m );
 		}
 	}
 
 	// then we can iterate through and generate previews
+	const mat3 transform = glm::mat3( 0.004 ) *
+		rotation( vec3( 1.0f, 0.0f, 1.0f ), 2.2f ) *
+		rotation( vec3( 1.0f, 1.0f, 0.0f ), 1.1f ) *
+		rotation( vec3( 0.0f, 1.0f, 0.0f ), 2.3f );
+
+	for  ( auto& modelBase : baseModels ) {
+		for ( auto& texx : modelBase.texPaths ) {
+
+			SoftRast s( 4000, 4000 );
+			cout << "model with " << modelBase.objModel[ 0 ] << " and tex " << texx << newline;
+
+			Tick();
+			s.DrawModel( modelBase.objModel[ 0 ], texx, transform );
+			cout << Tock() << " to render" << newline << newline;
+
+			// Image depthOutput( 640, 640 );
+			// for ( uint32_t x = 0; x < depthOutput.width; x++ ) {
+			// 	for ( uint32_t y = 0; y < depthOutput.height; y++ ) {
+			// 		float d = s.Depth.GetAtXY( x, y ).r;
+			// 		uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
+			// 		depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );
+			// 	}
+			// }
+
+			// depthOutput.Save( "testDepth.png" );
+			string file = texx.substr( texx.find_last_of( "/" ) + 1 );
+			s.Color.Save( "../SimulationMode/PreviewWireframe/" file );
+		}
+	}
+
 }
 
 void engine::DisplaySetup () {

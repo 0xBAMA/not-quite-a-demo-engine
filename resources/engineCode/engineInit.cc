@@ -136,7 +136,7 @@ void engine::DisplaySetup () {
 	cout << T_GREEN << "done." << RESET << newline;
 
 
-	const uint32_t dimension = 256;
+	const uint32_t dimension = 5000;
 	SoftRast s( dimension, dimension );
 
 	mat3 transform = rotation( vec3( 1.0f, 0.0f, 0.0f ), pi ) * mat3( 0.0005f );

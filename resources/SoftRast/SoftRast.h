@@ -86,17 +86,27 @@ public:
 		return vec4( value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f ) - vec4( 0.5f );
 	}
 
-	Image currentTex;
-	void LoadTex ( string texPath ) { currentTex = Image( texPath ); }
-	vec4 TexRef ( vec2 texCoord ) {
-		uint32_t x = uint32_t( texCoord.x * float( currentTex.width ) );
-		uint32_t y = uint32_t( texCoord.y * float( currentTex.height ) );
-		rgba val = currentTex.GetAtXY( x, y );
+	std::vector<Image> texSet;
+	void LoadTex ( string texPath ) {
+		if ( !texPath.empty() ) {
+			cout << "    loading" << endl;
+			texSet.push_back( Image( texPath, STB ) );
+			cout << "    done" << endl << endl;
+		} else {
+			cout << "    image defaulting" << endl;
+			Image temp;
+			texSet.push_back( temp );
+			cout << "    done" << endl << endl;
+		}
+	}
+	vec4 TexRef ( vec2 texCoord, int id ) {
+		uint32_t x = uint32_t( texCoord.x * float( texSet[ id ].width ) );
+		uint32_t y = uint32_t( texCoord.y * float( texSet[ id ].height ) );
+		rgba val = texSet[ id ].GetAtXY( x, y );
 		vec4 returnVal = vec4( float( val.r ) / 255.0f, float( val.g ) / 255.0f, float( val.b ) / 255.0f, float( val.a ) / 255.0f );
 		// cout << returnVal.x << " " << returnVal.y << " " << returnVal.z << " " << returnVal.w << newline;
 		return returnVal;
 	}
-
 
 	const vec3 NDCToPixelCoords ( vec3 NDCCoord ) {
 		return vec3(
@@ -166,7 +176,7 @@ public:
 
 	// draw triangle
 	// void DrawTriangle ( vec3 p0, vec3 p1, vec3 p2, vec4 color ) { // eventually extend to include texcoords + normals
-	void DrawTriangle ( triangle t, vec4 color ) { // eventually extend to include texcoords + normals
+	void DrawTriangle ( triangle t ) { // eventually extend to include texcoords + normals
 		vec2 bboxmin(  std::numeric_limits< float >::max(),  std::numeric_limits< float >::max() );
 		vec2 bboxmax( -std::numeric_limits< float >::max(), -std::numeric_limits< float >::max() );
 		vec2 clamp( width - 1, height - 1 );
@@ -187,6 +197,26 @@ public:
 			bboxmax[ j ] = std::min( clamp[ j ], std::max( bboxmax[ j ], t.p2[ j ] ) );
 		}
 
+		constexpr bool verboseDraw = false;
+		if ( verboseDraw ) {
+			cout << "Drawing triangle, with:" << newline;
+			cout << "[vertex 0]" << newline;
+			cout << "  Position: " << t.p0.x << " " << t.p0.y << " " << t.p0.z << newline;
+			cout << "  Normal:   " << t.n0.x << " " << t.n0.y << " " << t.n0.z << newline;
+			cout << "  TexCoord: " << t.t0.x << " " << t.t0.y << " " << t.t0.z << newline;
+			cout << "  Color:    " << t.c0.x << " " << t.c0.y << " " << t.c0.z << newline;
+			cout << "[vertex 1]" << newline;
+			cout << "  Position: " << t.p1.x << " " << t.p1.y << " " << t.p1.z << newline;
+			cout << "  Normal:   " << t.n1.x << " " << t.n1.y << " " << t.n1.z << newline;
+			cout << "  TexCoord: " << t.t1.x << " " << t.t1.y << " " << t.t1.z << newline;
+			cout << "  Color:    " << t.c1.x << " " << t.c1.y << " " << t.c1.z << newline;
+			cout << "[vertex 2]" << newline;
+			cout << "  Position: " << t.p2.x << " " << t.p2.y << " " << t.p2.z << newline;
+			cout << "  Normal:   " << t.n2.x << " " << t.n2.y << " " << t.n2.z << newline;
+			cout << "  TexCoord: " << t.t2.x << " " << t.t2.y << " " << t.t2.z << newline;
+			cout << "  Color:    " << t.c2.x << " " << t.c2.y << " " << t.c2.z << newline << newline;
+		}
+
 		const bool allowPrimitiveJitter = false;
 		ivec2 eval;
 		for ( eval.x = bboxmin.x; eval.x <= bboxmax.x; eval.x++ ) {
@@ -196,7 +226,8 @@ public:
 				vec4 jitter = allowPrimitiveJitter ? BlueNoiseRef( eval ) : vec4( 0.0f );
 				vec3 bc = BarycentricCoords( t.p0, t.p1, t.p2, vec3( float( eval.x ) + jitter.x, float( eval.y ) + jitter.y, 0.0f ) );
 
-				if ( bc.x < 0 || bc.y < 0 || bc.z < 0 ) continue; // any barycentric coord being negative means degenerate triangle or sample point outside triangle
+				// any barycentric coord being negative means degenerate triangle or sample point outside triangle
+				if ( bc.x < 0 || bc.y < 0 || bc.z < 0 ) continue;
 
 				// if ( // interesting experiment, reject samples with certain ranges of the barycentric coords
 				// 	( std::fmod( bc.x, 0.5f ) > 0.1618 && std::fmod( bc.y, 0.5f ) > 0.1618 ) ||
@@ -209,27 +240,37 @@ public:
 				depth += bc.y * t.p1.z;
 				depth += bc.z * t.p2.z;
 
-				vec2 texCoord = vec2( 0.0f );
-				texCoord += bc.x * vec2( t.t0.x, t.t0.y );
-				texCoord += bc.y * vec2( t.t1.x, t.t1.y );
-				texCoord += bc.z * vec2( t.t2.x, t.t2.y );
+				vec3 texCoord = vec3( 0.0f );
+				texCoord += bc.x * vec3( t.t0.x, t.t0.y, 0.0f );
+				texCoord += bc.y * vec3( t.t1.x, t.t1.y, 0.0f );
+				texCoord += bc.z * vec3( t.t2.x, t.t2.y, 0.0f );
+				texCoord.z = t.t0.z; // single material per tri
 
-				if ( depth < 0.0f ) return;
+				vec3 normal = vec3( 0.0f );
+				normal += bc.x * vec3( t.n0.x, t.n0.y, t.n0.z );
+				normal += bc.y * vec3( t.n1.x, t.n1.y, t.n1.z );
+				normal += bc.z * vec3( t.n2.x, t.n2.y, t.n2.z );
+
+				if ( depth < 0.0f ) {
+					return; // cheapo clipping plane
+				}
 
 				if ( Depth.GetAtXY( eval.x, eval.y ).r > depth ) {
-					// will need to do this same barycentric interpolation of texcoords, normals, etc with bc
-
 					// compute the color to write, texturing, etc, etc
 
 					// write color - start with bc as color, 1.0 alpha - eventually will need to blend with existing color buffer value
 					// Color.SetAtXY( eval.x, eval.y, { uint8_t( bc.x * 255.0f ), uint8_t( bc.y * 255.0f ), uint8_t( bc.z * 255.0f ), 255 } );
 					// Color.SetAtXY( eval.x, eval.y, { uint8_t( texCoord.x * 255.0f ), uint8_t( texCoord.y * 255.0f ), 0, 255 } );
 
-					// vec4 texRef = TexRef( vec2( texCoord.x, 1.0f - texCoord.y ) );
-					// if ( texRef.a == 0.0f ) continue; // reject zero alpha samples - still need to blend
-					// Color.SetAtXY( eval.x, eval.y, { uint8_t( texRef.x * 255 ), uint8_t( texRef.y * 255 ), uint8_t( texRef.z * 255 ), uint8_t( texRef.w * 255 ) } );
+					vec4 texRef = TexRef( vec2( texCoord.x, 1.0f - texCoord.y ), texCoord.z );
+					// if ( texRef.a == 0.0f ) {
+					// 	continue; // reject zero alpha samples - still need to implement blending
+					// }
 
-					Color.SetAtXY( eval.x, eval.y, { uint8_t( color.x * 255 ), uint8_t( color.y * 255 ), uint8_t( color.z * 255 ), uint8_t( color.w * 255 ) } );
+					// vec4 color( texCoord.x, texCoord.y, texCoord.z / texSet.size(), 1.0f );
+					vec4 color( texRef.x, texRef.y, texRef.z, 1.0f );
+
+					Color.SetAtXY( eval.x, eval.y, RGBAFromVec4( color ) );
 					Depth.SetAtXY( eval.x, eval.y, { depth, 0.0f, 0.0f, 0.0f } );
 				}
 			}
@@ -262,92 +303,101 @@ public:
 		auto& shapes = reader.GetShapes();
 		auto& materials = reader.GetMaterials();
 
+		// iterating through the materials
+		for ( size_t materialID = 0; materialID < materials.size(); materialID++ ) {
+			cout << "Material " << materialID << " is called " << materials[ materialID ].name << newline;
 
-		std::random_device rng;
-		std::seed_seq seedSeq{ rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng() };
-		auto generator = std::mt19937_64( seedSeq );
-		std::uniform_real_distribution< float > pick( 0.0f, 1.0f );
+			string diffuseTexname = materials[ materialID ].diffuse_texname;
+			cout << "  diffuse texture is: " << diffuseTexname << newline << newline;
 
-		std::vector<vec4> colors;
-		for ( size_t i = 0; i < materials.size(); i++ ) {
-			colors.push_back( vec4( pick( generator ), pick( generator ), pick( generator ), 1.0f ) );
+			LoadTex( diffuseTexname.empty() ? string() : mtlSearchPath + diffuseTexname );
 		}
 
-		vec3 mins = vec3(  10000.0f );
-		vec3 maxs = vec3( -10000.0f );
+		// iterating through shapes in the file
+		for ( size_t shapeID = 0; shapeID < shapes.size(); shapeID++ ) {
 
-		for ( size_t shapeID = 0; shapeID < shapes.size(); shapeID++ ) { // shapes in the file
-
+			// for indexing into the mesh's index array
 			size_t indexOffset = 0;
-			for ( size_t faceID = 0; faceID < shapes[ shapeID ].mesh.num_face_vertices.size(); faceID++ ) { // faces in the mesh
+
+			// iterating through faces in the mesh
+			for ( size_t faceID = 0; faceID < shapes[ shapeID ].mesh.num_face_vertices.size(); faceID++ ) {
 
 				triangle t; // current triangle to be drawn
 
-				size_t numFaceVertices = size_t( shapes[ shapeID ].mesh.num_face_vertices[ faceID ] );
-				for ( size_t vertexID = 0; vertexID < numFaceVertices; vertexID++ ) { // vertices in the face
+				// per-face material ( texture select )
+				size_t texID = shapes[ shapeID ].mesh.material_ids[ faceID ];
 
-					// we got triangles
+				// this should basically always be 3, with the triangulate flag set ( default setting )
+				size_t numFaceVertices = size_t( shapes[ shapeID ].mesh.num_face_vertices[ faceID ] );
+
+				// iterating through vertices in the face
+				for ( size_t vertexID = 0; vertexID < numFaceVertices; vertexID++ ) {
+
+				// we got triangles
 					// access to vertex position data
 					tinyobj::index_t idx = shapes[ shapeID ].mesh.indices[ indexOffset + vertexID ];
-					tinyobj::real_t vx = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 0 ];
-					tinyobj::real_t vy = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 1 ];
-					tinyobj::real_t vz = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 2 ];
+					tinyobj::real_t vx, vy, vz;
+					vx = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 0 ];
+					vy = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 1 ];
+					vz = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 2 ];
 
-					mins.x = std::min( mins.x, vx );
-					mins.y = std::min( mins.y, vy );
-					mins.z = std::min( mins.z, vz );
+					tinyobj::real_t nx, ny, nz;
+					if ( idx.normal_index >= 0 ) { // Check if `normal_index` is zero or positive. negative = no normal data
+						nx = attributes.normals[ 3 * size_t( idx.normal_index ) + 0 ];
+						ny = attributes.normals[ 3 * size_t( idx.normal_index ) + 1 ];
+						nz = attributes.normals[ 3 * size_t( idx.normal_index ) + 2 ];
+					}
 
-					maxs.x = std::max( maxs.x, vx );
-					maxs.y = std::max( maxs.y, vy );
-					maxs.z = std::max( maxs.z, vz );
+					tinyobj::real_t tx, ty;
+					if ( idx.texcoord_index >= 0 ) { // Check if `texcoord_index` is zero or positive. negative = no texcoord data
+						tx = attributes.texcoords[ 2 * size_t( idx.texcoord_index ) + 0 ];
+						ty = attributes.texcoords[ 2 * size_t( idx.texcoord_index ) + 1 ];
+						// pack the material id in the third element
+					}
 
-					// if ( idx.normal_index >= 0 ) { // Check if `normal_index` is zero or positive. negative = no normal data
-					// 	tinyobj::real_t nx = attributes.normals[ 3 * size_t( idx.normal_index ) + 0 ];
-					// 	tinyobj::real_t ny = attributes.normals[ 3 * size_t( idx.normal_index ) + 1 ];
-					// 	tinyobj::real_t nz = attributes.normals[ 3 * size_t( idx.normal_index ) + 2 ];
-					// }
+					tinyobj::real_t red, green, blue;
+					if ( idx.vertex_index >= 0 ) { // Check if `vertex_index` is zero or positive. negative = no vertex color data
+						red   = attributes.colors[ 3 * size_t( idx.vertex_index ) + 0 ];
+						green = attributes.colors[ 3 * size_t( idx.vertex_index ) + 1 ];
+						blue  = attributes.colors[ 3 * size_t( idx.vertex_index ) + 2 ];
+					}
 
-					// if ( idx.texcoord_index >= 0 ) { // Check if `texcoord_index` is zero or positive. negative = no texcoord data
-					// 	tinyobj::real_t tx = attributes.texcoords[ 2 * size_t( idx.texcoord_index ) + 0 ];
-					// 	tinyobj::real_t ty = attributes.texcoords[ 2 * size_t( idx.texcoord_index ) + 1 ];
-					// }
-
-					// // Optional: vertex colors
-					// if ( idx.vertex_index >= 0 ) { // Check if `texcoord_index` is zero or positive. negative = no texcoord data
-					// 	tinyobj::real_t red   = attributes.colors[ 3 * size_t( idx.vertex_index ) + 0 ];
-					// 	tinyobj::real_t green = attributes.colors[ 3 * size_t( idx.vertex_index ) + 1 ];
-					// 	tinyobj::real_t blue  = attributes.colors[ 3 * size_t( idx.vertex_index ) + 2 ];
-					// }
 
 					switch ( vertexID ) {
 						case 0:
 							t.p0 = transform * vec3( vx, vy, vz );
+							t.n0 = vec3( nx, ny, nz );
+							t.t0 = vec3( tx, ty, texID );
+							t.c0 = vec3( red, green, blue );
 							break;
 
 						case 1:
 							t.p1 = transform * vec3( vx, vy, vz );
+							t.n1 = vec3( nx, ny, nz );
+							t.t1 = vec3( tx, ty, texID );
+							t.c1 = vec3( red, green, blue );
 							break;
 
 						case 2:
 							t.p2 = transform * vec3( vx, vy, vz );
+							t.n2 = vec3( nx, ny, nz );
+							t.t2 = vec3( tx, ty, texID );
+							t.c2 = vec3( red, green, blue );
 							break;
 
-						default:
+						default: // should not hit this, because of triangulate flag
 							cout << "vertex out of range" << newline;
 							break;
 					}
 				}
-				// increment indexing
+
+				// increment index array indexing by ( what should always be 3 )
 				indexOffset += numFaceVertices;
 
-				// per-face material
-
-				// draw it with a color based on the material index
-				DrawTriangle( t, colors[ shapes[ shapeID ].mesh.material_ids[ faceID ] ] ); // this is the material id for the triangle ( texture select )
+				// do it
+				DrawTriangle( t );
 			}
 		}
-		cout << "mins " << mins.x << " " << mins.y << " " << mins.z << newline;
-		cout << "maxs " << maxs.x << " " << maxs.y << " " << maxs.z << newline;
 	}
 
 

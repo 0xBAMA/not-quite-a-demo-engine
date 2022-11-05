@@ -27,6 +27,7 @@ using std::cout;
 using std::endl;
 using std::flush;
 using std::string;
+using std::stringstream;
 constexpr char newline = '\n';
 
 // pi definition - definitely sufficient precision
@@ -123,8 +124,11 @@ using XMLDocument = tinyxml2::XMLDocument;
 // #define WIDTH 1280
 // #define HEIGHT 720
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 768
+#define HEIGHT 768
+
+// #define WIDTH 1920
+// #define HEIGHT 1080
 
 struct colorGradeParameters {
 	int tonemapMode = 6;

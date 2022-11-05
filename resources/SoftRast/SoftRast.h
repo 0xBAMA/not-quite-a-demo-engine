@@ -90,7 +90,13 @@ public:
 	void LoadTex ( string texPath ) {
 		if ( !texPath.empty() ) {
 			cout << "    loading" << endl;
-			texSet.push_back( Image( texPath, STB ) );
+			Image temp( texPath );
+
+			// stringstream ss;
+			// ss << texSet.size() << ".png";
+			// temp.Save( ss.str() );
+
+			texSet.push_back( temp );
 			cout << "    done" << endl << endl;
 		} else {
 			cout << "    image defaulting" << endl;
@@ -217,7 +223,7 @@ public:
 			cout << "  Color:    " << t.c2.x << " " << t.c2.y << " " << t.c2.z << newline << newline;
 		}
 
-		const bool allowPrimitiveJitter = false;
+		constexpr bool allowPrimitiveJitter = false;
 		ivec2 eval;
 		for ( eval.x = bboxmin.x; eval.x <= bboxmax.x; eval.x++ ) {
 			for ( eval.y = bboxmin.y; eval.y <= bboxmax.y; eval.y++ ) {
@@ -251,21 +257,17 @@ public:
 				normal += bc.y * vec3( t.n1.x, t.n1.y, t.n1.z );
 				normal += bc.z * vec3( t.n2.x, t.n2.y, t.n2.z );
 
-				if ( depth < 0.0f ) {
+				if ( depth < -0.2f ) {
 					return; // cheapo clipping plane
 				}
 
-				if ( Depth.GetAtXY( eval.x, eval.y ).r > depth ) {
-					// compute the color to write, texturing, etc, etc
+				if ( Depth.GetAtXY( eval.x, eval.y ).r > depth ) { // compute the color to write, texturing, etc, etc
 
-					// write color - start with bc as color, 1.0 alpha - eventually will need to blend with existing color buffer value
-					// Color.SetAtXY( eval.x, eval.y, { uint8_t( bc.x * 255.0f ), uint8_t( bc.y * 255.0f ), uint8_t( bc.z * 255.0f ), 255 } );
-					// Color.SetAtXY( eval.x, eval.y, { uint8_t( texCoord.x * 255.0f ), uint8_t( texCoord.y * 255.0f ), 0, 255 } );
-
-					vec4 texRef = TexRef( vec2( texCoord.x, 1.0f - texCoord.y ), texCoord.z );
-					// if ( texRef.a == 0.0f ) {
-					// 	continue; // reject zero alpha samples - still need to implement blending
-					// }
+					vec4 texRef = TexRef( glm::mod( vec2( texCoord.x, 1.0f - texCoord.y ), vec2( 1.0f ) ), texCoord.z );
+					// vec4 texRef = TexRef( vec2( texCoord.x, 1.0f - texCoord.y ), texCoord.z );
+					if ( texRef.a == 0.0f ) {
+						continue; // reject zero alpha samples - still need to implement blending
+					}
 
 					// vec4 color( texCoord.x, texCoord.y, texCoord.z / texSet.size(), 1.0f );
 					vec4 color( texRef.x, texRef.y, texRef.z, 1.0f );
@@ -287,6 +289,8 @@ public:
 		readerConfig.mtl_search_path = mtlSearchPath;
 
 		tinyobj::ObjReader reader;
+
+		Tick();
 
 		// report any errors or warnings
 		if ( !reader.ParseFromFile( modelPath, readerConfig ) ) {
@@ -395,10 +399,20 @@ public:
 				indexOffset += numFaceVertices;
 
 				// do it
-				DrawTriangle( t );
+				triangles.push_back( t );
 			}
 		}
+
+		cout << "loading took " << Tock() / 1000.0 << "ms" << newline;
+
+		Tick();
+		for ( auto& t : triangles ) {
+			DrawTriangle( t );
+		}
+		cout << "drawing took " << Tock() / 1000.0 << "ms" << newline;
 	}
+
+	std::vector<triangle> triangles;
 
 
 	// dimensions

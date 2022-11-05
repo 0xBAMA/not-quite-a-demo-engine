@@ -37,15 +37,31 @@ static const vec3 BarycentricCoords ( vec3 p0, vec3 p1, vec3 p2, vec3 P ) {
 	return vec3( -1.0f, 1.0f, 1.0f );	// in this case generate negative coordinates, it will be thrown away by the rasterizer
 }
 
-static const mat3 rotation( vec3 a, float angle ) { //thanks to Neil Mendoza via http://www.neilmendoza.com/glsl-rotation-about-an-arbitrary-axis/
+static const mat3 rotation( vec3 a, float angle ) {
 	a = glm::normalize( a ); //a is the axis
 	float s = sin( angle );
 	float c = cos( angle );
 	float oc = 1.0f - c;
-	return mat3(oc * a.x * a.x + c,         oc * a.x * a.y - a.z * s,  oc * a.z * a.x + a.y * s,
-				oc * a.x * a.y + a.z * s,   oc * a.y * a.y + c,        oc * a.y * a.z - a.x * s,
-				oc * a.z * a.x - a.y * s,   oc * a.y * a.z + a.x * s,  oc * a.z * a.z + c );
+	return mat3(
+		oc * a.x * a.x + c,         oc * a.x * a.y - a.z * s,  oc * a.z * a.x + a.y * s,
+		oc * a.x * a.y + a.z * s,   oc * a.y * a.y + c,        oc * a.y * a.z - a.x * s,
+		oc * a.z * a.x - a.y * s,   oc * a.y * a.z + a.x * s,  oc * a.z * a.z + c
+	);
 }
+
+static const mat4 rotation( vec3 a, float angle ) {
+	a = glm::normalize( a ); //a is the axis
+	float s = sin( angle );
+	float c = cos( angle );
+	float oc = 1.0f - c;
+	return mat4(
+		oc * a.x * a.x + c,         oc * a.x * a.y - a.z * s,  oc * a.z * a.x + a.y * s, 0.0f,
+		oc * a.x * a.y + a.z * s,   oc * a.y * a.y + c,        oc * a.y * a.z - a.x * s, 0.0f,
+		oc * a.z * a.x - a.y * s,   oc * a.y * a.z + a.x * s,  oc * a.z * a.z + c,       0.0f,
+		0.0f,                       0.0f,                      0.0f,                     1.0f
+	);
+}
+
 
 // Plans:
 	// something to wrap texture reference, with or without interpolation - start with no interp for now

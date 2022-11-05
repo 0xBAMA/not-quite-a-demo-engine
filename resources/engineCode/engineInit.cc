@@ -107,6 +107,8 @@ void engine::DisplaySetup () {
 	// have to have dummy call to this - OpenGL core spec requires a VAO bound when calling glDrawArrays, otherwise it complains
 	glGenVertexArrays( 1, &displayVAO );
 
+	cout << T_BLUE << "    Setting up textures" << RESET << " .............................. ";
+
 	// create the image textures
 	Image initial( WIDTH, HEIGHT, true );
 	glGenTextures( 1, &accumulatorTexture );
@@ -130,6 +132,9 @@ void engine::DisplaySetup () {
 	glActiveTexture( GL_TEXTURE4 );
 	glBindTexture( GL_TEXTURE_2D, blueNoiseTexture );
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data.data()[ 0 ] );
+
+	cout << T_GREEN << "done." << RESET << newline;
+
 }
 
 void engine::ComputeShaderCompile () {

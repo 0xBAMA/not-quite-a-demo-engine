@@ -1,7 +1,7 @@
 #ifndef SOFTRAST
 #define SOFTRAST
 
-#include "../TinyOBJLoader/objLoader.h"
+#include "../TinyOBJLoader/tiny_obj_loader.h"
 #include "../engineCode/includes.h"
 
 struct triangle {
@@ -215,70 +215,75 @@ public:
 		}
 	}
 
-	void DrawModel ( string modelPath, string texturePath, mat3 transform, vec3 offset ) {
-		// passing in transform means we can scale, rotate, etc, and keep the interface simple
-		objLoader o( modelPath );
 
-		LoadTex( texturePath );
+// the interface to TinyOBJLoader has changed significantly, and my wrapper is no longer really relevant at all - this will need to be rewritten to handle the new stuff
+	// on the upside - materials become much, much easier to handle - this means that I will be able to more easily handle multi-texture models
+		// for example, the sponza model I found here https://github.com/jimmiebergmann/Sponza
 
-		// cout << "image loaded " << currentTex.width << " by " << currentTex.height << newline;
-
-		for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
-			vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
-			vec4 p1 = o.vertices[ int( o.triangleIndices[ i ].y ) ];
-			vec4 p2 = o.vertices[ int( o.triangleIndices[ i ].z ) ];
-			vec3 p0x( p0.x, p0.y, p0.z );
-			vec3 p1x( p1.x, p1.y, p1.z );
-			vec3 p2x( p2.x, p2.y, p2.z );
-
-			p0x = transform * p0x;
-			p1x = transform * p1x;
-			p2x = transform * p2x;
-
-			p0x += offset;
-			p1x += offset;
-			p2x += offset;
-
-			triangle t;
-			t.p0 = p0x;
-			t.p1 = p1x;
-			t.p2 = p2x;
-			t.tc0 = o.texcoords[ int( o.texcoordIndices[ i ].x ) ];
-			t.tc1 = o.texcoords[ int( o.texcoordIndices[ i ].y ) ];
-			t.tc2 = o.texcoords[ int( o.texcoordIndices[ i ].z ) ];
-
-			// DrawTriangle ( p0x, p1x, p2x, vec4( 1.0f ) );
-			DrawTriangle ( t, vec4( 1.0f ) );
-		}
-
-		// wireframe
-		// for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
-		// 	vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
-		// 	vec4 p1 = o.vertices[ int( o.triangleIndices[ i ].y ) ];
-		// 	vec4 p2 = o.vertices[ int( o.triangleIndices[ i ].z ) ];
-		// 	vec3 p0x( p0.x, p0.y, p0.z );
-		// 	vec3 p1x( p1.x, p1.y, p1.z );
-		// 	vec3 p2x( p2.x, p2.y, p2.z );
-
-		// 	const vec3 offset = vec3( 0.0, 0.0, -0.01 );
-		// 	p0x = ( transform * p0x ) + offset;
-		// 	p1x = ( transform * p1x ) + offset;
-		// 	p2x = ( transform * p2x ) + offset;
-
-		// 	triangle t;
-		// 	t.p0 = p0x;
-		// 	t.p1 = p1x;
-		// 	t.p2 = p2x;
-		// 	t.tc0 = o.texcoords[ int( o.texcoordIndices[ i ].x ) ];
-		// 	t.tc1 = o.texcoords[ int( o.texcoordIndices[ i ].y ) ];
-		// 	t.tc2 = o.texcoords[ int( o.texcoordIndices[ i ].z ) ];
-		//
-		// 	DrawLine ( p0x, p1x, vec4( 1.0f ) );
-		// 	DrawLine ( p0x, p2x, vec4( 1.0f ) );
-		// 	DrawLine ( p2x, p1x, vec4( 1.0f ) );
-		// }
-
-	}
+	// void DrawModel ( string modelPath, string texturePath, mat3 transform, vec3 offset ) {
+	// 	// passing in transform means we can scale, rotate, etc, and keep the interface simple
+	// 	objLoader o( modelPath );
+	//
+	// 	LoadTex( texturePath );
+	//
+	// 	// cout << "image loaded " << currentTex.width << " by " << currentTex.height << newline;
+	//
+	// 	for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
+	// 		vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
+	// 		vec4 p1 = o.vertices[ int( o.triangleIndices[ i ].y ) ];
+	// 		vec4 p2 = o.vertices[ int( o.triangleIndices[ i ].z ) ];
+	// 		vec3 p0x( p0.x, p0.y, p0.z );
+	// 		vec3 p1x( p1.x, p1.y, p1.z );
+	// 		vec3 p2x( p2.x, p2.y, p2.z );
+	//
+	// 		p0x = transform * p0x;
+	// 		p1x = transform * p1x;
+	// 		p2x = transform * p2x;
+	//
+	// 		p0x += offset;
+	// 		p1x += offset;
+	// 		p2x += offset;
+	//
+	// 		triangle t;
+	// 		t.p0 = p0x;
+	// 		t.p1 = p1x;
+	// 		t.p2 = p2x;
+	// 		t.tc0 = o.texcoords[ int( o.texcoordIndices[ i ].x ) ];
+	// 		t.tc1 = o.texcoords[ int( o.texcoordIndices[ i ].y ) ];
+	// 		t.tc2 = o.texcoords[ int( o.texcoordIndices[ i ].z ) ];
+	//
+	// 		// DrawTriangle ( p0x, p1x, p2x, vec4( 1.0f ) );
+	// 		DrawTriangle ( t, vec4( 1.0f ) );
+	// 	}
+	//
+	// 	// wireframe
+	// 	// for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
+	// 	// 	vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
+	// 	// 	vec4 p1 = o.vertices[ int( o.triangleIndices[ i ].y ) ];
+	// 	// 	vec4 p2 = o.vertices[ int( o.triangleIndices[ i ].z ) ];
+	// 	// 	vec3 p0x( p0.x, p0.y, p0.z );
+	// 	// 	vec3 p1x( p1.x, p1.y, p1.z );
+	// 	// 	vec3 p2x( p2.x, p2.y, p2.z );
+	//
+	// 	// 	const vec3 offset = vec3( 0.0, 0.0, -0.01 );
+	// 	// 	p0x = ( transform * p0x ) + offset;
+	// 	// 	p1x = ( transform * p1x ) + offset;
+	// 	// 	p2x = ( transform * p2x ) + offset;
+	//
+	// 	// 	triangle t;
+	// 	// 	t.p0 = p0x;
+	// 	// 	t.p1 = p1x;
+	// 	// 	t.p2 = p2x;
+	// 	// 	t.tc0 = o.texcoords[ int( o.texcoordIndices[ i ].x ) ];
+	// 	// 	t.tc1 = o.texcoords[ int( o.texcoordIndices[ i ].y ) ];
+	// 	// 	t.tc2 = o.texcoords[ int( o.texcoordIndices[ i ].z ) ];
+	//
+	// 	// 	DrawLine ( p0x, p1x, vec4( 1.0f ) );
+	// 	// 	DrawLine ( p0x, p2x, vec4( 1.0f ) );
+	// 	// 	DrawLine ( p2x, p1x, vec4( 1.0f ) );
+	// 	// }
+	//
+	// }
 
 	// dimensions
 	uint32_t width = 0;

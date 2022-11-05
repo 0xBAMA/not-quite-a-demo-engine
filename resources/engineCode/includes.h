@@ -86,7 +86,7 @@ using glm::mat4;
 #include "../fonts/fontRenderer/renderer.h"
 
 // wrapper for TinyOBJLoader
-#include "../TinyOBJLoader/objLoader.h"
+#include "../TinyOBJLoader/tiny_obj_loader.h"
 
 // software rasterizer reimplementation
 #include "../SoftRast/SoftRast.h"
@@ -140,7 +140,7 @@ struct colorGradeParameters {
 //   this code is licensed under the CC0 license
 //   http://creativecommons.org/publicdomain/zero/1.0/
 // Valid from 1000 to 40000 K (and additionally 0 for pure full white)
-inline vec3 GetColorForTemperature ( double temperature ) {
+inline vec3 GetColorForTemperature ( float temperature ) {
 	// Values from:
 	// http://blenderartists.org/forum/showthread.php?270332-OSL-Goodness&p=2268693&viewfull=1#post2268693
 	mat3 m =
@@ -152,8 +152,8 @@ inline vec3 GetColorForTemperature ( double temperature ) {
 					vec3( -2666.3474220535695, -2173.1012343082230, 2575.2827530017594 ),
 					vec3( 0.55995389139931482, 0.70381203140554553, 1.8993753891711275 ) );
 
-	return glm::mix( glm::clamp( vec3( m[ 0 ] / ( vec3( glm::clamp( temperature, 1000.0, 40000.0 ) ) +
-		m[ 1 ] ) + m[ 2 ] ), vec3( 0.0 ), vec3( 1.0 ) ), vec3( 1.0 ), glm::smoothstep( 1000.0, 0.0, temperature ) );
+	return glm::mix( glm::clamp( vec3( m[ 0 ] / ( vec3( glm::clamp( temperature, 1000.0f, 40000.0f ) ) +
+		m[ 1 ] ) + m[ 2 ] ), vec3( 0.0f ), vec3( 1.0f ) ), vec3( 1.0f ), glm::smoothstep( 1000.0f, 0.0f, temperature ) );
 }
 
 #endif

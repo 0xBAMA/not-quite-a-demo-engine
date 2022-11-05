@@ -66,6 +66,8 @@ add_library( tinyXML2 resources/tinyXML2/tinyxml2.cc )
 
 add_library( STB_ImageUtilsWrapper resources/ImageHandling/stb/impl.cc )
 
+add_library( TinyOBJLoader resources/TinyOBJLoader/tiny_obj_loader.cc )
+
 add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/ImageHandling/fpng )
 
 add_library( CompilerFlags INTERFACE )
@@ -73,7 +75,6 @@ target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc
 
 # this builds the final executable
 add_executable( exe
-	resources/TinyOBJLoader/objLoader.cc
 	resources/tracy/public/TracyClient.cpp
 	resources/noise/perlin.cc
 	resources/engineCode/main.cc
@@ -83,4 +84,17 @@ add_executable( exe
 	resources/engineCode/engineImguiUtils.cc
 	resources/ImageHandling/LodePNG/lodepng.cc )
 
-target_link_libraries( exe PUBLIC imgui BigInt tinyXML2 opengl sdl2 STB_ImageUtilsWrapper fpng stdc++fs FastNoise Tracy::TracyClient CompilerFlags )
+target_link_libraries( exe
+	PUBLIC
+	imgui
+	BigInt
+	tinyXML2
+	opengl
+	sdl2
+	STB_ImageUtilsWrapper
+	fpng
+	stdc++fs
+	FastNoise
+	Tracy::TracyClient
+	TinyOBJLoader
+	CompilerFlags )

@@ -136,11 +136,11 @@ void engine::DisplaySetup () {
 	cout << T_GREEN << "done." << RESET << newline;
 
 	SoftRast s( WIDTH, HEIGHT );
-
 	mat3 transform = rotation( vec3( 0.0f, 1.0f, 0.0f ), -0.1f ) * rotation( vec3( 1.0f, 0.0f, 0.0f ), pi - 0.2f ) * mat3( 0.0005f );
 	s.DrawModel( "../otherFolks/Sponza/sponza.obj", "../otherFolks/Sponza/", transform );
 	s.Color.Save( "test.png" );
-	Image depthOutput( dimension, dimension );
+
+	Image depthOutput( WIDTH, HEIGHT );
 	for ( uint32_t x = 0; x < WIDTH; x++ ) {
 		for ( uint32_t y = 0; y < HEIGHT; y++ ) {
 			float d = s.Depth.GetAtXY( x, y ).r;

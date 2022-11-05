@@ -5,9 +5,10 @@
 #include "../engineCode/includes.h"
 
 struct triangle {
-	glm::vec3 p0, p1, p2;
-	glm::vec3 tc0, tc1, tc2;
-	glm::vec3 n0, n1, n2;
+	vec3 p0, p1, p2;
+	vec3 t0, t1, t2;
+	vec3 n0, n1, n2;
+	vec3 c0, c1, c2;
 };
 
 // helper functions
@@ -49,18 +50,19 @@ static const mat3 rotation( vec3 a, float angle ) {
 	);
 }
 
-static const mat4 rotation( vec3 a, float angle ) {
-	a = glm::normalize( a ); //a is the axis
-	float s = sin( angle );
-	float c = cos( angle );
-	float oc = 1.0f - c;
-	return mat4(
-		oc * a.x * a.x + c,         oc * a.x * a.y - a.z * s,  oc * a.z * a.x + a.y * s, 0.0f,
-		oc * a.x * a.y + a.z * s,   oc * a.y * a.y + c,        oc * a.y * a.z - a.x * s, 0.0f,
-		oc * a.z * a.x - a.y * s,   oc * a.y * a.z + a.x * s,  oc * a.z * a.z + c,       0.0f,
-		0.0f,                       0.0f,                      0.0f,                     1.0f
-	);
-}
+	// if for some reason I need the mat4 version
+// static const mat4 rotation( vec3 a, float angle ) {
+// 	a = glm::normalize( a ); //a is the axis
+// 	float s = sin( angle );
+// 	float c = cos( angle );
+// 	float oc = 1.0f - c;
+// 	return mat4(
+// 		oc * a.x * a.x + c,         oc * a.x * a.y - a.z * s,  oc * a.z * a.x + a.y * s, 0.0f,
+// 		oc * a.x * a.y + a.z * s,   oc * a.y * a.y + c,        oc * a.y * a.z - a.x * s, 0.0f,
+// 		oc * a.z * a.x - a.y * s,   oc * a.y * a.z + a.x * s,  oc * a.z * a.z + c,       0.0f,
+// 		0.0f,                       0.0f,                      0.0f,                     1.0f
+// 	);
+// }
 
 
 // Plans:
@@ -208,9 +210,11 @@ public:
 				depth += bc.z * t.p2.z;
 
 				vec2 texCoord = vec2( 0.0f );
-				texCoord += bc.x * vec2( t.tc0.x, t.tc0.y );
-				texCoord += bc.y * vec2( t.tc1.x, t.tc1.y );
-				texCoord += bc.z * vec2( t.tc2.x, t.tc2.y );
+				texCoord += bc.x * vec2( t.t0.x, t.t0.y );
+				texCoord += bc.y * vec2( t.t1.x, t.t1.y );
+				texCoord += bc.z * vec2( t.t2.x, t.t2.y );
+
+				if ( depth < 0.0f ) return;
 
 				if ( Depth.GetAtXY( eval.x, eval.y ).r > depth ) {
 					// will need to do this same barycentric interpolation of texcoords, normals, etc with bc
@@ -221,10 +225,11 @@ public:
 					// Color.SetAtXY( eval.x, eval.y, { uint8_t( bc.x * 255.0f ), uint8_t( bc.y * 255.0f ), uint8_t( bc.z * 255.0f ), 255 } );
 					// Color.SetAtXY( eval.x, eval.y, { uint8_t( texCoord.x * 255.0f ), uint8_t( texCoord.y * 255.0f ), 0, 255 } );
 
-					vec4 texRef = TexRef( vec2( texCoord.x, 1.0f - texCoord.y ) );
-					if ( texRef.a == 0.0f ) continue; // reject zero alpha samples - still need to blend
+					// vec4 texRef = TexRef( vec2( texCoord.x, 1.0f - texCoord.y ) );
+					// if ( texRef.a == 0.0f ) continue; // reject zero alpha samples - still need to blend
+					// Color.SetAtXY( eval.x, eval.y, { uint8_t( texRef.x * 255 ), uint8_t( texRef.y * 255 ), uint8_t( texRef.z * 255 ), uint8_t( texRef.w * 255 ) } );
 
-					Color.SetAtXY( eval.x, eval.y, { uint8_t( texRef.x * 255 ), uint8_t( texRef.y * 255 ), uint8_t( texRef.z * 255 ), uint8_t( texRef.w * 255 ) } );
+					Color.SetAtXY( eval.x, eval.y, { uint8_t( color.x * 255 ), uint8_t( color.y * 255 ), uint8_t( color.z * 255 ), uint8_t( color.w * 255 ) } );
 					Depth.SetAtXY( eval.x, eval.y, { depth, 0.0f, 0.0f, 0.0f } );
 				}
 			}
@@ -236,70 +241,115 @@ public:
 	// on the upside - materials become much, much easier to handle - this means that I will be able to more easily handle multi-texture models
 		// for example, the sponza model I found here https://github.com/jimmiebergmann/Sponza
 
-	// void DrawModel ( string modelPath, string texturePath, mat3 transform, vec3 offset ) {
-	// 	// passing in transform means we can scale, rotate, etc, and keep the interface simple
-	// 	objLoader o( modelPath );
-	//
-	// 	LoadTex( texturePath );
-	//
-	// 	// cout << "image loaded " << currentTex.width << " by " << currentTex.height << newline;
-	//
-	// 	for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
-	// 		vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
-	// 		vec4 p1 = o.vertices[ int( o.triangleIndices[ i ].y ) ];
-	// 		vec4 p2 = o.vertices[ int( o.triangleIndices[ i ].z ) ];
-	// 		vec3 p0x( p0.x, p0.y, p0.z );
-	// 		vec3 p1x( p1.x, p1.y, p1.z );
-	// 		vec3 p2x( p2.x, p2.y, p2.z );
-	//
-	// 		p0x = transform * p0x;
-	// 		p1x = transform * p1x;
-	// 		p2x = transform * p2x;
-	//
-	// 		p0x += offset;
-	// 		p1x += offset;
-	// 		p2x += offset;
-	//
-	// 		triangle t;
-	// 		t.p0 = p0x;
-	// 		t.p1 = p1x;
-	// 		t.p2 = p2x;
-	// 		t.tc0 = o.texcoords[ int( o.texcoordIndices[ i ].x ) ];
-	// 		t.tc1 = o.texcoords[ int( o.texcoordIndices[ i ].y ) ];
-	// 		t.tc2 = o.texcoords[ int( o.texcoordIndices[ i ].z ) ];
-	//
-	// 		// DrawTriangle ( p0x, p1x, p2x, vec4( 1.0f ) );
-	// 		DrawTriangle ( t, vec4( 1.0f ) );
-	// 	}
-	//
-	// 	// wireframe
-	// 	// for ( unsigned int i = 0; i < o.triangleIndices.size() - 80 /* exclude wheel */; i++ ) {
-	// 	// 	vec4 p0 = o.vertices[ int( o.triangleIndices[ i ].x ) ];
-	// 	// 	vec4 p1 = o.vertices[ int( o.triangleIndices[ i ].y ) ];
-	// 	// 	vec4 p2 = o.vertices[ int( o.triangleIndices[ i ].z ) ];
-	// 	// 	vec3 p0x( p0.x, p0.y, p0.z );
-	// 	// 	vec3 p1x( p1.x, p1.y, p1.z );
-	// 	// 	vec3 p2x( p2.x, p2.y, p2.z );
-	//
-	// 	// 	const vec3 offset = vec3( 0.0, 0.0, -0.01 );
-	// 	// 	p0x = ( transform * p0x ) + offset;
-	// 	// 	p1x = ( transform * p1x ) + offset;
-	// 	// 	p2x = ( transform * p2x ) + offset;
-	//
-	// 	// 	triangle t;
-	// 	// 	t.p0 = p0x;
-	// 	// 	t.p1 = p1x;
-	// 	// 	t.p2 = p2x;
-	// 	// 	t.tc0 = o.texcoords[ int( o.texcoordIndices[ i ].x ) ];
-	// 	// 	t.tc1 = o.texcoords[ int( o.texcoordIndices[ i ].y ) ];
-	// 	// 	t.tc2 = o.texcoords[ int( o.texcoordIndices[ i ].z ) ];
-	//
-	// 	// 	DrawLine ( p0x, p1x, vec4( 1.0f ) );
-	// 	// 	DrawLine ( p0x, p2x, vec4( 1.0f ) );
-	// 	// 	DrawLine ( p2x, p1x, vec4( 1.0f ) );
-	// 	// }
-	//
-	// }
+	void DrawModel ( string modelPath, string mtlSearchPath, mat3 transform ) {
+		tinyobj::ObjReaderConfig readerConfig;
+		readerConfig.mtl_search_path = mtlSearchPath;
+
+		tinyobj::ObjReader reader;
+
+		// report any errors or warnings
+		if ( !reader.ParseFromFile( modelPath, readerConfig ) ) {
+			if ( !reader.Error().empty() ) {
+				cout << "TinyOBJLoader: " << reader.Error() << newline;
+			}
+		}
+
+		if ( !reader.Warning().empty() ) {
+			cout << "TinyObjLoader: " << reader.Warning() << newline;
+		}
+
+		auto& attributes = reader.GetAttrib();
+		auto& shapes = reader.GetShapes();
+		auto& materials = reader.GetMaterials();
+
+
+		std::random_device rng;
+		std::seed_seq seedSeq{ rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng(), rng() };
+		auto generator = std::mt19937_64( seedSeq );
+		std::uniform_real_distribution< float > pick( 0.0f, 1.0f );
+
+		std::vector<vec4> colors;
+		for ( size_t i = 0; i < materials.size(); i++ ) {
+			colors.push_back( vec4( pick( generator ), pick( generator ), pick( generator ), 1.0f ) );
+		}
+
+		vec3 mins = vec3(  10000.0f );
+		vec3 maxs = vec3( -10000.0f );
+
+		for ( size_t shapeID = 0; shapeID < shapes.size(); shapeID++ ) { // shapes in the file
+
+			size_t indexOffset = 0;
+			for ( size_t faceID = 0; faceID < shapes[ shapeID ].mesh.num_face_vertices.size(); faceID++ ) { // faces in the mesh
+
+				triangle t; // current triangle to be drawn
+
+				size_t numFaceVertices = size_t( shapes[ shapeID ].mesh.num_face_vertices[ faceID ] );
+				for ( size_t vertexID = 0; vertexID < numFaceVertices; vertexID++ ) { // vertices in the face
+
+					// we got triangles
+					// access to vertex position data
+					tinyobj::index_t idx = shapes[ shapeID ].mesh.indices[ indexOffset + vertexID ];
+					tinyobj::real_t vx = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 0 ];
+					tinyobj::real_t vy = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 1 ];
+					tinyobj::real_t vz = attributes.vertices[ 3 * size_t( idx.vertex_index ) + 2 ];
+
+					mins.x = std::min( mins.x, vx );
+					mins.y = std::min( mins.y, vy );
+					mins.z = std::min( mins.z, vz );
+
+					maxs.x = std::max( maxs.x, vx );
+					maxs.y = std::max( maxs.y, vy );
+					maxs.z = std::max( maxs.z, vz );
+
+					// if ( idx.normal_index >= 0 ) { // Check if `normal_index` is zero or positive. negative = no normal data
+					// 	tinyobj::real_t nx = attributes.normals[ 3 * size_t( idx.normal_index ) + 0 ];
+					// 	tinyobj::real_t ny = attributes.normals[ 3 * size_t( idx.normal_index ) + 1 ];
+					// 	tinyobj::real_t nz = attributes.normals[ 3 * size_t( idx.normal_index ) + 2 ];
+					// }
+
+					// if ( idx.texcoord_index >= 0 ) { // Check if `texcoord_index` is zero or positive. negative = no texcoord data
+					// 	tinyobj::real_t tx = attributes.texcoords[ 2 * size_t( idx.texcoord_index ) + 0 ];
+					// 	tinyobj::real_t ty = attributes.texcoords[ 2 * size_t( idx.texcoord_index ) + 1 ];
+					// }
+
+					// // Optional: vertex colors
+					// if ( idx.vertex_index >= 0 ) { // Check if `texcoord_index` is zero or positive. negative = no texcoord data
+					// 	tinyobj::real_t red   = attributes.colors[ 3 * size_t( idx.vertex_index ) + 0 ];
+					// 	tinyobj::real_t green = attributes.colors[ 3 * size_t( idx.vertex_index ) + 1 ];
+					// 	tinyobj::real_t blue  = attributes.colors[ 3 * size_t( idx.vertex_index ) + 2 ];
+					// }
+
+					switch ( vertexID ) {
+						case 0:
+							t.p0 = transform * vec3( vx, vy, vz );
+							break;
+
+						case 1:
+							t.p1 = transform * vec3( vx, vy, vz );
+							break;
+
+						case 2:
+							t.p2 = transform * vec3( vx, vy, vz );
+							break;
+
+						default:
+							cout << "vertex out of range" << newline;
+							break;
+					}
+				}
+				// increment indexing
+				indexOffset += numFaceVertices;
+
+				// per-face material
+
+				// draw it with a color based on the material index
+				DrawTriangle( t, colors[ shapes[ shapeID ].mesh.material_ids[ faceID ] ] ); // this is the material id for the triangle ( texture select )
+			}
+		}
+		cout << "mins " << mins.x << " " << mins.y << " " << mins.z << newline;
+		cout << "maxs " << maxs.x << " " << maxs.y << " " << maxs.z << newline;
+	}
+
 
 	// dimensions
 	uint32_t width = 0;

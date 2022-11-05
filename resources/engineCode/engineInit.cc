@@ -135,6 +135,25 @@ void engine::DisplaySetup () {
 
 	cout << T_GREEN << "done." << RESET << newline;
 
+
+	const uint32_t dimension = 256;
+	SoftRast s( dimension, dimension );
+
+	mat3 transform = rotation( vec3( 1.0f, 0.0f, 0.0f ), pi ) * mat3( 0.0005f );
+	s.DrawModel( "../Sponza/sponza.obj", "../Sponza/", transform );
+
+	s.Color.Save( "test.png" );
+
+	Image depthOutput( dimension, dimension );
+	for ( uint32_t x = 0; x < dimension; x++ ) {
+		for ( uint32_t y = 0; y < dimension; y++ ) {
+			float d = s.Depth.GetAtXY( x, y ).r;
+			uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
+			depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );
+		}
+	}
+	depthOutput.Save( "testDepth.png" );
+
 }
 
 void engine::ComputeShaderCompile () {

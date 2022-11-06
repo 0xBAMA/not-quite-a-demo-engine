@@ -12,7 +12,9 @@ uniform vec3 colorTempAdjust;
 
 void main () {
 	ivec2 loc = ivec2( gl_GlobalInvocationID.xy );
-	uvec4 originalValue = imageLoad( accumulatorTexture, loc );
+
+	// temporary hack for inverted image
+	uvec4 originalValue = imageLoad( accumulatorTexture, ivec2( loc.x, imageSize( accumulatorTexture ).y - loc.y ) );
 
 	vec3 color = tonemap( tonemapMode, colorTempAdjust * ( vec3( originalValue.xyz ) / 255.0 ) );
 	color = gammaCorrect( gamma, color );

@@ -134,22 +134,6 @@ void engine::DisplaySetup () {
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data.data()[ 0 ] );
 
 	cout << T_GREEN << "done." << RESET << newline;
-
-	SoftRast s( WIDTH, HEIGHT );
-	mat3 transform = rotation( vec3( 0.0f, 1.0f, 0.0f ), -0.1f ) * rotation( vec3( 1.0f, 0.0f, 0.0f ), pi - 0.2f ) * mat3( 0.0005f );
-	s.DrawModel( "../otherFolks/Sponza/sponza.obj", "../otherFolks/Sponza/", transform );
-	s.Color.Save( "test.png" );
-
-	Image depthOutput( WIDTH, HEIGHT );
-	for ( uint32_t x = 0; x < WIDTH; x++ ) {
-		for ( uint32_t y = 0; y < HEIGHT; y++ ) {
-			float d = s.Depth.GetAtXY( x, y ).r;
-			uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
-			depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );
-		}
-	}
-	depthOutput.Save( "testDepth.png" );
-
 }
 
 void engine::ComputeShaderCompile () {

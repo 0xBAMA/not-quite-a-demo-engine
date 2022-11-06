@@ -181,16 +181,32 @@ public:
 	}
 
 	// draw triangle
-	// void DrawTriangle ( vec3 p0, vec3 p1, vec3 p2, vec4 color ) { // eventually extend to include texcoords + normals
-	void DrawTriangle ( triangle t ) { // eventually extend to include texcoords + normals
-		vec2 bboxmin(  std::numeric_limits< float >::max(),  std::numeric_limits< float >::max() );
-		vec2 bboxmax( -std::numeric_limits< float >::max(), -std::numeric_limits< float >::max() );
-		vec2 clamp( width - 1, height - 1 );
+	void DrawTriangle ( triangle t, const mat3 transform, const vec3 offset  ) {
+
+		// apply transform
+		t.p0 = transform * ( t.p0 + offset );
+		t.p1 = transform * ( t.p1 + offset );
+		t.p2 = transform * ( t.p2 + offset );
+
+		// perspective projection parameters
+		t.p0.x *= RemapRange( t.p0.z, -2.0f, 2.0f, 0.9f, 0.75f );
+		t.p0.y *= RemapRange( t.p0.z, -2.0f, 2.0f, 0.9f, 0.75f );
+
+		t.p1.x *= RemapRange( t.p1.z, -2.0f, 2.0f, 0.9f, 0.75f );
+		t.p1.y *= RemapRange( t.p1.z, -2.0f, 2.0f, 0.9f, 0.75f );
+
+		t.p2.x *= RemapRange( t.p2.z, -2.0f, 2.0f, 0.9f, 0.75f );
+		t.p2.y *= RemapRange( t.p2.z, -2.0f, 2.0f, 0.9f, 0.75f );
 
 		// translate x, y of points into screen space
 		t.p0 = NDCToPixelCoords( t.p0 );
 		t.p1 = NDCToPixelCoords( t.p1 );
 		t.p2 = NDCToPixelCoords( t.p2 );
+
+		// clipping for single triangle
+		vec2 bboxmin(  std::numeric_limits< float >::max(),  std::numeric_limits< float >::max() );
+		vec2 bboxmax( -std::numeric_limits< float >::max(), -std::numeric_limits< float >::max() );
+		vec2 clamp( width - 1, height - 1 );
 
 		for ( int j = 0; j < 2; j++ ) {
 			bboxmin[ j ] = std::max( 0.0f, std::min( bboxmin[ j ], t.p0[ j ] ) );
@@ -257,14 +273,13 @@ public:
 				normal += bc.y * vec3( t.n1.x, t.n1.y, t.n1.z );
 				normal += bc.z * vec3( t.n2.x, t.n2.y, t.n2.z );
 
-				if ( depth < -0.2f ) {
+				if ( depth < 0.0f ) {
 					return; // cheapo clipping plane
 				}
 
 				if ( Depth.GetAtXY( eval.x, eval.y ).r > depth ) { // compute the color to write, texturing, etc, etc
 
 					vec4 texRef = TexRef( glm::mod( vec2( texCoord.x, 1.0f - texCoord.y ), vec2( 1.0f ) ), texCoord.z );
-					// vec4 texRef = TexRef( vec2( texCoord.x, 1.0f - texCoord.y ), texCoord.z );
 					if ( texRef.a == 0.0f ) {
 						continue; // reject zero alpha samples - still need to implement blending
 					}
@@ -284,7 +299,7 @@ public:
 	// on the upside - materials become much, much easier to handle - this means that I will be able to more easily handle multi-texture models
 		// for example, the sponza model I found here https://github.com/jimmiebergmann/Sponza
 
-	void DrawModel ( string modelPath, string mtlSearchPath, mat3 transform ) {
+	void LoadModel ( string modelPath, string mtlSearchPath ) {
 		tinyobj::ObjReaderConfig readerConfig;
 		readerConfig.mtl_search_path = mtlSearchPath;
 
@@ -369,21 +384,21 @@ public:
 
 					switch ( vertexID ) {
 						case 0:
-							t.p0 = transform * vec3( vx, vy, vz );
+							t.p0 = vec3( vx, vy, vz );
 							t.n0 = vec3( nx, ny, nz );
 							t.t0 = vec3( tx, ty, texID );
 							t.c0 = vec3( red, green, blue );
 							break;
 
 						case 1:
-							t.p1 = transform * vec3( vx, vy, vz );
+							t.p1 = vec3( vx, vy, vz );
 							t.n1 = vec3( nx, ny, nz );
 							t.t1 = vec3( tx, ty, texID );
 							t.c1 = vec3( red, green, blue );
 							break;
 
 						case 2:
-							t.p2 = transform * vec3( vx, vy, vz );
+							t.p2 = vec3( vx, vy, vz );
 							t.n2 = vec3( nx, ny, nz );
 							t.t2 = vec3( tx, ty, texID );
 							t.c2 = vec3( red, green, blue );
@@ -404,10 +419,12 @@ public:
 		}
 
 		cout << "loading took " << Tock() / 1000.0 << "ms" << newline;
+	}
 
+	void DrawModel( const mat3 transform, const vec3 offset ) {
 		Tick();
 		for ( auto& t : triangles ) {
-			DrawTriangle( t );
+			DrawTriangle( t, transform, offset );
 		}
 		cout << "drawing took " << Tock() / 1000.0 << "ms" << newline;
 	}

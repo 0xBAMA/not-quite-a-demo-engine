@@ -363,6 +363,12 @@ public:
 		return result;
 	}
 
+	void SetTo( const uint8_t set ) {
+		for ( auto& val : data ) {
+			val = set;
+		}
+	}
+
 private:
 
 	void Reset () { data.resize( 0 ); width = 0; height = 0; };
@@ -680,6 +686,12 @@ public:
 		result.b = ( sums[ 2 ] / numPixels );
 		result.a = ( sums[ 3 ] / numPixels );
 		return result;
+	}
+
+	void SetTo( const float set ) {
+		for ( auto& val : data ) {
+			val = set;
+		}
 	}
 
 private:

@@ -11,14 +11,16 @@ void engine::QuitConf ( bool *open ) {
 			ImGui::Text( "  " );
 			ImGui::SameLine();
 			// button to cancel -> set this window's bool to false
-			if ( ImGui::Button( " Cancel " ) )
+			if ( ImGui::Button( " Cancel " ) ) {
 				*open = false;
+			}
 			ImGui::SameLine();
-			ImGui::Text("      ");
+			ImGui::Text( "      " );
 			ImGui::SameLine();
 			// button to quit -> set pquit to true
-			if ( ImGui::Button( " Quit " ) )
+			if ( ImGui::Button( " Quit " ) ) {
 				pQuit = true;
+			}
 		}
 	}
 }

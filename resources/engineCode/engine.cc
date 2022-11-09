@@ -10,6 +10,8 @@ void engine::Init () {
 	DisplaySetup();
 	ShaderCompile();
 	ImguiSetup();
+	// if init takes some time, don't show the window before it's done
+	SDL_ShowWindow( window );
 }
 
 // terminate ImGUI

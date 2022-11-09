@@ -120,13 +120,15 @@ struct configData {
 	uint32_t height = 0;
 	uint8_t MSAACount = 0;
 	vec4 clearColor = vec4( 0.0f );
-	// anything else? something to indicate desired window mode... tbd
-		// window title
-		// window offset x
-		// window offset y
-		// what screen to start on
-		// SDL window flags
-		// ...
+	string windowTitle = string( "NQADE" );
+	uint32_t windowFlags = 0;
+	ivec2 windowOffset = ivec2( 0, 0 );
+	uint8_t startOnScreen = 0;
+	bool vSyncEnable = true;
+
+	// enable blend/blend mode? not sure if there's much utility there
+	// enable depth testing would be helpful
+	// anything else?
 };
 
 struct colorGradeParameters {

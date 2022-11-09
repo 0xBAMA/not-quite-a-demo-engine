@@ -7,7 +7,7 @@ void engine::StartMessage () {
 }
 
 void engine::LoadConfig () {
-	cout << T_BLUE << "    Configuring Application" << RESET << " .......................... ";
+	cout << T_BLUE << "    Configuring Application" << RESET << " ................... ";
 	json j;
 	// load the config json, populate config struct - this will probably have more data, eventually
 	ifstream i( "resources/engineCode/config.json" );
@@ -19,11 +19,21 @@ void engine::LoadConfig () {
 	config.clearColor.g = j[ "clearColor" ][ "g" ];
 	config.clearColor.b = j[ "clearColor" ][ "b" ];
 	config.clearColor.a = j[ "clearColor" ][ "a" ];
+	config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN" ] ? SDL_WINDOW_FULLSCREEN : 0 );
+	config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN_DESKTOP" ] ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0 );
+	config.windowFlags |= ( j[ "SDL_WINDOW_BORDERLESS" ] ? SDL_WINDOW_BORDERLESS : 0 );
+	config.windowFlags |= ( j[ "SDL_WINDOW_RESIZABLE" ] ? SDL_WINDOW_RESIZABLE : 0 );
+	config.windowFlags |= ( j[ "SDL_WINDOW_INPUT_GRABBED" ] ? SDL_WINDOW_INPUT_GRABBED : 0 );
+	config.windowOffset.x = j[ "windowOffset" ][ "x" ];
+	config.windowOffset.y = j[ "windowOffset" ][ "y" ];
+	config.vSyncEnable = j[ "vSyncEnable" ];
+	config.startOnScreen = j[ "startOnScreen" ];
+
 	cout << T_GREEN << "done." << RESET << newline;
 }
 
 void engine::CreateWindowAndContext () {
-	cout << T_BLUE << "    Initializing SDL2" << RESET << " ................................ ";
+	cout << T_BLUE << "    Initializing SDL2" << RESET << " ......................... ";
 	if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 ) {
 		cout << "Error: " << SDL_GetError() << newline;
 	}
@@ -40,41 +50,22 @@ void engine::CreateWindowAndContext () {
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, config.MSAACount );
 	}
 	cout << T_GREEN << "done." << RESET << newline;
+	cout << T_BLUE << "    Creating Window" << RESET << " ........................... ";
 
-	cout << T_BLUE << "    Creating Window" << RESET << " .................................. ";
 	// prep for window creation
-	int flags;
 	SDL_DisplayMode dm;
 	SDL_GetDesktopDisplayMode( 0, &dm );
-
 	// different window configurations - this needs work, I don't like this switch statement at all
-	int windowInitMode = 0;
-	switch ( windowInitMode ) {
-		case 0: // little window, using width and height from the config data
-			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
-			window = SDL_CreateWindow( "NQADE", 0, 0, config.width, config.height, flags );
-			break;
+	//   use dm dimension for either value set to -1 ( width or height ), or negative to do dm.val - config.val? tbd
 
-		case 1: // fullscreen borderless
-			// first, query the screen resolution
-			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS;
-			window = SDL_CreateWindow( "NQADE", 0, 0, dm.w, dm.h, flags );
-			break;
-
-		case 2: // borderless floating
-			flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS;
-			window = SDL_CreateWindow( "NQADE", 50, 50, dm.w - 100, dm.h - 100, flags );
-			break;
-
-		// other modes? load from config, would be best, doesn't require recompile
-	}
-
-	// if init takes some time, don't show the window before it's done
-	SDL_ShowWindow( window );
+	// always need OpenGL, always start hidden till init finishes
+	config.windowFlags |= SDL_WINDOW_OPENGL;
+	config.windowFlags |= SDL_WINDOW_HIDDEN;
+	// todo: offset so that it starts on the selected screen, config.startOnScreen ( bump by n * screenWidth )
+	window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x, config.windowOffset.y, config.width, config.height, config.windowFlags );
 
 	cout << T_GREEN << "done." << RESET << newline;
-
-	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ........................ ";
+	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ................. ";
 	// initialize OpenGL 4.3 + GLSL version 430
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
@@ -83,8 +74,8 @@ void engine::CreateWindowAndContext () {
 	GLcontext = SDL_GL_CreateContext( window );
 	SDL_GL_MakeCurrent( window, GLcontext );
 
-	SDL_GL_SetSwapInterval( 1 ); // Enable vsync
-	// SDL_GL_SetSwapInterval( 0 ); // Disables vsync
+	// config vsync enable/disable
+	SDL_GL_SetSwapInterval( config.vSyncEnable ? 1 : 0 );
 
 	// load OpenGL functions
 	if ( gl3wInit() != 0 ) { cout << "Failed to Initialize OpenGL Loader!" << newline; abort(); }
@@ -113,7 +104,7 @@ void engine::DisplaySetup () {
 	// have to have dummy call to this - OpenGL core spec requires a VAO bound when calling glDrawArrays, otherwise it complains
 	glGenVertexArrays( 1, &displayVAO );
 
-	cout << T_BLUE << "    Setting Up Textures" << RESET << " .............................. ";
+	cout << T_BLUE << "    Setting Up Textures" << RESET << " ....................... ";
 	// create the image textures
 	Image initial( config.width, config.height, true );
 	glGenTextures( 1, &accumulatorTexture );
@@ -142,7 +133,7 @@ void engine::DisplaySetup () {
 }
 
 void engine::ShaderCompile () {
-	cout << T_BLUE << "    Compiling Shaders" << RESET << " ................................ ";
+	cout << T_BLUE << "    Compiling Shaders" << RESET << " ......................... ";
 
 	// create the shader for the triangles to cover the screen
 	displayShader = regularShader( "resources/engineCode/shaders/blit.vs.glsl", "resources/engineCode/shaders/blit.fs.glsl" ).shaderHandle;
@@ -160,7 +151,7 @@ void engine::ShaderCompile () {
 }
 
 void engine::ImguiSetup () {
-	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ............................ ";
+	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ..................... ";
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();

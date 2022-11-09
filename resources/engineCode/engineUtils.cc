@@ -2,15 +2,14 @@
 
 bool engine::MainLoop () {
 	ZoneScoped;
-
-	HandleEvents();								// handle keyboard / mouse events
-	ClearColorAndDepth();					// if I just disable depth testing, this can disappear
-	ComputePasses();							// multistage update of displayTexture
-	BlitToScreen();								// fullscreen triangle copying the displayTexture to the screen
-	ImguiPass();									// do all the gui stuff
+	HandleEvents();					// handle keyboard / mouse events
+	// ClearColorAndDepth();			// if I just disable depth testing, this can disappear
+	ComputePasses();				// multistage update of displayTexture
+	BlitToScreen();					// fullscreen triangle copying the displayTexture to the screen
+	ImguiPass();					// do all the gui stuff
 	SDL_GL_SwapWindow( window );	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
-	FrameMark;										// tells tracy that this is the end of a frame
-	return pQuit;									// break main loop when pQuit turns true
+	FrameMark;						// tells tracy that this is the end of a frame
+	return pQuit;					// break main loop when pQuit turns true
 }
 
 void engine::ComputePasses () {
@@ -18,13 +17,13 @@ void engine::ComputePasses () {
 
 // dummy draw
 	// set up environment ( 0:blue noise, 1: accumulator )
-	// glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-	// glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 
 	// blablah draw something into accumulatorTexture
-	// glUseProgram( dummyDrawShader );
-	// glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
-	// glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+	glUseProgram( dummyDrawShader );
+	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
+	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 // postprocessing
 	// set up environment ( 0:accumulator, 1:display )
@@ -51,22 +50,19 @@ void engine::ComputePasses () {
 
 void engine::ClearColorAndDepth () {
 	ZoneScoped;
-
 	// clear the screen
 	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
-	// glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	glClear( GL_COLOR_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	ImGuiIO &io = ImGui::GetIO();
 	const int width = ( int ) io.DisplaySize.x;
 	const int height = ( int ) io.DisplaySize.y;
 	// prevent -1, -1 being passed on first frame, since ImGui hasn't rendered yet
-	glViewport(0, 0, width > 0 ? width : WIDTH, height > 0 ? height : HEIGHT );
+	glViewport( 0, 0, width > 0 ? width : WIDTH, height > 0 ? height : HEIGHT ); // should this be elsewhere?
 }
 
 void engine::SendTonemappingParameters () {
 	ZoneScoped;
-
 	glUniform3fv( glGetUniformLocation( tonemapShader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
 	glUniform1i( glGetUniformLocation( tonemapShader, "tonemapMode" ), tonemap.tonemapMode );
 	glUniform1f( glGetUniformLocation( tonemapShader, "gamma" ), tonemap.gamma );
@@ -74,8 +70,7 @@ void engine::SendTonemappingParameters () {
 
 void engine::BlitToScreen () {
 	ZoneScoped;
-
-	// bind the displayTexture and display its current state
+	// bind the displayTexture and display its current state - there are more efficient ways to do this, look into it
 	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
 	glUseProgram( displayShader );
 	glBindVertexArray( displayVAO );
@@ -86,104 +81,27 @@ void engine::BlitToScreen () {
 
 void engine::ImguiPass () {
 	ZoneScoped;
-
-	ImguiFrameStart();					// start the imgui frame
+	ImguiFrameStart();						// start the imgui frame
 	TonemapControlsWindow();
-
-	// if ( true )
-		// ImGui::ShowDemoWindow();	// show the demo window
-	QuitConf( &quitConfirm );		// show quit confirm window, if triggered
-	// static bool showMenu = true;
-	// MenuLayout( &showMenu );
-
+	if ( false ) ImGui::ShowDemoWindow();	// show the demo window
+	QuitConf( &quitConfirm );				// show quit confirm window, if triggered
 	ImguiFrameEnd();						// finish up the imgui stuff and put it in the framebuffer
 }
 
 void engine::HandleEvents () {
 	ZoneScoped;
-
-	static SoftRast s( WIDTH, HEIGHT );
-	static bool firstTime = true;
-	if ( firstTime ) {
-		s.LoadModel( "../otherFolks/Sponza/sponza.obj", "../otherFolks/Sponza/" );
-		firstTime = false;
-	}
-
-	static mat3 transform = rotation( vec3( 0.0f, 1.0f, 0.0f ), -1.5f ) * rotation( vec3( 1.0f, 0.0f, 0.0f ), pi - 0.2f ) * mat3( 0.005f );
-	static vec3 offset = vec3( 0.0f, 2.5f, -1.0f );
-	s.Color.SetTo( 0 );
-	s.Depth.SetTo( 10000.0f );
-	s.DrawModel( transform, offset );
-
-	// buffer result to the accumulator buffer
-
-	glBindTexture( GL_TEXTURE_2D, accumulatorTexture );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, WIDTH, HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &s.Color.data[ 0 ] );
-
-	// s.Color.Save( "test.png" );
-
-	// Image depthOutput( WIDTH, HEIGHT );
-	// for ( uint32_t x = 0; x < WIDTH; x++ ) {
-	// 	for ( uint32_t y = 0; y < HEIGHT; y++ ) {
-	// 		float d = s.Depth.GetAtXY( x, y ).r;
-	// 		uint8_t writeVal = uint8_t( RemapRange( d, -1.0f, 1.0f, 0.0f, 255.0f ) );
-	// 		depthOutput.SetAtXY( x, y, { writeVal, writeVal, writeVal, 255 } );
-	// 	}
-	// }
-	// depthOutput.Save( "testDepth.png" );
-
 	const uint8_t *state = SDL_GetKeyboardState( NULL );
-	const float scalar = SDL_GetModState() & KMOD_SHIFT ? 1000.0f : 10.0f;
-
-	if ( state[ SDL_SCANCODE_RIGHT ] ) {
-		cout << "Right Key Pressed" << newline << flush;
-		offset += transform * vec3( 0.0f, 0.0f, 1.0f * scalar );
-	}
-
-	if ( state[ SDL_SCANCODE_LEFT ] ) {
-		cout << "Left Key Pressed" << newline << flush;
-		offset += transform * vec3( 0.0f, 0.0f, -1.0f * scalar );
-	}
-
-	if ( state[ SDL_SCANCODE_UP ] ) {
-		cout << "Up Key Pressed" << newline << flush;
-		offset += transform * vec3( 1.0f * scalar, 0.0f, 0.0f );
-	}
-
-	if ( state[ SDL_SCANCODE_DOWN ] ) {
-		cout << "Down Key Pressed" << newline << flush;
-		offset += transform * vec3( -1.0f * scalar, 0.0f, 0.0f );
-	}
-
-	if ( state[ SDL_SCANCODE_PAGEDOWN ] ) {
-		cout << "PageDown Pressed" << newline << flush;
-		offset += transform * vec3( 0.0f, -1.0f * scalar, 0.0f );
-	}
-
-	if ( state[ SDL_SCANCODE_PAGEUP ] ) {
-		cout << "PageUp Pressed" << newline << flush;
-		offset += transform * vec3( 0.0f, 1.0f * scalar, 0.0f );
-	}
-
-	if ( state[ SDL_SCANCODE_W ] ) {
-		cout << "W Pressed" << newline << flush;
-		transform = rotation( transform * vec3( 0.0f, 0.0f, 1.0f ), -0.01f * scalar ) * transform;
-	}
-
-	if ( state[ SDL_SCANCODE_S ] ) {
-		cout << "S Pressed" << newline << flush;
-		transform = rotation( transform * vec3( 0.0f, 0.0f, 1.0f ), 0.01f * scalar ) * transform;
-	}
-
-	if ( state[ SDL_SCANCODE_A ] ) {
-		cout << "A Pressed" << newline << flush;
-		transform = rotation( transform * vec3( 0.0f, 1.0f, 0.0f ), 0.01f * scalar ) * transform;
-	}
-
-	if ( state[ SDL_SCANCODE_D ] ) {
-		cout << "D Pressed" << newline << flush;
-		transform = rotation( transform * vec3( 0.0f, 1.0f, 0.0f ), -0.01f * scalar ) * transform;
-	}
+	// const float scalar = SDL_GetModState() & KMOD_SHIFT ? 1000.0f : 10.0f;
+	if ( state[ SDL_SCANCODE_RIGHT ] ) {	cout << "Right Key Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_LEFT ] ) {		cout << "Left Key Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_UP ] ) {		cout << "Up Key Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_DOWN ] ) {		cout << "Down Key Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_PAGEDOWN ] ) {	cout << "PageDown Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_PAGEUP ] ) {	cout << "PageUp Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_W ] ) {		cout << "W Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_S ] ) {		cout << "S Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_A ] ) {		cout << "A Pressed" << newline; }
+	if ( state[ SDL_SCANCODE_D ] ) {		cout << "D Pressed" << newline; }
 
 //==============================================================================
 // Need to keep this for pQuit handling ( force quit )

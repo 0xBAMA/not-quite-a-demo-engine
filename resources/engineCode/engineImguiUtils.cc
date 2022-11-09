@@ -37,32 +37,30 @@ static void HelpMarker ( const char *desc ) {
 void engine::DrawTextEditor () {
 	ImGui::Begin( "Editor", NULL, 0 );
 	static TextEditor editor;
-	// static auto lang = TextEditor::LanguageDefinition::CPlusPlus();
-	static auto lang = TextEditor::LanguageDefinition::GLSL();
-	editor.SetLanguageDefinition( lang );
 
-	auto cpos = editor.GetCursorPosition();
-	// editor.SetPalette( TextEditor::GetLightPalette() );
+	static auto language = TextEditor::LanguageDefinition::GLSL();
+	editor.SetLanguageDefinition( language );
+
+	auto cursorPosition = editor.GetCursorPosition();
 	editor.SetPalette( TextEditor::GetDarkPalette() );
-	// editor.SetPalette( TextEditor::GetRetroBluePalette() );
 
-	static bool loaded = false;
 	static const char *fileToEdit = "resources/engineCode/shaders/blit.vs.glsl";
+	static bool loaded = false;
 	if ( !loaded ) {
 		std::ifstream t ( fileToEdit );
-		editor.SetLanguageDefinition( lang );
+		editor.SetLanguageDefinition( language );
 		if ( t.good() ) {
 			editor.SetText( std::string( ( std::istreambuf_iterator< char >( t ) ), std::istreambuf_iterator< char >() ) );
 			loaded = true;
 		}
 	}
 
-	// add dropdown for different shaders?
-	ImGui::Text( "%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1,
-							cpos.mColumn + 1, editor.GetTotalLines(),
-							editor.IsOverwrite() ? "Ovr" : "Ins",
-							editor.CanUndo() ? "*" : " ",
-							editor.GetLanguageDefinition().mName.c_str(), fileToEdit );
+	// add dropdown for different shaders? this can be whatever
+	ImGui::Text( "%6d/%-6d %6d lines  | %s | %s | %s | %s", cursorPosition.mLine + 1,
+		cursorPosition.mColumn + 1, editor.GetTotalLines(),
+		editor.IsOverwrite() ? "Ovr" : "Ins",
+		editor.CanUndo() ? "*" : " ",
+		editor.GetLanguageDefinition().mName.c_str(), fileToEdit );
 
 	editor.Render( "Editor" );
 	HelpMarker( "dummy helpmarker to get rid of unused warning" );

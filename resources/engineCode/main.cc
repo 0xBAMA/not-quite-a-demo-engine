@@ -1,7 +1,7 @@
 #include "engine.h"
 
 int main ( int argc, char *argv[] ) {
-	engine e;
-	while( !e.MainLoop() );
+	engine engineInstance;
+	while( !engineInstance.MainLoop() );
 	return 0;
 }

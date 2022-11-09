@@ -4,10 +4,11 @@
 // initialization of OpenGL, etc
 void engine::Init () {
 	StartMessage();
+	LoadConfig();
 	CreateWindowAndContext();
-	GlDebugEnable();
+	GLDebugEnable();
 	DisplaySetup();
-	ComputeShaderCompile();
+	ShaderCompile();
 	ImguiSetup();
 }
 

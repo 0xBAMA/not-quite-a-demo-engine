@@ -35,7 +35,7 @@ void MessageCallback( GLenum source,
 	SDL_Delay( 10 ); // hang a short time so the spew doesn't make it impossible to get back to the error
 }
 
-void GlDebugEnable() {
+void GLDebugEnable() {
 	//DEBUG ENABLE
 	glEnable              ( GL_DEBUG_OUTPUT );
 	glDebugMessageCallback( MessageCallback, 0 );      //getting a seg fault here, I think

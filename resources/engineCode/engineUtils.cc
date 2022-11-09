@@ -3,7 +3,7 @@
 bool engine::MainLoop () {
 	ZoneScoped;
 	HandleEvents();					// handle keyboard / mouse events
-	// ClearColorAndDepth();			// if I just disable depth testing, this can disappear
+	ClearColorAndDepth();			// if I just disable depth testing, this can disappear
 	ComputePasses();				// multistage update of displayTexture
 	BlitToScreen();					// fullscreen triangle copying the displayTexture to the screen
 	ImguiPass();					// do all the gui stuff
@@ -22,7 +22,7 @@ void engine::ComputePasses () {
 
 	// blablah draw something into accumulatorTexture
 	glUseProgram( dummyDrawShader );
-	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
+	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 // postprocessing
@@ -33,7 +33,7 @@ void engine::ComputePasses () {
 	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
 	glUseProgram( tonemapShader );
 	SendTonemappingParameters();
-	glDispatchCompute( ( WIDTH + 15 ) / 16, ( HEIGHT + 15 ) / 16, 1 );
+	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 	// shader to apply dithering
@@ -51,14 +51,14 @@ void engine::ComputePasses () {
 void engine::ClearColorAndDepth () {
 	ZoneScoped;
 	// clear the screen
-	glClearColor( clearColor.x, clearColor.y, clearColor.z, clearColor.w );
+	glClearColor( config.clearColor.x, config.clearColor.y, config.clearColor.z, config.clearColor.w );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	ImGuiIO &io = ImGui::GetIO();
 	const int width = ( int ) io.DisplaySize.x;
 	const int height = ( int ) io.DisplaySize.y;
 	// prevent -1, -1 being passed on first frame, since ImGui hasn't rendered yet
-	glViewport( 0, 0, width > 0 ? width : WIDTH, height > 0 ? height : HEIGHT ); // should this be elsewhere?
+	glViewport( 0, 0, width > 0 ? width : config.width, height > 0 ? height : config.height ); // should this be elsewhere?
 }
 
 void engine::SendTonemappingParameters () {
@@ -90,6 +90,8 @@ void engine::ImguiPass () {
 
 void engine::HandleEvents () {
 	ZoneScoped;
+
+	// can handle multiple simultaneous inputs like this
 	const uint8_t *state = SDL_GetKeyboardState( NULL );
 	// const float scalar = SDL_GetModState() & KMOD_SHIFT ? 1000.0f : 10.0f;
 	if ( state[ SDL_SCANCODE_RIGHT ] ) {	cout << "Right Key Pressed" << newline; }

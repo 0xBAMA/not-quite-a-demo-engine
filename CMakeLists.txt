@@ -48,7 +48,8 @@ add_library( imgui
 	resources/ImGUI/imgui_widgets.cc
 	resources/ImGUI/imgui_tables.cc
 	resources/ImGUI/imgui_gl3w.cc
-	resources/ImGUI/TextEditor.cc )
+	resources/ImGUI/TextEditor.cc
+)
 
 target_link_libraries( imgui PUBLIC sdl2 opengl )
 
@@ -61,7 +62,9 @@ add_library( BigInt
 	resources/noise/VAT/BigInt/BigInteger.cc
 	resources/noise/VAT/BigInt/BigIntegerAlgorithms.cc
 	resources/noise/VAT/BigInt/BigUnsignedInABase.cc
-	resources/noise/VAT/BigInt/BigIntegerUtils.cc )
+	resources/noise/VAT/BigInt/BigIntegerUtils.cc
+)
+
 target_compile_options( BigInt PUBLIC -Wno-deprecated )
 
 add_library( tinyXML2 resources/tinyXML2/tinyxml2.cc )
@@ -84,7 +87,8 @@ add_executable( exe
 	resources/engineCode/engineUtils.cc
 	resources/engineCode/engineInit.cc
 	resources/engineCode/engineImguiUtils.cc
-	resources/ImageHandling/LodePNG/lodepng.cc )
+	resources/ImageHandling/LodePNG/lodepng.cc
+)
 
 target_link_libraries( exe
 	PUBLIC
@@ -99,4 +103,5 @@ target_link_libraries( exe
 	FastNoise
 	Tracy::TracyClient
 	TinyOBJLoader
-	CompilerFlags )
+	CompilerFlags
+)

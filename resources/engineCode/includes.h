@@ -33,9 +33,6 @@ constexpr char newline = '\n';
 // pi definition - definitely sufficient precision
 constexpr double pi = 3.14159265358979323846;
 
-// MSAA count - effects OpenGL geometry evaluation
-constexpr int MSAACount = 1;
-
 // vector math library GLM
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZW
@@ -118,20 +115,22 @@ using json = nlohmann::json;
 #include "../tinyXML2/tinyxml2.h"
 using XMLDocument = tinyxml2::XMLDocument;
 
-// #define WIDTH 640
-// #define HEIGHT 480
-
-// #define WIDTH 1280
-// #define HEIGHT 720
-
-#define WIDTH 768
-#define HEIGHT 768
-
-// #define WIDTH 1920
-// #define HEIGHT 1080
+struct configData {
+	uint32_t width = 0;
+	uint32_t height = 0;
+	uint8_t MSAACount = 0;
+	vec4 clearColor = vec4( 0.0f );
+	// anything else? something to indicate desired window mode... tbd
+		// window title
+		// window offset x
+		// window offset y
+		// what screen to start on
+		// SDL window flags
+		// ...
+};
 
 struct colorGradeParameters {
-	int tonemapMode = 6;
+	int tonemapMode = 6; // todo: write an enum for this
 	float gamma = 1.1f;
 	float colorTemp = 6500.0f;
 };
@@ -148,13 +147,13 @@ inline vec3 GetColorForTemperature ( float temperature ) {
 	// Values from:
 	// http://blenderartists.org/forum/showthread.php?270332-OSL-Goodness&p=2268693&viewfull=1#post2268693
 	mat3 m =
-		( temperature <= 6500.0 )
-			? mat3( vec3( 0.0, -2902.1955373783176, -8257.7997278925690 ),
-					vec3( 0.0, 1669.5803561666639, 2575.2827530017594 ),
-					vec3( 1.0, 1.3302673723350029, 1.8993753891711275 ) )
-			: mat3( vec3( 1745.0425298314172, 1216.6168361476490, -8257.7997278925690 ),
-					vec3( -2666.3474220535695, -2173.1012343082230, 2575.2827530017594 ),
-					vec3( 0.55995389139931482, 0.70381203140554553, 1.8993753891711275 ) );
+		( temperature <= 6500.0f )
+			? mat3( vec3( 0.0f, -2902.1955373783176f, -8257.7997278925690f ),
+					vec3( 0.0f, 1669.5803561666639f, 2575.2827530017594f ),
+					vec3( 1.0f, 1.3302673723350029f, 1.8993753891711275f ) )
+			: mat3( vec3( 1745.0425298314172f, 1216.6168361476490f, -8257.7997278925690f ),
+					vec3( -2666.3474220535695f, -2173.1012343082230f, 2575.2827530017594f ),
+					vec3( 0.55995389139931482f, 0.70381203140554553f, 1.8993753891711275f ) );
 
 	return glm::mix( glm::clamp( vec3( m[ 0 ] / ( vec3( glm::clamp( temperature, 1000.0f, 40000.0f ) ) +
 		m[ 1 ] ) + m[ 2 ] ), vec3( 0.0f ), vec3( 1.0f ) ), vec3( 1.0f ), glm::smoothstep( 1000.0f, 0.0f, temperature ) );

@@ -11,12 +11,12 @@ public:
 
 private:
 	// application handles + basic data
-	// windowHandler w;
+	// windowHandler w; // this was partially implemented in Voraldo13, consider bringing that over
 	SDL_Window * window;
 	SDL_GLContext GLcontext;
-	int totalScreenWidth;
-	int totalScreenHeight;
-	ImVec4 clearColor;
+
+	// loaded from config.json
+	configData config;
 
 	// text renderer framework
 	layerManager textRenderer;
@@ -41,9 +41,10 @@ private:
 	// initialization
 	void Init ();
 	void StartMessage ();
+	void LoadConfig ();
 	void CreateWindowAndContext ();
 	void DisplaySetup ();
-	void ComputeShaderCompile ();
+	void ShaderCompile ();
 	void ImguiSetup ();
 
 	// main loop functions

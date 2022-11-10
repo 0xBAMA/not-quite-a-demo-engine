@@ -5,10 +5,10 @@
 #include "../engineCode/includes.h"
 
 struct triangle {
-	vec3 p0, p1, p2;
-	vec3 t0, t1, t2;
-	vec3 n0, n1, n2;
-	vec3 c0, c1, c2;
+	vec3 p0, p1, p2; // per vertex position
+	vec3 t0, t1, t2; // per vertex texcoord xy, texture index
+	vec3 n0, n1, n2; // per vertex normals
+	vec3 c0, c1, c2; // per vertex color
 };
 
 // helper functions
@@ -50,7 +50,7 @@ static const mat3 rotation( vec3 a, float angle ) {
 	);
 }
 
-	// if for some reason I need the mat4 version
+// if for some reason I need the mat4 version
 // static const mat4 rotation( vec3 a, float angle ) {
 // 	a = glm::normalize( a ); //a is the axis
 // 	float s = sin( angle );
@@ -89,13 +89,9 @@ public:
 	std::vector<Image> texSet;
 	void LoadTex ( string texPath ) {
 		if ( !texPath.empty() ) {
-			cout << "    loading" << endl;
+			cout << "    loading ";
 			Image temp( texPath );
-
-			// stringstream ss;
-			// ss << texSet.size() << ".png";
-			// temp.Save( ss.str() );
-
+			cout << temp.width << "x" << temp.height << " image" << newline;
 			texSet.push_back( temp );
 			cout << "    done" << endl << endl;
 		} else {
@@ -327,7 +323,7 @@ public:
 			cout << "Material " << materialID << " is called " << materials[ materialID ].name << newline;
 
 			string diffuseTexname = materials[ materialID ].diffuse_texname;
-			cout << "  diffuse texture is: " << diffuseTexname << newline << newline;
+			cout << "  diffuse texture is: " << diffuseTexname << newline;
 
 			LoadTex( diffuseTexname.empty() ? string() : mtlSearchPath + diffuseTexname );
 		}
@@ -382,7 +378,7 @@ public:
 					}
 
 
-					switch ( vertexID ) {
+					switch ( vertexID ) { // there's a better way to do this
 						case 0:
 							t.p0 = vec3( vx, vy, vz );
 							t.n0 = vec3( nx, ny, nz );
@@ -418,19 +414,28 @@ public:
 			}
 		}
 
-		cout << "loading took " << Tock() / 1000.0 << "ms" << newline;
+		cout << "loading took " << Tock() / 1000.0f << "ms" << newline;
 	}
 
-	void DrawModel( const mat3 transform, const vec3 offset ) {
+	void DrawModel( const mat3 transform, const vec3 offset = vec3( 0.0f ) ) {
 		Tick();
 		for ( auto& t : triangles ) {
 			DrawTriangle( t, transform, offset );
 		}
-		cout << "drawing took " << Tock() / 1000.0 << "ms" << newline;
+		cout << "drawing took " << Tock() / 1000.0f << "ms" << newline;
+	}
+
+	void DrawModelWireframe( const mat3 transform, const vec3 offset = vec3( 0.0f ) ) {
+		Tick();
+		for ( auto& t : triangles ) {
+			DrawLine( ( transform * ( t.p0 + offset ) ), ( transform * ( t.p1 + offset ) ), vec4( t.n0, 1.0f ) );
+			DrawLine( ( transform * ( t.p1 + offset ) ), ( transform * ( t.p2 + offset ) ), vec4( t.n1, 1.0f ) );
+			DrawLine( ( transform * ( t.p2 + offset ) ), ( transform * ( t.p0 + offset ) ), vec4( t.n2, 1.0f ) );
+		}
+		cout << "drawing took " << Tock() / 1000.0f << "ms" << newline;
 	}
 
 	std::vector<triangle> triangles;
-
 
 	// dimensions
 	uint32_t width = 0;

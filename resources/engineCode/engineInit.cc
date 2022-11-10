@@ -108,6 +108,13 @@ void engine::DisplaySetup () {
 	// have to have dummy call to this - OpenGL core spec requires a VAO bound when calling glDrawArrays, otherwise it complains
 	glGenVertexArrays( 1, &displayVAO );
 
+	SoftRast s ( 3000, 3000 );
+	s.LoadModel( "../otherFolks/Sponza/sponza.obj", "../otherFolks/Sponza/" );
+	// s.DrawModel( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
+	s.DrawModelWireframe( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
+	cout << "loaded " << s.triangles.size() << " triangles" << newline;
+	s.Color.Save( "test.png" );
+
 	cout << T_BLUE << "    Setting Up Textures" << RESET << " ....................... ";
 	// create the image textures
 	Image initial( config.width, config.height, true );

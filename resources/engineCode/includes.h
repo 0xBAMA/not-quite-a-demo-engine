@@ -116,15 +116,18 @@ using json = nlohmann::json;
 using XMLDocument = tinyxml2::XMLDocument;
 
 struct configData {
+	uint32_t windowFlags = 0;
+	string windowTitle = string( "NQADE" );
 	uint32_t width = 0;
 	uint32_t height = 0;
-	uint8_t MSAACount = 0;
-	vec4 clearColor = vec4( 0.0f );
-	string windowTitle = string( "NQADE" );
-	uint32_t windowFlags = 0;
 	ivec2 windowOffset = ivec2( 0, 0 );
 	uint8_t startOnScreen = 0;
+
+	uint8_t MSAACount = 0;
+	vec4 clearColor = vec4( 0.0f );
 	bool vSyncEnable = true;
+	uint8_t OpenGLVersionMajor = 4;
+	uint8_t OpenGLVersionMinor = 3;
 
 	// enable blend/blend mode? not sure if there's much utility there
 	// enable depth testing would be helpful

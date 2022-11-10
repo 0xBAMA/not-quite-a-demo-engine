@@ -14,20 +14,24 @@ void engine::LoadConfig () {
 	i >> j; i.close();
 	config.width = j[ "screenWidth" ];
 	config.height = j[ "screenHeight" ];
-	config.MSAACount = j[ "MSAACount" ];
-	config.clearColor.r = j[ "clearColor" ][ "r" ];
-	config.clearColor.g = j[ "clearColor" ][ "g" ];
-	config.clearColor.b = j[ "clearColor" ][ "b" ];
-	config.clearColor.a = j[ "clearColor" ][ "a" ];
+	config.windowOffset.x = j[ "windowOffset" ][ "x" ];
+	config.windowOffset.y = j[ "windowOffset" ][ "y" ];
+	config.startOnScreen = j[ "startOnScreen" ];
+
 	config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN" ] ? SDL_WINDOW_FULLSCREEN : 0 );
 	config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN_DESKTOP" ] ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0 );
 	config.windowFlags |= ( j[ "SDL_WINDOW_BORDERLESS" ] ? SDL_WINDOW_BORDERLESS : 0 );
 	config.windowFlags |= ( j[ "SDL_WINDOW_RESIZABLE" ] ? SDL_WINDOW_RESIZABLE : 0 );
 	config.windowFlags |= ( j[ "SDL_WINDOW_INPUT_GRABBED" ] ? SDL_WINDOW_INPUT_GRABBED : 0 );
-	config.windowOffset.x = j[ "windowOffset" ][ "x" ];
-	config.windowOffset.y = j[ "windowOffset" ][ "y" ];
 	config.vSyncEnable = j[ "vSyncEnable" ];
-	config.startOnScreen = j[ "startOnScreen" ];
+	config.MSAACount = j[ "MSAACount" ];
+	config.OpenGLVersionMajor = j[ "OpenGLVersionMajor" ];
+	config.OpenGLVersionMinor = j[ "OpenGLVersionMinor" ];
+
+	config.clearColor.r = j[ "clearColor" ][ "r" ];
+	config.clearColor.g = j[ "clearColor" ][ "g" ];
+	config.clearColor.b = j[ "clearColor" ][ "b" ];
+	config.clearColor.a = j[ "clearColor" ][ "a" ];
 
 	cout << T_GREEN << "done." << RESET << newline;
 }
@@ -53,24 +57,24 @@ void engine::CreateWindowAndContext () {
 	cout << T_BLUE << "    Creating Window" << RESET << " ........................... ";
 
 	// prep for window creation
-	SDL_DisplayMode dm;
-	SDL_GetDesktopDisplayMode( 0, &dm );
-	// different window configurations - this needs work, I don't like this switch statement at all
-	//   use dm dimension for either value set to -1 ( width or height ), or negative to do dm.val - config.val? tbd
+	SDL_DisplayMode displayMode;
+	SDL_GetDesktopDisplayMode( 0, &displayMode );
+// different window configurations - this needs work, I don't like this switch statement at all
+//	use displayMode dimension for either value set to -1 ( width or height ), or negative to do displayMode.val - config.val? tbd
 
 	// always need OpenGL, always start hidden till init finishes
 	config.windowFlags |= SDL_WINDOW_OPENGL;
 	config.windowFlags |= SDL_WINDOW_HIDDEN;
 	// todo: offset so that it starts on the selected screen, config.startOnScreen ( bump by n * screenWidth )
-	window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x, config.windowOffset.y, config.width, config.height, config.windowFlags );
+	window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x + config.startOnScreen * displayMode.w, config.windowOffset.y, config.width, config.height, config.windowFlags );
 
 	cout << T_GREEN << "done." << RESET << newline;
 	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ................. ";
-	// initialize OpenGL 4.3 + GLSL version 430
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
+	// defaults to OpenGL 4.3
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, config.OpenGLVersionMajor );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, config.OpenGLVersionMinor );
 	GLcontext = SDL_GL_CreateContext( window );
 	SDL_GL_MakeCurrent( window, GLcontext );
 
@@ -110,7 +114,7 @@ void engine::DisplaySetup () {
 	glGenTextures( 1, &accumulatorTexture );
 	glActiveTexture( GL_TEXTURE3 );
 	glBindTexture( GL_TEXTURE_2D, accumulatorTexture );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data[ 0 ] );
 
 	glGenTextures( 1, &displayTexture );
 	glActiveTexture( GL_TEXTURE0 );
@@ -120,14 +124,14 @@ void engine::DisplaySetup () {
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linearFilter ? GL_LINEAR : GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data.data()[ 0 ] );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data[ 0 ] );
 
 	// blue noise image on the GPU
 	Image blueNoiseImage{ "resources/noise/blueNoise.png", LODEPNG };
 	glGenTextures( 1, &blueNoiseTexture );
 	glActiveTexture( GL_TEXTURE4 );
 	glBindTexture( GL_TEXTURE_2D, blueNoiseTexture );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data.data()[ 0 ] );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data[ 0 ] );
 
 	cout << T_GREEN << "done." << RESET << newline;
 }

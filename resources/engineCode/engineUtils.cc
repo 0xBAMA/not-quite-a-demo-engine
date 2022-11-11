@@ -4,12 +4,33 @@ bool engine::MainLoop () {
 	ZoneScoped;
 	HandleEvents();					// handle keyboard / mouse events
 	ClearColorAndDepth();			// if I just disable depth testing, this can disappear
-	ComputePasses();				// multistage update of displayTexture
-	BlitToScreen();					// fullscreen triangle copying the displayTexture to the screen
+	DrawAPIGeometry();				// draw any API geometry desired
+
+	// temporarily disabled while playing with api geo
+	// ComputePasses();				// multistage update of displayTexture
+	// BlitToScreen();				// fullscreen triangle copying the displayTexture to the screen
+
 	ImguiPass();					// do all the gui stuff
 	SDL_GL_SwapWindow( window );	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
 	FrameMark;						// tells tracy that this is the end of a frame
 	return pQuit;					// break main loop when pQuit turns true
+}
+
+void engine::DrawAPIGeometry () {
+	glUseProgram( sponzaShader );
+
+	ImGuiIO &io = ImGui::GetIO();
+	const float width = ( float ) io.DisplaySize.x;
+	const float height = ( float ) io.DisplaySize.y;
+
+	mat4 transform;
+	float time = TotalTime() / 10'000'000.0f;
+	transform = glm::perspective( ( float ) pi / 4.0f, width / height, 0.001f, 15.0f );
+	transform = glm::translate( transform, vec3( 0.0f, -1.0f, 0.0f ) );
+	transform = glm::rotate( transform, time, vec3( 0.0f, 1.0f, 0.0f ) );
+
+	glUniformMatrix4fv( glGetUniformLocation( sponzaShader, "perspective" ), 1, GL_FALSE, glm::value_ptr( transform ) );
+	glDrawArrays( GL_TRIANGLES, 0, 3 * sponzaNumTriangles );
 }
 
 void engine::ComputePasses () {

@@ -85,7 +85,7 @@ void engine::CreateWindowAndContext () {
 	if ( gl3wInit() != 0 ) { cout << "Failed to Initialize OpenGL Loader!" << newline; abort(); }
 
 	// basic OpenGL Config
-	// glEnable( GL_DEPTH_TEST );
+	glEnable( GL_DEPTH_TEST );
 	// glEnable( GL_LINE_SMOOTH );
 	// glPointSize( 3.0 );
 	glEnable( GL_BLEND );
@@ -105,17 +105,149 @@ void engine::DisplaySetup () {
 	const GLubyte *glslVersion = glGetString( GL_SHADING_LANGUAGE_VERSION );
 	cout << T_RED << "      GLSL Version Supported : " << T_CYAN << glslVersion << RESET << newline << newline;
 
-	// have to have dummy call to this - OpenGL core spec requires a VAO bound when calling glDrawArrays, otherwise it complains
-	glGenVertexArrays( 1, &displayVAO );
+
+
+	cout << T_BLUE << "    Setting Up Vertex Data" << RESET << " .................... ";
+
+
+
+
+
 
 	SoftRast s ( 3000, 3000 );
 	s.LoadModel( "../otherFolks/Sponza/sponza.obj", "../otherFolks/Sponza/" );
 	// s.DrawModel( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
-	s.DrawModelWireframe( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
+	// s.DrawModelWireframe( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
+	// s.Color.Save( "test.png" );
 	cout << "loaded " << s.triangles.size() << " triangles" << newline;
-	s.Color.Save( "test.png" );
+
+	// set up vertex buffers, with all the triangle data - vertex colors are defaulted, not specified in the input
+		// position
+	std::vector<vec3> positions;
+		// texcoord
+	std::vector<vec3> texCoords;
+		// normal
+	std::vector<vec3> normals;
+
+	// I want to try using array textures for texturing
+		// this is going to involve resizing the texture maps to a constant size
+			// I think that this makes the most sense as 2048x2048, because I have VRAM to burn, and I can use stb_image_resize
+			// to make the smaller textures match ( 256x256, 512x512, 1024x1024 ) - I can't find anywhere that says that array
+			// textures must all use the same resolution, but they get loaded with glTexImage3D, so I'm kind of assuming that's
+			// at least the intended usage
+		// then, once they're of uniform size, pack them all into one big buffer, and pass it
+		// I want to interleave the normal maps, too, so that'll be diffuse, normal, diffuse, normal...
+			// they are already ordered this way in s.texSet
+
+	for ( auto& triangle : s.triangles ) {
+		positions.push_back( triangle.p0 );
+		positions.push_back( triangle.p1 );
+		positions.push_back( triangle.p2 );
+
+		texCoords.push_back( triangle.t0 );
+		texCoords.push_back( triangle.t1 );
+		texCoords.push_back( triangle.t2 );
+
+		normals.push_back( triangle.n0 );
+		normals.push_back( triangle.n1 );
+		normals.push_back( triangle.n2 );
+
+		sponzaNumTriangles++;
+	}
+
+	// send the data, set up the vertex attributes
+	uintptr_t numBytesPositions = positions.size() * sizeof( glm::vec3 );
+	uintptr_t numBytesTexCoords = texCoords.size() * sizeof( glm::vec3 );
+	uintptr_t numBytesNormals = normals.size() * sizeof( glm::vec3 );
+
+	// OpenGL core spec requires a VAO bound when calling glDrawArrays
+	glGenVertexArrays( 1, &displayVAO );
+	glBindVertexArray( displayVAO );
+
+	//BUFFER
+	glGenBuffers( 1, &displayVBO );
+	glBindBuffer( GL_ARRAY_BUFFER, displayVBO );
+
+	// idk
+	glUseProgram( sponzaShader );
+
+	// send it
+	glBufferData( GL_ARRAY_BUFFER, numBytesPositions + numBytesTexCoords + numBytesNormals, NULL, GL_DYNAMIC_DRAW );
+	uint bufferbase = 0;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferbase, numBytesPositions, &positions[ 0 ] );
+	bufferbase += numBytesPositions;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferbase, numBytesTexCoords, &texCoords[ 0 ] );
+	bufferbase += numBytesTexCoords;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferbase, numBytesNormals, &normals[ 0 ] );
+
+
+// set up the pointers to the vertex data... layout qualifiers seem to be the easiest way to get this to go through successfully
+	{
+		const GLvoid * base = ( GLvoid * ) 0;
+		// glEnableVertexAttribArray( glGetAttribLocation( sponzaShader, "vPosition" ) );
+		// glVertexAttribPointer( glGetAttribLocation( sponzaShader, "vPosition" ), 3, GL_FLOAT, GL_FALSE, 0, base );
+		glEnableVertexAttribArray( 0 );
+		glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, base );
+	}
+	{
+		const GLvoid * base = ( GLvoid * ) numBytesPositions;
+		// glEnableVertexAttribArray( glGetAttribLocation( sponzaShader, "vTexCoord" ) );
+		// glVertexAttribPointer( glGetAttribLocation( sponzaShader, "vTexCoord" ), 3, GL_FLOAT, GL_FALSE, 0, base );
+		glEnableVertexAttribArray( 1 );
+		glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, base );
+	}
+	{
+		const GLvoid * base = ( GLvoid * ) ( numBytesPositions + numBytesTexCoords );
+		// glEnableVertexAttribArray( glGetAttribLocation( sponzaShader, "vNormal" ) );
+		// glVertexAttribPointer( glGetAttribLocation( sponzaShader, "vNormal" ), 3, GL_FLOAT, GL_FALSE, 0, base );
+		glEnableVertexAttribArray( 2 );
+		glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, 0, base );
+	}
+
+	const size_t tNumBytes = sponzaNumTriangles * 3 * sizeof( vec3 );
+	cout << newline << newline << "sent " << sponzaNumTriangles << " triangles, for a total of " <<
+		( tNumBytes / 1000000 ) % 1000 << " " <<
+		( tNumBytes / 1000 ) % 1000 << " " <<
+		( tNumBytes ) % 1000 << " bytes" << newline << newline;
+
+	cout << T_GREEN << "done." << RESET << newline;
+
+
+
+
+
+
 
 	cout << T_BLUE << "    Setting Up Textures" << RESET << " ....................... ";
+	// missing textures have been filled with zeroes
+	// all textures which do not match the 2048x2048 dimension have been scaled to match on load
+	glGenTextures( 1, &texArray );
+	glBindTexture( GL_TEXTURE_2D_ARRAY, texArray );
+
+	// preallocate storage
+	glTexStorage3D( GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, 2048, 2048, s.texSet.size() );
+
+	// go go go
+	for ( size_t i = 0; i < s.texSet.size(); i++ ) {
+		glTexSubImage3D( GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, 2048, 2048, 1, GL_RGBA, GL_UNSIGNED_BYTE, &s.texSet[ i ].data[ 0 ] );
+	}
+
+	const size_t numBytes = 2048 * 2048 * 4 * s.texSet.size();
+	cout << newline << newline << "sent " <<
+		( numBytes / 1000000 ) % 1000 << " " <<
+		( numBytes / 1000 ) % 1000 << " " <<
+		( numBytes ) % 1000 << " bytes to GPU for Sponza textures" << newline << newline;
+
+	// parameters
+	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S,  GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T,  GL_REPEAT );
+
+
+
+
+
 	// create the image textures
 	Image initial( config.width, config.height, true );
 	glGenTextures( 1, &accumulatorTexture );
@@ -148,6 +280,9 @@ void engine::ShaderCompile () {
 
 	// create the shader for the triangles to cover the screen
 	displayShader = regularShader( "resources/engineCode/shaders/blit.vs.glsl", "resources/engineCode/shaders/blit.fs.glsl" ).shaderHandle;
+
+	// load the sponza shader
+	sponzaShader = regularShader( "resources/engineCode/shaders/sponza.vs.glsl", "resources/engineCode/shaders/sponza.fs.glsl" ).shaderHandle;
 
 	// initialize the text renderer
 	textRenderer.Init( config.width, config.height, computeShader( "resources/fonts/fontRenderer/font.cs.glsl" ).shaderHandle );

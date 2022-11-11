@@ -7,8 +7,8 @@ void engine::Init () {
 	LoadConfig();
 	CreateWindowAndContext();
 	GLDebugEnable();
-	DisplaySetup();
 	ShaderCompile();
+	DisplaySetup();
 	ImguiSetup();
 	// if init takes some time, don't show the window before it's done
 	SDL_ShowWindow( window );

@@ -91,12 +91,25 @@ public:
 		if ( !texPath.empty() ) {
 			cout << "    loading ";
 			Image temp( texPath );
+
+
+			// hackity hack hack - pre-squared the chain texture, only non-square texture in the set
+			if ( temp.width == 256 ) {
+				temp.Resize( 8.0f );
+			} else if ( temp.width == 512 ) {
+				temp.Resize( 4.0f );
+			} else if ( temp.width == 1024 ) {
+				temp.Resize( 2.0f );
+			}
+
+
 			cout << temp.width << "x" << temp.height << " image" << newline;
 			texSet.push_back( temp );
 			cout << "    done" << endl << endl;
 		} else {
-			cout << "    image defaulting" << endl;
-			Image temp;
+			cout << "    image defaulting";
+			Image temp( 2048, 2048 );
+			cout << temp.width << "x" << temp.height << " image" << newline;
 			texSet.push_back( temp );
 			cout << "    done" << endl << endl;
 		}
@@ -324,8 +337,15 @@ public:
 
 			string diffuseTexname = materials[ materialID ].diffuse_texname;
 			cout << "  diffuse texture is: " << diffuseTexname << newline;
-
 			LoadTex( diffuseTexname.empty() ? string() : mtlSearchPath + diffuseTexname );
+
+			// for some reason they use the displacement texture field
+			string normalTexname = materials[ materialID ].displacement_texname;
+			cout << "  normal texture is: " << normalTexname << newline;
+			LoadTex( normalTexname.empty() ? string() : mtlSearchPath + normalTexname );
+
+			// eventually I'll implement something for GLTF and have something higher quality to look at,
+				// with the full complement of pbr textures
 		}
 
 		// iterating through shapes in the file

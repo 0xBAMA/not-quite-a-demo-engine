@@ -30,8 +30,18 @@ private:
 	GLuint displayTexture;
 	GLuint displayShader;
 	GLuint displayVAO;
+	GLuint displayVBO;
 	GLuint dummyDrawShader;
 	GLuint tonemapShader;
+
+	// SPONZA STUFF
+	GLuint sponzaShader;
+	// packed color + normal array texture
+	GLuint texArray;
+	// how many triangles
+	uint32_t sponzaNumTriangles = 0;
+	// offsetting the model's location
+	vec3 offset;
 
 	// tonemapping parameters + adjustment
 	colorGradeParameters tonemap;
@@ -51,6 +61,7 @@ private:
 	void BlitToScreen ();
 	void HandleEvents ();
 	void ClearColorAndDepth ();
+	void DrawAPIGeometry ();
 	void ComputePasses ();
 	void ImguiPass ();
 	void ImguiFrameStart ();

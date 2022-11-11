@@ -28,10 +28,6 @@ void engine::DrawAPIGeometry () {
 	const float width = ( float ) io.DisplaySize.x;
 	const float height = ( float ) io.DisplaySize.y;
 
-	glActiveTexture( GL_TEXTURE1 );
-	glBindTexture( GL_TEXTURE_2D_ARRAY, texArray );
-	glUniform1i( glGetUniformLocation( sponzaShader, "textures" ), 1 );
-
 	mat4 transform;
 	float time = TotalTime() / 10'000'000.0f;
 	transform = glm::perspective( ( float ) pi / 4.0f, width / height, 0.001f, 15.0f );

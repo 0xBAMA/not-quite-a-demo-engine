@@ -5,7 +5,7 @@ in vec3 texCoord;
 in vec3 normal;
 
 // texture array - use texcoord z value * 2 for color, * 2 + 1 for normals
-uniform sampler2DArray textures;
+layout( binding = 1 ) uniform sampler2DArray textures;
 
 out vec4 fragmentOutput;
 

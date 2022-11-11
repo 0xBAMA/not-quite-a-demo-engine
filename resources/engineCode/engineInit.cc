@@ -51,7 +51,8 @@ void engine::CreateWindowAndContext () {
 	SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,       8 );
 	// multisampling AA, for edges when evaluating API geometry
 	if ( config.MSAACount > 1 ) {
-		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, config.MSAACount );
+		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1 );
+		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, config.MSAACount );
 	}
 	cout << T_GREEN << "done." << RESET << newline;
 	cout << T_BLUE << "    Creating Window" << RESET << " ........................... ";
@@ -222,6 +223,7 @@ void engine::DisplaySetup () {
 	// missing textures have been filled with zeroes
 	// all textures which do not match the 2048x2048 dimension have been scaled to match on load
 	glGenTextures( 1, &texArray );
+	glActiveTexture( GL_TEXTURE1 );
 	glBindTexture( GL_TEXTURE_2D_ARRAY, texArray );
 
 	// preallocate storage
@@ -229,8 +231,12 @@ void engine::DisplaySetup () {
 
 	// go go go
 	for ( size_t i = 0; i < s.texSet.size(); i++ ) {
+		s.texSet[ i ].FlipVertical();
 		glTexSubImage3D( GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, 2048, 2048, 1, GL_RGBA, GL_UNSIGNED_BYTE, &s.texSet[ i ].data[ 0 ] );
 	}
+
+	// generate the mipmaps
+	glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
 
 	const size_t numBytes = 2048 * 2048 * 4 * s.texSet.size();
 	cout << newline << newline << "sent " <<
@@ -239,7 +245,7 @@ void engine::DisplaySetup () {
 		( numBytes ) % 1000 << " bytes to GPU for Sponza textures" << newline << newline;
 
 	// parameters
-	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S,  GL_REPEAT );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T,  GL_REPEAT );
@@ -249,7 +255,7 @@ void engine::DisplaySetup () {
 
 
 	// create the image textures
-	Image initial( config.width, config.height, true );
+	Image initial( config.width, config.height, false );
 	glGenTextures( 1, &accumulatorTexture );
 	glActiveTexture( GL_TEXTURE3 );
 	glBindTexture( GL_TEXTURE_2D, accumulatorTexture );

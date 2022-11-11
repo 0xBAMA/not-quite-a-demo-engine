@@ -6,9 +6,8 @@ bool engine::MainLoop () {
 	ClearColorAndDepth();			// if I just disable depth testing, this can disappear
 	DrawAPIGeometry();				// draw any API geometry desired
 
-	// temporarily disabled while playing with api geo
-	// ComputePasses();				// multistage update of displayTexture
-	// BlitToScreen();				// fullscreen triangle copying the displayTexture to the screen
+	ComputePasses();				// multistage update of displayTexture
+	BlitToScreen();				// fullscreen triangle copying the displayTexture to the screen
 
 	ImguiPass();					// do all the gui stuff
 	SDL_GL_SwapWindow( window );	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
@@ -23,10 +22,15 @@ void engine::DrawAPIGeometry () {
 	const float width = ( float ) io.DisplaySize.x;
 	const float height = ( float ) io.DisplaySize.y;
 
+	glActiveTexture( GL_TEXTURE1 );
+	glBindTexture( GL_TEXTURE_2D_ARRAY, texArray );
+	glUniform1i( glGetUniformLocation( sponzaShader, "textures" ), 1 );
+
 	mat4 transform;
 	float time = TotalTime() / 10'000'000.0f;
 	transform = glm::perspective( ( float ) pi / 4.0f, width / height, 0.001f, 15.0f );
 	transform = glm::translate( transform, vec3( 0.0f, -1.0f, 0.0f ) );
+	transform = glm::rotate( transform, 0.3f * sin( time ), vec3( 1.0f, 0.0f, 0.0f ) );
 	transform = glm::rotate( transform, time, vec3( 0.0f, 1.0f, 0.0f ) );
 
 	glUniformMatrix4fv( glGetUniformLocation( sponzaShader, "perspective" ), 1, GL_FALSE, glm::value_ptr( transform ) );
@@ -36,26 +40,26 @@ void engine::DrawAPIGeometry () {
 void engine::ComputePasses () {
 	ZoneScoped;
 
-// dummy draw
-	// set up environment ( 0:blue noise, 1: accumulator )
-	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-
-	// blablah draw something into accumulatorTexture
-	glUseProgram( dummyDrawShader );
-	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
-	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
-
-// postprocessing
-	// set up environment ( 0:accumulator, 1:display )
-	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-
-	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
-	glUseProgram( tonemapShader );
-	SendTonemappingParameters();
-	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
-	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+// // dummy draw
+// 	// set up environment ( 0:blue noise, 1: accumulator )
+// 	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+// 	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+//
+// 	// blablah draw something into accumulatorTexture
+// 	glUseProgram( dummyDrawShader );
+// 	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
+// 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+//
+// // postprocessing
+// 	// set up environment ( 0:accumulator, 1:display )
+// 	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+// 	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+//
+// 	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
+// 	glUseProgram( tonemapShader );
+// 	SendTonemappingParameters();
+// 	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
+// 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 	// shader to apply dithering
 		// ...

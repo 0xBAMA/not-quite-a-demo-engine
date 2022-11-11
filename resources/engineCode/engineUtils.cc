@@ -16,6 +16,12 @@ bool engine::MainLoop () {
 }
 
 void engine::DrawAPIGeometry () {
+
+	GLuint64 startTime, stopTime;
+	GLuint queryID[2];
+	glGenQueries( 2, queryID );
+	glQueryCounter( queryID[ 0 ], GL_TIMESTAMP );
+
 	glUseProgram( sponzaShader );
 
 	ImGuiIO &io = ImGui::GetIO();
@@ -35,6 +41,18 @@ void engine::DrawAPIGeometry () {
 
 	glUniformMatrix4fv( glGetUniformLocation( sponzaShader, "perspective" ), 1, GL_FALSE, glm::value_ptr( transform ) );
 	glDrawArrays( GL_TRIANGLES, 0, 3 * sponzaNumTriangles );
+
+	glQueryCounter( queryID[ 1 ], GL_TIMESTAMP );
+	GLint timeAvailable = 0;
+	while( !timeAvailable ) {
+		glGetQueryObjectiv( queryID[ 1 ], GL_QUERY_RESULT_AVAILABLE, &timeAvailable );
+	}
+
+	glGetQueryObjectui64v( queryID[ 0 ], GL_QUERY_RESULT, &startTime );
+	glGetQueryObjectui64v( queryID[ 1 ], GL_QUERY_RESULT, &stopTime );
+	float passTimeMs = ( stopTime - startTime ) / 1000000.0f;
+
+	cout << passTimeMs << "ms" << newline;
 }
 
 void engine::ComputePasses () {

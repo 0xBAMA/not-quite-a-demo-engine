@@ -115,9 +115,8 @@ void engine::DisplaySetup () {
 
 
 
-
-
-	SoftRast s ( 3000, 3000 );
+	// SoftRast s ( 3000, 3000 );
+	SoftRast s; // todo: model wrapper, maybe something that will generalize obj + gltf? tbd
 	s.LoadModel( "../otherFolks/Sponza/sponza.obj", "../otherFolks/Sponza/" );
 	// s.DrawModel( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
 	// s.DrawModelWireframe( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
@@ -149,6 +148,15 @@ void engine::DisplaySetup () {
 		normals.push_back( triangle.n1 );
 		normals.push_back( triangle.n2 );
 
+		// basis for normal mapping
+		tangents.push_back( triangle.t );
+		tangents.push_back( triangle.t );
+		tangents.push_back( triangle.t );
+
+		bitangents.push_back( triangle.b );
+		bitangents.push_back( triangle.b );
+		bitangents.push_back( triangle.b );
+
 		sponzaNumTriangles++;
 	}
 
@@ -156,6 +164,8 @@ void engine::DisplaySetup () {
 	uintptr_t numBytesPositions = positions.size() * sizeof( glm::vec3 );
 	uintptr_t numBytesTexCoords = texCoords.size() * sizeof( glm::vec3 );
 	uintptr_t numBytesNormals = normals.size() * sizeof( glm::vec3 );
+	uintptr_t numBytesTangents = tangents.size() * sizeof( glm::vec3 );
+	uintptr_t numBytesBitangents = bitangents.size() * sizeof( glm::vec3 );
 
 	// OpenGL core spec requires a VAO bound when calling glDrawArrays
 	glGenVertexArrays( 1, &displayVAO );
@@ -169,13 +179,18 @@ void engine::DisplaySetup () {
 	glUseProgram( sponzaShader );
 
 	// send it
-	glBufferData( GL_ARRAY_BUFFER, numBytesPositions + numBytesTexCoords + numBytesNormals, NULL, GL_DYNAMIC_DRAW );
-	uint bufferbase = 0;
-	glBufferSubData( GL_ARRAY_BUFFER, bufferbase, numBytesPositions, &positions[ 0 ] );
-	bufferbase += numBytesPositions;
-	glBufferSubData( GL_ARRAY_BUFFER, bufferbase, numBytesTexCoords, &texCoords[ 0 ] );
-	bufferbase += numBytesTexCoords;
-	glBufferSubData( GL_ARRAY_BUFFER, bufferbase, numBytesNormals, &normals[ 0 ] );
+	glBufferData( GL_ARRAY_BUFFER, numBytesPositions + numBytesTexCoords + numBytesNormals + numBytesTangents + numBytesBitangents, NULL, GL_DYNAMIC_DRAW );
+	uint bufferBase = 0;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferBase, numBytesPositions, &positions[ 0 ] );
+	bufferBase += numBytesPositions;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferBase, numBytesTexCoords, &texCoords[ 0 ] );
+	bufferBase += numBytesTexCoords;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferBase, numBytesNormals, &normals[ 0 ] );
+	bufferBase += numBytesNormals;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferBase, numBytesTangents, &tangents[ 0 ] );
+	bufferBase += numBytesTangents;
+	glBufferSubData( GL_ARRAY_BUFFER, bufferBase, numBytesBitangents, &bitangents[ 0 ] );
+
 
 
 // set up the pointers to the vertex data... layout qualifiers seem to be the easiest way to get this to go through successfully
@@ -194,6 +209,17 @@ void engine::DisplaySetup () {
 		glEnableVertexAttribArray( 2 );
 		glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, 0, base );
 	}
+	{
+		const GLvoid * base = ( GLvoid * ) ( numBytesPositions + numBytesTexCoords + numBytesNormals );
+		glEnableVertexAttribArray( 3 );
+		glVertexAttribPointer( 3, 3, GL_FLOAT, GL_FALSE, 0, base );
+	}
+	{
+		const GLvoid * base = ( GLvoid * ) ( numBytesPositions + numBytesTexCoords + numBytesNormals + numBytesTangents );
+		glEnableVertexAttribArray( 4 );
+		glVertexAttribPointer( 4, 3, GL_FLOAT, GL_FALSE, 0, base );
+	}
+
 
 	// const size_t tNumBytes = sponzaNumTriangles * 3 * sizeof( vec3 );
 	// cout << newline << newline << "sent " << sponzaNumTriangles << " triangles, for a total of " <<

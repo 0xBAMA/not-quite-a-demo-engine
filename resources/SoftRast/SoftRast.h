@@ -444,6 +444,20 @@ public:
 				// increment index array indexing by ( what should always be 3 )
 				indexOffset += numFaceVertices;
 
+				// compute tangent, bitangent
+				vec3 edge1 = t.p1 - t.p0;
+				vec3 edge2 = t.p2 - t.p0;
+				vec2 deltaUV1 = t.t1 - t.t0;
+				vec2 deltaUV2 = t.t2 - t.t0;
+
+				float f = 1.0f / ( deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y );
+				t.t.x = f * ( deltaUV2.y * edge1.x - deltaUV1.y * edge2.x );
+				t.t.y = f * ( deltaUV2.y * edge1.y - deltaUV1.y * edge2.y );
+				t.t.z = f * ( deltaUV2.y * edge1.z - deltaUV1.y * edge2.z );
+				t.b.x = f * ( -deltaUV2.x * edge1.x + deltaUV1.x * edge2.x );
+				t.b.y = f * ( -deltaUV2.x * edge1.y + deltaUV1.x * edge2.y );
+				t.b.z = f * ( -deltaUV2.x * edge1.z + deltaUV1.x * edge2.z );
+
 				// do it
 				triangles.push_back( t );
 			}

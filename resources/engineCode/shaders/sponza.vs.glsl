@@ -16,11 +16,13 @@ out vec3 bitangent;
 uniform mat4 transform;
 
 void main () {
-	position	= vPosition;
-	texCoord	= vTexCoord;
-	normal		= vNormal;
-	tangent		= vTangent;
-	bitangent	= vBitangent;
+	vec4 tPosition = transform * vec4( vPosition, 1.0f );
 
-	gl_Position	= transform * vec4( position, 1.0f );
+	position	= tPosition.xyz;
+	texCoord	= vTexCoord;
+	normal		= normalize( ( transform * vec4( vNormal, 0.0f ) ).xyz );
+	tangent		= normalize( ( transform * vec4( vTangent, 0.0f ) ).xyz );
+	bitangent	= normalize( ( transform * vec4( vBitangent, 0.0f ) ).xyz );
+
+	gl_Position	= tPosition;
 }

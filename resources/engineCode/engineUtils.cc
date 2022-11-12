@@ -34,8 +34,9 @@ void engine::DrawAPIGeometry () {
 	transform = glm::translate( transform, vec3( 0.0f, -1.0f, 0.0f ) );
 	transform = glm::rotate( transform, 0.3f * sin( time ), vec3( 1.0f, 0.0f, 0.0f ) );
 	transform = glm::rotate( transform, time, vec3( 0.0f, 1.0f, 0.0f ) );
+	transform = glm::scale( transform, vec3( 0.0024f ) );
 
-	glUniformMatrix4fv( glGetUniformLocation( sponzaShader, "perspective" ), 1, GL_FALSE, glm::value_ptr( transform ) );
+	glUniformMatrix4fv( glGetUniformLocation( sponzaShader, "transform" ), 1, GL_FALSE, glm::value_ptr( transform ) );
 	glDrawArrays( GL_TRIANGLES, 0, 3 * sponzaNumTriangles );
 
 	glQueryCounter( queryID[ 1 ], GL_TIMESTAMP );
@@ -48,7 +49,9 @@ void engine::DrawAPIGeometry () {
 	glGetQueryObjectui64v( queryID[ 1 ], GL_QUERY_RESULT, &stopTime );
 	float passTimeMs = ( stopTime - startTime ) / 1000000.0f;
 
-	cout << passTimeMs << "ms" << newline;
+	// cout << passTimeMs << "ms" << newline;
+	textRenderer.Update( passTimeMs / 1000.0f );
+
 }
 
 void engine::ComputePasses () {
@@ -82,7 +85,7 @@ void engine::ComputePasses () {
 		// ...
 
 	// text rendering timestamp, as final step - required texture binds are handled internally
-	textRenderer.Update( ImGui::GetIO().DeltaTime );
+	// textRenderer.Update( ImGui::GetIO().DeltaTime );
 	textRenderer.Draw( displayTexture ); // displayTexture is the writeTarget
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }

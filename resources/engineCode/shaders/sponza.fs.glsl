@@ -3,19 +3,27 @@
 in vec3 position;
 in vec3 texCoord;
 in vec3 normal;
+in vec3 tangent;
+in vec3 bitangent;
 
-// texture array - use texcoord z value * 2 for color, * 2 + 1 for normals
+uniform mat4 transform;
+
 layout( binding = 1 ) uniform sampler2DArray textures;
 
 out vec4 fragmentOutput;
 
 void main () {
-	// fragmentOutput = vec4( 0.5f * normal + 0.5f, 1.0f );
+	// texture array - use texcoord z value * 2 for color, * 2 + 1 for normals
+	vec3 tcNormal = vec3( texCoord.xy, texCoord.z * 2.0f + 1.0f );
+	vec3 tcColor = vec3( texCoord.xy, texCoord.z * 2.0f );
 
-	vec3 t = vec3( texCoord.xy, texCoord.z * 2.0f );
+	vec4 texRefNormal = texture( textures, tcNormal );
+	vec4 texRefColor = texture( textures, tcColor );
 
-	vec4 texRef = texture( textures, t );
-	if( texRef.a < 0.01f ) discard;
+	// skip blending
+	if( texRefColor.a < 0.01f ) discard;
 
-	fragmentOutput = vec4( texRef );
+	// fragmentOutput = vec4( ( texRefColor.xyz + texRefNormal.xyz ) / 2.0f, 1.0f );
+	// fragmentOutput = vec4( ( normal.xyz * 0.5f ) + 0.5f, 1.0f );
+	fragmentOutput = vec4( texRefColor.xyz, 1.0f );
 }

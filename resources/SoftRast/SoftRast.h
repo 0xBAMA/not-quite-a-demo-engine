@@ -9,6 +9,9 @@ struct triangle {
 	vec3 t0, t1, t2; // per vertex texcoord xy, texture index
 	vec3 n0, n1, n2; // per vertex normals
 	vec3 c0, c1, c2; // per vertex color
+
+	vec3 t; // tangent
+	vec3 b; // bitangent
 };
 
 // helper functions
@@ -72,6 +75,10 @@ static const mat3 rotation( vec3 a, float angle ) {
 	// helper function for depth testing? it's already pretty short... tbd
 	// object for holding triangle parameters, to simplify passing - need positions, need texcoords, need normals
 
+// noisey noisey
+constexpr bool verboseLoad = false;
+constexpr bool verboseDraw = false;
+
 class SoftRast {
 public:
 	SoftRast( uint32_t x = 0, uint32_t y = 0 ) : width( x ), height( y ) {
@@ -89,9 +96,8 @@ public:
 	std::vector<Image> texSet;
 	void LoadTex ( string texPath ) {
 		if ( !texPath.empty() ) {
-			cout << "    loading ";
 			Image temp( texPath );
-
+			temp.FlipVertical();
 
 			// hackity hack hack - pre-squared the chain texture, only non-square texture in the set
 			if ( temp.width == 256 ) {
@@ -102,16 +108,23 @@ public:
 				temp.Resize( 2.0f );
 			}
 
+			if ( verboseLoad ) {
+				cout << "    loading ";
+				cout << temp.width << "x" << temp.height << " image" << newline;
+				cout << "    done" << endl << endl;
+			}
 
-			cout << temp.width << "x" << temp.height << " image" << newline;
 			texSet.push_back( temp );
-			cout << "    done" << endl << endl;
 		} else {
-			cout << "    image defaulting";
 			Image temp( 2048, 2048 );
-			cout << temp.width << "x" << temp.height << " image" << newline;
+
+			if ( verboseLoad ) {
+				cout << "    image defaulting";
+				cout << temp.width << "x" << temp.height << " image" << newline;
+				cout << "    done" << endl << endl;
+			}
+
 			texSet.push_back( temp );
-			cout << "    done" << endl << endl;
 		}
 	}
 	vec4 TexRef ( vec2 texCoord, int id ) {
@@ -228,7 +241,6 @@ public:
 			bboxmax[ j ] = std::min( clamp[ j ], std::max( bboxmax[ j ], t.p2[ j ] ) );
 		}
 
-		constexpr bool verboseDraw = false;
 		if ( verboseDraw ) {
 			cout << "Drawing triangle, with:" << newline;
 			cout << "[vertex 0]" << newline;
@@ -331,22 +343,25 @@ public:
 		auto& shapes = reader.GetShapes();
 		auto& materials = reader.GetMaterials();
 
+	// eventually I'll implement something for GLTF and have something higher quality to look at, with the
+		// full complement of pbr textures ( intel sponza is a nice option, given sufficient VRAM )
+
 		// iterating through the materials
 		for ( size_t materialID = 0; materialID < materials.size(); materialID++ ) {
-			cout << "Material " << materialID << " is called " << materials[ materialID ].name << newline;
 
 			string diffuseTexname = materials[ materialID ].diffuse_texname;
-			cout << "  diffuse texture is: " << diffuseTexname << newline;
-			LoadTex( diffuseTexname.empty() ? string() : mtlSearchPath + diffuseTexname );
-
-			// for some reason they use the displacement texture field
 			string normalTexname = materials[ materialID ].displacement_texname;
-			cout << "  normal texture is: " << normalTexname << newline;
+			LoadTex( diffuseTexname.empty() ? string() : mtlSearchPath + diffuseTexname );
 			LoadTex( normalTexname.empty() ? string() : mtlSearchPath + normalTexname );
 
-			// eventually I'll implement something for GLTF and have something higher quality to look at,
-				// with the full complement of pbr textures
+			if ( verboseLoad ) {
+				cout << "Material " << materialID << " is called " << materials[ materialID ].name << newline;
+				cout << "  diffuse texture is: " << diffuseTexname << newline;
+				// for some reason they use the displacement texture field
+				cout << "  normal texture is: " << normalTexname << newline;
+			}
 		}
+
 
 		// iterating through shapes in the file
 		for ( size_t shapeID = 0; shapeID < shapes.size(); shapeID++ ) {
@@ -434,7 +449,9 @@ public:
 			}
 		}
 
-		cout << "loading took " << Tock() / 1000.0f << "ms" << newline;
+		if ( verboseLoad ) {
+			cout << "loading took " << Tock() / 1000.0f << "ms" << newline;
+		}
 	}
 
 	void DrawModel( const mat3 transform, const vec3 offset = vec3( 0.0f ) ) {
@@ -442,7 +459,9 @@ public:
 		for ( auto& t : triangles ) {
 			DrawTriangle( t, transform, offset );
 		}
-		cout << "drawing took " << Tock() / 1000.0f << "ms" << newline;
+		if ( verboseDraw ) {
+			cout << "drawing took " << Tock() / 1000.0f << "ms" << newline;
+		}
 	}
 
 	void DrawModelWireframe( const mat3 transform, const vec3 offset = vec3( 0.0f ) ) {
@@ -452,7 +471,9 @@ public:
 			DrawLine( ( transform * ( t.p1 + offset ) ), ( transform * ( t.p2 + offset ) ), vec4( t.n1, 1.0f ) );
 			DrawLine( ( transform * ( t.p2 + offset ) ), ( transform * ( t.p0 + offset ) ), vec4( t.n2, 1.0f ) );
 		}
-		cout << "drawing took " << Tock() / 1000.0f << "ms" << newline;
+		if ( verboseDraw ) {
+			cout << "drawing took " << Tock() / 1000.0f << "ms" << newline;
+		}
 	}
 
 	std::vector<triangle> triangles;

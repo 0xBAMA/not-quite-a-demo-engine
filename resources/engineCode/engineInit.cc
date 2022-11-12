@@ -94,6 +94,8 @@ void engine::CreateWindowAndContext () {
 	cout << T_GREEN << "done." << RESET << newline;
 }
 
+
+// split up into vertex, texture funcs + report platform info ( maybe do this later? )
 void engine::DisplaySetup () {
 	// some info on your current platform
 	cout << T_BLUE << "    Platform Info :" << RESET << newline;
@@ -120,7 +122,7 @@ void engine::DisplaySetup () {
 	// s.DrawModel( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
 	// s.DrawModelWireframe( rotation( vec3( 0.0f, 0.0f, 1.0f ), pi ) * mat3( 0.0005f ) );
 	// s.Color.Save( "test.png" );
-	cout << "loaded " << s.triangles.size() << " triangles" << newline;
+	// cout << "loaded " << s.triangles.size() << " triangles" << newline;
 
 	// set up vertex buffers, with all the triangle data - vertex colors are defaulted, not specified in the input
 		// position
@@ -129,16 +131,10 @@ void engine::DisplaySetup () {
 	std::vector<vec3> texCoords;
 		// normal
 	std::vector<vec3> normals;
-
-	// I want to try using array textures for texturing
-		// this is going to involve resizing the texture maps to a constant size
-			// I think that this makes the most sense as 2048x2048, because I have VRAM to burn, and I can use stb_image_resize
-			// to make the smaller textures match ( 256x256, 512x512, 1024x1024 ) - I can't find anywhere that says that array
-			// textures must all use the same resolution, but they get loaded with glTexImage3D, so I'm kind of assuming that's
-			// at least the intended usage
-		// then, once they're of uniform size, pack them all into one big buffer, and pass it
-		// I want to interleave the normal maps, too, so that'll be diffuse, normal, diffuse, normal...
-			// they are already ordered this way in s.texSet
+		// tangent
+	std::vector<vec3> tangents;
+		// bitangent
+	std::vector<vec3> bitangents;
 
 	for ( auto& triangle : s.triangles ) {
 		positions.push_back( triangle.p0 );
@@ -185,35 +181,27 @@ void engine::DisplaySetup () {
 // set up the pointers to the vertex data... layout qualifiers seem to be the easiest way to get this to go through successfully
 	{
 		const GLvoid * base = ( GLvoid * ) 0;
-		// glEnableVertexAttribArray( glGetAttribLocation( sponzaShader, "vPosition" ) );
-		// glVertexAttribPointer( glGetAttribLocation( sponzaShader, "vPosition" ), 3, GL_FLOAT, GL_FALSE, 0, base );
 		glEnableVertexAttribArray( 0 );
 		glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, base );
 	}
 	{
 		const GLvoid * base = ( GLvoid * ) numBytesPositions;
-		// glEnableVertexAttribArray( glGetAttribLocation( sponzaShader, "vTexCoord" ) );
-		// glVertexAttribPointer( glGetAttribLocation( sponzaShader, "vTexCoord" ), 3, GL_FLOAT, GL_FALSE, 0, base );
 		glEnableVertexAttribArray( 1 );
 		glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, base );
 	}
 	{
 		const GLvoid * base = ( GLvoid * ) ( numBytesPositions + numBytesTexCoords );
-		// glEnableVertexAttribArray( glGetAttribLocation( sponzaShader, "vNormal" ) );
-		// glVertexAttribPointer( glGetAttribLocation( sponzaShader, "vNormal" ), 3, GL_FLOAT, GL_FALSE, 0, base );
 		glEnableVertexAttribArray( 2 );
 		glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, 0, base );
 	}
 
-	const size_t tNumBytes = sponzaNumTriangles * 3 * sizeof( vec3 );
-	cout << newline << newline << "sent " << sponzaNumTriangles << " triangles, for a total of " <<
-		( tNumBytes / 1000000 ) % 1000 << " " <<
-		( tNumBytes / 1000 ) % 1000 << " " <<
-		( tNumBytes ) % 1000 << " bytes" << newline << newline;
+	// const size_t tNumBytes = sponzaNumTriangles * 3 * sizeof( vec3 );
+	// cout << newline << newline << "sent " << sponzaNumTriangles << " triangles, for a total of " <<
+	// 	( tNumBytes / 1000000 ) % 1000 << " " <<
+	// 	( tNumBytes / 1000 ) % 1000 << " " <<
+	// 	( tNumBytes ) % 1000 << " bytes" << newline << newline;
 
 	cout << T_GREEN << "done." << RESET << newline;
-
-
 
 
 
@@ -231,24 +219,24 @@ void engine::DisplaySetup () {
 
 	// go go go
 	for ( size_t i = 0; i < s.texSet.size(); i++ ) {
-		s.texSet[ i ].FlipVertical();
 		glTexSubImage3D( GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, 2048, 2048, 1, GL_RGBA, GL_UNSIGNED_BYTE, &s.texSet[ i ].data[ 0 ] );
 	}
 
-	// generate the mipmaps
-	glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
-
-	const size_t numBytes = 2048 * 2048 * 4 * s.texSet.size();
-	cout << newline << newline << "sent " <<
-		( numBytes / 1000000 ) % 1000 << " " <<
-		( numBytes / 1000 ) % 1000 << " " <<
-		( numBytes ) % 1000 << " bytes to GPU for Sponza textures" << newline << newline;
+	// const size_t numBytes = 2048 * 2048 * 4 * s.texSet.size();
+	// cout << newline << newline << "sent " <<
+	// 	( numBytes / 1000000 ) % 1000 << " " <<
+	// 	( numBytes / 1000 ) % 1000 << " " <<
+	// 	( numBytes ) % 1000 <<
+	// 	" bytes to GPU for Sponza textures" << newline << newline;
 
 	// parameters
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S,  GL_REPEAT );
 	glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T,  GL_REPEAT );
+
+	// generate the mipmaps
+	glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
 
 
 

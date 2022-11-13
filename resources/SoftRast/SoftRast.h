@@ -1,7 +1,7 @@
 #ifndef SOFTRAST
 #define SOFTRAST
 
-#include "../TinyOBJLoader/tiny_obj_loader.h"
+#include "../ModelLoading/TinyOBJLoader/tiny_obj_loader.h"
 #include "../engineCode/includes.h"
 
 struct triangle {

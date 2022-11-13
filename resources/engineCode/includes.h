@@ -74,7 +74,7 @@ using glm::mat4;
 // simple std::chrono wrapper
 #include "Timer.h"
 
-// keyboard input handling
+// keyboard input handling - this didn't go well
 // #include "inputHandler.h"
 
 // tracy profiler annotation
@@ -84,7 +84,7 @@ using glm::mat4;
 #include "../fonts/fontRenderer/renderer.h"
 
 // wrapper for TinyOBJLoader
-#include "../TinyOBJLoader/tiny_obj_loader.h"
+#include "../ModelLoading/TinyOBJLoader/tiny_obj_loader.h"
 
 // software rasterizer reimplementation
 #include "../SoftRast/SoftRast.h"
@@ -108,11 +108,11 @@ using glm::mat4;
 #include "../noise/perlin.h"
 
 // Niels Lohmann - JSON for Modern C++
-#include "../JSON/json.hpp"
+#include "../Serialization/JSON/json.hpp"
 using json = nlohmann::json;
 
 // tinyXML2 XML parser
-#include "../tinyXML2/tinyxml2.h"
+#include "../Serialization/tinyXML2/tinyxml2.h"
 using XMLDocument = tinyxml2::XMLDocument;
 
 struct configData {

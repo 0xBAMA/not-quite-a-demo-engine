@@ -67,11 +67,11 @@ add_library( BigInt
 
 target_compile_options( BigInt PUBLIC -Wno-deprecated )
 
-add_library( tinyXML2 resources/tinyXML2/tinyxml2.cc )
+add_library( tinyXML2 resources/Serialization/tinyXML2/tinyxml2.cc )
 
 add_library( STB_ImageUtilsWrapper resources/ImageHandling/stb/impl.cc )
 
-add_library( TinyOBJLoader resources/TinyOBJLoader/tiny_obj_loader.cc )
+add_library( TinyOBJLoader resources/ModelLoading/TinyOBJLoader/tiny_obj_loader.cc )
 
 add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/ImageHandling/fpng )
 

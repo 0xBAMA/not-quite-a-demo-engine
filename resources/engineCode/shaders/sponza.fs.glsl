@@ -10,7 +10,7 @@ out vec4 fragmentOutput;
 layout( binding = 1 ) uniform sampler2DArray textures;
 
 uniform mat4 transform;
-// uniform vec3 lightPosition;
+uniform vec3 lightPosition;
 
 const vec3 viewPosition = vec3( 0.0f );
 

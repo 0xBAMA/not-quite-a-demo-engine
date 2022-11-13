@@ -5,10 +5,8 @@ bool engine::MainLoop () {
 	HandleEvents();					// handle keyboard / mouse events
 	ClearColorAndDepth();			// if I just disable depth testing, this can disappear
 	DrawAPIGeometry();				// draw any API geometry desired
-
 	ComputePasses();				// multistage update of displayTexture
-	BlitToScreen();				// fullscreen triangle copying the displayTexture to the screen
-
+	BlitToScreen();					// fullscreen triangle copying the displayTexture to the screen
 	ImguiPass();					// do all the gui stuff
 	SDL_GL_SwapWindow( window );	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
 	FrameMark;						// tells tracy that this is the end of a frame
@@ -22,25 +20,7 @@ void engine::DrawAPIGeometry () {
 	glGenQueries( 2, queryID );
 	glQueryCounter( queryID[ 0 ], GL_TIMESTAMP );
 
-	glUseProgram( sponzaShader );
-
-	ImGuiIO &io = ImGui::GetIO();
-	const float width = ( float ) io.DisplaySize.x;
-	const float height = ( float ) io.DisplaySize.y;
-
-	mat4 transform;
-	float time = TotalTime() / 10'000'000.0f;
-	transform = glm::perspective( ( float ) pi / 4.0f, width / height, 0.001f, 15.0f );
-	transform = glm::translate( transform, vec3( 0.0f, -1.0f, 0.0f ) );
-	transform = glm::rotate( transform, 0.3f * sin( time ), vec3( 1.0f, 0.0f, 0.0f ) );
-	transform = glm::rotate( transform, time, vec3( 0.0f, 1.0f, 0.0f ) );
-	transform = glm::scale( transform, vec3( 0.0024f ) );
-
-	// send view position ( transform, above - maybe inverted? tbd )
-	// send light position(s) maybe a buffer with a couple in it? or pass uniform vector
-	glUniformMatrix4fv( glGetUniformLocation( sponzaShader, "transform" ), 1, GL_FALSE, glm::value_ptr( transform ) );
-
-	glDrawArrays( GL_TRIANGLES, 0, 3 * sponzaNumTriangles );
+	// draw ur shit
 
 	glQueryCounter( queryID[ 1 ], GL_TIMESTAMP );
 	GLint timeAvailable = 0;
@@ -50,36 +30,34 @@ void engine::DrawAPIGeometry () {
 
 	glGetQueryObjectui64v( queryID[ 0 ], GL_QUERY_RESULT, &startTime );
 	glGetQueryObjectui64v( queryID[ 1 ], GL_QUERY_RESULT, &stopTime );
-	float passTimeMs = ( stopTime - startTime ) / 1000000.0f;
+	float passTimeMs = ( stopTime - startTime ) / 1000000.0f; // operation time in ms
 
-	// cout << passTimeMs << "ms" << newline;
-	textRenderer.Update( passTimeMs / 1000.0f );
-
+	( void ) passTimeMs; // avoid unused variable warning
 }
 
 void engine::ComputePasses () {
 	ZoneScoped;
 
-// // dummy draw
-// 	// set up environment ( 0:blue noise, 1: accumulator )
-// 	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-// 	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-//
-// 	// blablah draw something into accumulatorTexture
-// 	glUseProgram( dummyDrawShader );
-// 	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
-// 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
-//
-// // postprocessing
-// 	// set up environment ( 0:accumulator, 1:display )
-// 	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-// 	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-//
-// 	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
-// 	glUseProgram( tonemapShader );
-// 	SendTonemappingParameters();
-// 	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
-// 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+// dummy draw
+	// set up environment ( 0:blue noise, 1: accumulator )
+	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+
+	// blablah draw something into accumulatorTexture
+	glUseProgram( dummyDrawShader );
+	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
+	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+
+// postprocessing
+	// set up environment ( 0:accumulator, 1:display )
+	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+
+	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
+	glUseProgram( tonemapShader );
+	SendTonemappingParameters();
+	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
+	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 	// shader to apply dithering
 		// ...

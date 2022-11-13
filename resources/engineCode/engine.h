@@ -54,6 +54,8 @@ private:
 	void LoadConfig ();
 	void CreateWindowAndContext ();
 	void DisplaySetup ();
+	void SetupVertexData ();
+	void SetupTextureData ();
 	void ShaderCompile ();
 	void ImguiSetup ();
 

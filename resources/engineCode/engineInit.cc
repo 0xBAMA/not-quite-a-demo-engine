@@ -160,6 +160,9 @@ void engine::DisplaySetup () {
 		sponzaNumTriangles++;
 	}
 
+	// prep the patient
+	glUseProgram( sponzaShader );
+
 	// send the data, set up the vertex attributes
 	uintptr_t numBytesPositions = positions.size() * sizeof( glm::vec3 );
 	uintptr_t numBytesTexCoords = texCoords.size() * sizeof( glm::vec3 );
@@ -175,8 +178,6 @@ void engine::DisplaySetup () {
 	glGenBuffers( 1, &displayVBO );
 	glBindBuffer( GL_ARRAY_BUFFER, displayVBO );
 
-	// idk
-	glUseProgram( sponzaShader );
 
 	// send it
 	glBufferData( GL_ARRAY_BUFFER, numBytesPositions + numBytesTexCoords + numBytesNormals + numBytesTangents + numBytesBitangents, NULL, GL_DYNAMIC_DRAW );
@@ -191,9 +192,7 @@ void engine::DisplaySetup () {
 	bufferBase += numBytesTangents;
 	glBufferSubData( GL_ARRAY_BUFFER, bufferBase, numBytesBitangents, &bitangents[ 0 ] );
 
-
-
-// set up the pointers to the vertex data... layout qualifiers seem to be the easiest way to get this to go through successfully
+// set up the pointers to the vertex data... layout qualifiers seem to be the easiest way to get this to go through
 	{
 		const GLvoid * base = ( GLvoid * ) 0;
 		glEnableVertexAttribArray( 0 );

@@ -36,7 +36,10 @@ void engine::DrawAPIGeometry () {
 	transform = glm::rotate( transform, time, vec3( 0.0f, 1.0f, 0.0f ) );
 	transform = glm::scale( transform, vec3( 0.0024f ) );
 
+	// send view position ( transform, above - maybe inverted? tbd )
+	// send light position(s) maybe a buffer with a couple in it? or pass uniform vector
 	glUniformMatrix4fv( glGetUniformLocation( sponzaShader, "transform" ), 1, GL_FALSE, glm::value_ptr( transform ) );
+
 	glDrawArrays( GL_TRIANGLES, 0, 3 * sponzaNumTriangles );
 
 	glQueryCounter( queryID[ 1 ], GL_TIMESTAMP );

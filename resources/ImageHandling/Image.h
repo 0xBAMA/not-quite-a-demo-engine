@@ -28,7 +28,6 @@
 // considering templating this, or else just defining another couple classes
 	// I will need an equivalent float image type, and I will need 1 and 4 component buffers made from this type ( depth, color + alpha )
 
-
 // adding additional backends is as simple as adding an enum, writing the corresponding load/save implementation
 enum backend {
 	FPNG = 0,
@@ -241,7 +240,7 @@ public:
 		}
 	}
 
-	void Swizzle ( char[ 4 ] swizz ) { // this matches the functionality of irFlip2
+	void Swizzle ( char swizz[ 4 ] ) { // this matches the functionality of irFlip2
 		// four char input string determines the ordering of the final output data
 			// given input r,g,b,a, the following determines how the output is constructed:
 
@@ -258,9 +257,27 @@ public:
 		Image temp( width, height );
 		for ( uint32_t y = 0; y < height; y++ ) {
 			for ( uint32_t x = 0; x < width; x++ ) {
+				uint8_t color[ 4 ];
 				rgba val = GetAtXY( x, y );
-				temp.SetAtXY( x, y, { val.g, val.b, val.r, val.a } );
+				for ( uint8_t c = 0; c < 4; c++ ) {
+					switch ( swizz[ c ] ) {
+						case 'r': color[ c ] = val.r; break;
+						case 'R': color[ c ] = 255 - val.r; break;
+						case 'g': color[ c ] = val.g; break;
+						case 'G': color[ c ] = 255 - val.g; break;
+						case 'b': color[ c ] = val.b; break;
+						case 'B': color[ c ] = 255 - val.b; break;
+						case 'a': color[ c ] = val.a; break;
+						case 'A': color[ c ] = 255 - val.a; break;
+						case '0': color[ c ] = 0; break;
+						case '1': color[ c ] = 255; break;
+					}
+				}
+				temp.SetAtXY( x, y, { color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] } );
 			}
+		}
+		for ( size_t i = 0; i < width * height * 4; i++ ) {
+			data[ i ] = temp.data[ i ];
 		}
 	}
 

@@ -241,6 +241,29 @@ public:
 		}
 	}
 
+	void Swizzle ( char[ 4 ] swizz ) { // this matches the functionality of irFlip2
+		// four char input string determines the ordering of the final output data
+			// given input r,g,b,a, the following determines how the output is constructed:
+
+		// options for each char are r, R, g, G, b, B, a, A, 0, 1
+			// 'r' is input red channel,   'R' is 255 - input red channel
+			// 'g' is input green channel, 'G' is 255 - input green channel
+			// 'b' is input blue channel,  'B' is 255 - input blue channel
+			// 'a' is input alpha channel, 'A' is 255 - input alpha channel
+			// '0' saturates to 0, ignoring input
+			// '1' saturates to 255, ignoring input
+
+		// you can do a pretty arbitrary transform on the data with these options
+			// there are 10k ( ( 8 + 2 ) ^ 4 ) options, so hopefully one of those fits your need
+		Image temp( width, height );
+		for ( uint32_t y = 0; y < height; y++ ) {
+			for ( uint32_t x = 0; x < width; x++ ) {
+				rgba val = GetAtXY( x, y );
+				temp.SetAtXY( x, y, { val.g, val.b, val.r, val.a } );
+			}
+		}
+	}
+
 	enum class sortCriteria {
 		red, green, blue, luma
 	};
@@ -248,17 +271,17 @@ public:
 	struct {
 		bool operator()( rgba a, rgba b ) const {
 			// compute luma and compare
-			float ra = ( a.r / 255.0 );
-			float rb = ( b.r / 255.0 );
+			float ra = ( a.r / 255.0f );
+			float rb = ( b.r / 255.0f );
 
-			float ga = ( a.g / 255.0 );
-			float gb = ( b.g / 255.0 );
+			float ga = ( a.g / 255.0f );
+			float gb = ( b.g / 255.0f );
 
-			float ba = ( a.b / 255.0 );
-			float bb = ( b.b / 255.0 );
+			float ba = ( a.b / 255.0f );
+			float bb = ( b.b / 255.0f );
 
-			float lumaA = sqrt( 0.299 * ra * ra + 0.587 * ga * ga + 0.114 * ba * ba );
-			float lumaB = sqrt( 0.299 * rb * rb + 0.587 * gb * gb + 0.114 * bb * bb );
+			float lumaA = sqrt( 0.299f * ra * ra + 0.587f * ga * ga + 0.114f * ba * ba );
+			float lumaB = sqrt( 0.299f * rb * rb + 0.587f * gb * gb + 0.114f * bb * bb );
 			return lumaA < lumaB;
 		}
 	} lumaLess;
@@ -344,14 +367,14 @@ public:
 	uint32_t numChannels = 4;
 
 	rgba AverageColor () {
-		float sums[ 4 ] = { 0, 0, 0, 0 };
+		float sums[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		for( uint32_t y = 0; y < height; y++ ) {
 			for( uint32_t x = 0; x < width; x++ ) {
 				rgba val = GetAtXY( x, y );
-				sums[ 0 ] += val.r / 255.0;
-				sums[ 1 ] += val.g / 255.0;
-				sums[ 2 ] += val.b / 255.0;
-				sums[ 3 ] += val.a / 255.0;
+				sums[ 0 ] += val.r / 255.0f;
+				sums[ 1 ] += val.g / 255.0f;
+				sums[ 2 ] += val.b / 255.0f;
+				sums[ 3 ] += val.a / 255.0f;
 			}
 		}
 		const float numPixels = width * height;
@@ -466,10 +489,10 @@ public:
 			for ( uint32_t x = 0; x < width; x++ ) {
 				rgba tempVal = temp.GetAtXY( x, y );
 				rgbaF tempValF;
-				tempValF.r = tempVal.r / 255.0;
-				tempValF.g = tempVal.g / 255.0;
-				tempValF.b = tempVal.b / 255.0;
-				tempValF.a = tempVal.a / 255.0;
+				tempValF.r = tempVal.r / 255.0f;
+				tempValF.g = tempVal.g / 255.0f;
+				tempValF.b = tempVal.b / 255.0f;
+				tempValF.a = tempVal.a / 255.0f;
 				SetAtXY( x, y, tempValF );
 			}
 		}
@@ -582,8 +605,8 @@ public:
 	struct {
 		bool operator()( rgbaF a, rgbaF b ) const {
 			// compute luma and compare
-			float lumaA = sqrt( 0.299 * a.r * a.r + 0.587 * a.g * a.g + 0.114 * a.b * a.b );
-			float lumaB = sqrt( 0.299 * b.r * b.r + 0.587 * b.g * b.g + 0.114 * b.b * b.b );
+			float lumaA = sqrt( 0.299f * a.r * a.r + 0.587f * a.g * a.g + 0.114f * a.b * a.b );
+			float lumaB = sqrt( 0.299f * b.r * b.r + 0.587f * b.g * b.g + 0.114f * b.b * b.b );
 			return lumaA < lumaB;
 		}
 	} lumaLess;

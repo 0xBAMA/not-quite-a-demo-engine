@@ -12,6 +12,7 @@ void engine::LoadConfig () {
 	// load the config json, populate config struct - this will probably have more data, eventually
 	ifstream i( "resources/engineCode/config.json" );
 	i >> j; i.close();
+	config.windowTitle = j[ "windowTitle" ];
 	config.width = j[ "screenWidth" ];
 	config.height = j[ "screenHeight" ];
 	config.windowOffset.x = j[ "windowOffset" ][ "x" ];
@@ -67,7 +68,8 @@ void engine::CreateWindowAndContext () {
 	config.windowFlags |= SDL_WINDOW_OPENGL;
 	config.windowFlags |= SDL_WINDOW_HIDDEN;
 	// todo: offset so that it starts on the selected screen, config.startOnScreen ( bump by n * screenWidth )
-	window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x + config.startOnScreen * displayMode.w, config.windowOffset.y, config.width, config.height, config.windowFlags );
+	window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x + config.startOnScreen * displayMode.w,
+		config.windowOffset.y, config.width, config.height, config.windowFlags );
 
 	cout << T_GREEN << "done." << RESET << newline;
 	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ................. ";

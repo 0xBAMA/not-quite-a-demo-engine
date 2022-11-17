@@ -61,8 +61,10 @@ void engine::CreateWindowAndContext () {
 	// prep for window creation
 	SDL_DisplayMode displayMode;
 	SDL_GetDesktopDisplayMode( 0, &displayMode );
-// different window configurations - this needs work, I don't like this switch statement at all
-//	use displayMode dimension for either value set to -1 ( width or height ), or negative to do displayMode.val - config.val? tbd
+
+	// 0 or negative numbers will size the window relative to the display
+	config.width = ( config.width <= 0 ) ? displayMode.w + config.width : config.width;
+	config.height = ( config.height <= 0 ) ? displayMode.h + config.height : config.height;
 
 	// always need OpenGL, always start hidden till init finishes
 	config.windowFlags |= SDL_WINDOW_OPENGL;

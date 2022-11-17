@@ -118,8 +118,8 @@ using XMLDocument = tinyxml2::XMLDocument;
 struct configData {
 	uint32_t windowFlags = 0;
 	string windowTitle = string( "NQADE" );
-	uint32_t width = 0;
-	uint32_t height = 0;
+	int32_t width = 0;
+	int32_t height = 0;
 	ivec2 windowOffset = ivec2( 0, 0 );
 	uint8_t startOnScreen = 0;
 

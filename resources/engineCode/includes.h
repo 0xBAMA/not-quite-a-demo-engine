@@ -120,6 +120,7 @@ struct configData {
 	string windowTitle = string( "NQADE" );
 	int32_t width = 0;
 	int32_t height = 0;
+	bool linearFilter = false;
 	ivec2 windowOffset = ivec2( 0, 0 );
 	uint8_t startOnScreen = 0;
 
@@ -128,6 +129,7 @@ struct configData {
 	bool vSyncEnable = true;
 	uint8_t OpenGLVersionMajor = 4;
 	uint8_t OpenGLVersionMinor = 3;
+	bool reportPlatformInfo = true;
 
 	// enable blend/blend mode? not sure if there's much utility there
 	// enable depth testing would be helpful

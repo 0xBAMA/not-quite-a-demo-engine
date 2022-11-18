@@ -15,6 +15,7 @@ void engine::LoadConfig () {
 	config.windowTitle = j[ "windowTitle" ];
 	config.width = j[ "screenWidth" ];
 	config.height = j[ "screenHeight" ];
+	config.linearFilter = j[ "linearFilterDisplayTex" ];
 	config.windowOffset.x = j[ "windowOffset" ][ "x" ];
 	config.windowOffset.y = j[ "windowOffset" ][ "y" ];
 	config.startOnScreen = j[ "startOnScreen" ];
@@ -28,11 +29,17 @@ void engine::LoadConfig () {
 	config.MSAACount = j[ "MSAACount" ];
 	config.OpenGLVersionMajor = j[ "OpenGLVersionMajor" ];
 	config.OpenGLVersionMinor = j[ "OpenGLVersionMinor" ];
+	config.reportPlatformInfo = j[ "reportPlatformInfo" ];
 
 	config.clearColor.r = j[ "clearColor" ][ "r" ];
 	config.clearColor.g = j[ "clearColor" ][ "g" ];
 	config.clearColor.b = j[ "clearColor" ][ "b" ];
 	config.clearColor.a = j[ "clearColor" ][ "a" ];
+
+	// color grading stuff
+	tonemap.tonemapMode = j[ "tonemapMode" ];
+	tonemap.gamma = j[ "gamma" ];
+	tonemap.colorTemp = j[ "colorTemp" ];
 
 	cout << T_GREEN << "done." << RESET << newline;
 }
@@ -101,15 +108,17 @@ void engine::CreateWindowAndContext () {
 // split up into vertex, texture funcs + report platform info ( maybe do this later? )
 void engine::DisplaySetup () {
 	// some info on your current platform
-	cout << T_BLUE << "    Platform Info :" << RESET << newline;
-	const GLubyte *vendor = glGetString( GL_VENDOR );
-	cout << T_RED << "      Vendor : " << T_CYAN << vendor << RESET << newline;
-	const GLubyte *renderer = glGetString( GL_RENDERER );
-	cout << T_RED << "      Renderer : " << T_CYAN << renderer << RESET << newline;
-	const GLubyte *version = glGetString( GL_VERSION );
-	cout << T_RED << "      OpenGL Version Supported : " << T_CYAN << version << RESET << newline;
-	const GLubyte *glslVersion = glGetString( GL_SHADING_LANGUAGE_VERSION );
-	cout << T_RED << "      GLSL Version Supported : " << T_CYAN << glslVersion << RESET << newline << newline;
+	if ( config.reportPlatformInfo ) {
+		cout << T_BLUE << "    Platform Info :" << RESET << newline;
+		const GLubyte *vendor = glGetString( GL_VENDOR );
+		cout << T_RED << "      Vendor : " << T_CYAN << vendor << RESET << newline;
+		const GLubyte *renderer = glGetString( GL_RENDERER );
+		cout << T_RED << "      Renderer : " << T_CYAN << renderer << RESET << newline;
+		const GLubyte *version = glGetString( GL_VERSION );
+		cout << T_RED << "      OpenGL Version Supported : " << T_CYAN << version << RESET << newline;
+		const GLubyte *glslVersion = glGetString( GL_SHADING_LANGUAGE_VERSION );
+		cout << T_RED << "      GLSL Version Supported : " << T_CYAN << glslVersion << RESET << newline << newline;
+	}
 
 	SetupVertexData();
 	SetupTextureData();
@@ -146,9 +155,8 @@ void engine::SetupTextureData () {
 	glGenTextures( 1, &displayTexture );
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D, displayTexture );
-	bool linearFilter = true;
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, linearFilter ? GL_LINEAR : GL_NEAREST );
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linearFilter ? GL_LINEAR : GL_NEAREST );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, config.linearFilter ? GL_LINEAR : GL_NEAREST );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, config.linearFilter ? GL_LINEAR : GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data[ 0 ] );

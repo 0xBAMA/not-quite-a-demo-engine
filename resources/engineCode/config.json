@@ -8,8 +8,10 @@
 		"x":300,
 		"y":200
 	},
+	"linearFilterDisplayTex":true,
 	"OpenGLVersionMajor":4,
 	"OpenGLVersionMinor":3,
+	"reportPlatformInfo":true,
 	"SDL_WINDOW_FULLSCREEN":false,
 	"SDL_WINDOW_FULLSCREEN_DESKTOP":false,
 	"SDL_WINDOW_BORDERLESS":false,
@@ -21,5 +23,8 @@
 		"b":0.618,
 		"a":1.0
 	},
-	"vSyncEnable":true
+	"vSyncEnable":true,
+	"tonemapMode":6,
+	"gamma":1.1,
+	"colorTemp":6500.0
 }

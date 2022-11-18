@@ -12,6 +12,7 @@
 	"OpenGLVersionMajor":4,
 	"OpenGLVersionMinor":3,
 	"reportPlatformInfo":true,
+	"enableDepthTesting":false,
 	"SDL_WINDOW_FULLSCREEN":false,
 	"SDL_WINDOW_FULLSCREEN_DESKTOP":false,
 	"SDL_WINDOW_BORDERLESS":false,

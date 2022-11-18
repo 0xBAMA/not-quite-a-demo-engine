@@ -38,6 +38,9 @@ option(TRACY_ENABLE "" ON)
 option(TRACY_ON_DEMAND "" ON)
 add_subdirectory( resources/tracy )
 
+# assimp model loader
+add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/ModelLoading/assimp )
+
 # this is for ImGUI
 add_library( imgui
 	resources/ImGUI/imgui_impl_sdl.cc
@@ -73,8 +76,6 @@ add_library( STB_ImageUtilsWrapper resources/ImageHandling/stb/impl.cc )
 
 add_library( TinyOBJLoader resources/ModelLoading/TinyOBJLoader/tiny_obj_loader.cc )
 
-add_subdirectory( ${PROJECT_SOURCE_DIR}/resources/ImageHandling/fpng )
-
 add_library( CompilerFlags INTERFACE )
 target_compile_options( CompilerFlags INTERFACE -Wall -O3 -std=c++17 -lGL -lstdc++fs -lSDL2 -ldl -Wno-maybe-uninitialized -Wno-unused-function ) # suppresses warnings for Tracy
 
@@ -97,8 +98,8 @@ target_link_libraries( exe
 	tinyXML2
 	opengl
 	sdl2
+	assimp
 	STB_ImageUtilsWrapper
-	fpng
 	stdc++fs
 	FastNoise
 	Tracy::TracyClient

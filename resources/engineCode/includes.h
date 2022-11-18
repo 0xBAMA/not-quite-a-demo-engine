@@ -43,7 +43,7 @@ constexpr double pi = 3.14159265358979323846;
 #include "../GLM/gtx/transform.hpp"
 
 // not sure as to the utility of this
-#define GLX_GLEXT_PROTOTYPES
+// #define GLX_GLEXT_PROTOTYPES
 
 // convenience defines for GLM
 using glm::vec2;
@@ -67,6 +67,7 @@ using glm::mat4;
 // SDL includes - windowing, gl context, system info
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+// #include <SDL2/SDL_opengl_glext.h>
 
 // image load/save/resize/access/manipulation wrapper
 #include "../ImageHandling/Image.h"
@@ -127,9 +128,8 @@ struct configData {
 	uint8_t OpenGLVersionMajor = 4;
 	uint8_t OpenGLVersionMinor = 3;
 	bool reportPlatformInfo = true;
+	bool enableDepthTesting = false;
 
-	// enable blend/blend mode? not sure if there's much utility there
-	// enable depth testing would be helpful
 	// anything else?
 };
 

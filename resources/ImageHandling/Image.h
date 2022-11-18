@@ -7,9 +7,6 @@
 // Lode Vandevenne's LodePNG PNG Load/Save lib
 #include "../ImageHandling/LodePNG/lodepng.h"
 
-// Rich Geldrich's fpng - public domain, https://github.com/richgel999/fpng
-#include "../ImageHandling/fpng/fpng.h"
-
 // Sean Barrett's public domain load, save, resize libs - need corresponding define in the ./stb/impl.cc file, before their inclusion,
 	// which is done by the time compilation hits this point - they can be straight included, here, as follows:
 
@@ -30,9 +27,8 @@
 
 // adding additional backends is as simple as adding an enum, writing the corresponding load/save implementation
 enum backend {
-	FPNG = 0,
-	STB = 1,
-	LODEPNG = 2
+	STB = 0,
+	LODEPNG = 1
 };
 
 struct rgba {
@@ -95,13 +91,12 @@ public:
 		}
 	}
 
-	bool Load ( std::string path, backend loader = FPNG ) {
+	bool Load ( std::string path, backend loader = LODEPNG ) {
 		// stb can load non-png, others cannot
 		bool result = false;
 		if ( path.substr( path.find_last_of( "." ) ) != ".png" ) loader = STB;
 		Clear(); // remove existing data
 		switch ( loader ) {
-			case FPNG:		result = Load_fpng( path ); 	break;
 			case STB:		result = Load_stb( path ); 		break;
 			case LODEPNG:	result = Load_lodepng( path ); 	break;
 			default: break;
@@ -110,9 +105,8 @@ public:
 		return result;
 	}
 
-	bool Save ( std::string path, backend loader = FPNG ) {
+	bool Save ( std::string path, backend loader = LODEPNG ) {
 		switch ( loader ) {
-			case FPNG:		return Save_fpng( path );
 			case STB:		return Save_stb( path );
 			case LODEPNG:	return Save_lodepng( path );
 			default: break;
@@ -413,22 +407,6 @@ private:
 
 	void Reset () { data.resize( 0 ); width = 0; height = 0; };
 	void Clear () { data.resize( 0 ); };
-
-// ==== FPNG =========================================
-	bool Load_fpng ( std::string path ) {
-		uint32_t desired_channels = numChannels;
-		int check = fpng::fpng_decode_file( path.c_str(), data, width, height, numChannels, desired_channels );
-		if ( !check )
-			return true;
-		else {
-			std::cout << "failed with error " << check << std::endl << std::flush;
-			return false;
-		}
-	}
-
-	bool Save_fpng ( std::string path ) {
-		return fpng::fpng_encode_image_to_file( path.c_str(), &data[ 0 ], width, height, uint32_t( numChannels ) );
-	}
 
 // ==== STB_Image / STB_Image_Write =================
 	// if extension is anything other than '.png', this is the only option

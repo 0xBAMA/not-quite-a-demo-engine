@@ -74,9 +74,6 @@ using glm::mat4;
 // simple std::chrono wrapper
 #include "Timer.h"
 
-// keyboard input handling - this didn't go well
-// #include "inputHandler.h"
-
 // tracy profiler annotation
 #include "../tracy/public/tracy/Tracy.hpp"
 

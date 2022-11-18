@@ -24,7 +24,9 @@
 		"a":1.0
 	},
 	"vSyncEnable":true,
-	"tonemapMode":6,
-	"gamma":1.1,
-	"colorTemp":6500.0
+	"colorGrade":{
+		"tonemapMode":6,
+		"gamma":1.1,
+		"colorTemp":6500.0
+	}
 }

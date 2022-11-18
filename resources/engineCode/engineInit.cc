@@ -37,9 +37,9 @@ void engine::LoadConfig () {
 	config.clearColor.a = j[ "clearColor" ][ "a" ];
 
 	// color grading stuff
-	tonemap.tonemapMode = j[ "tonemapMode" ];
-	tonemap.gamma = j[ "gamma" ];
-	tonemap.colorTemp = j[ "colorTemp" ];
+	tonemap.tonemapMode = j[ "colorGrade" ][ "tonemapMode" ];
+	tonemap.gamma = j[ "colorGrade" ][ "gamma" ];
+	tonemap.colorTemp = j[ "colorGrade" ][ "colorTemp" ];
 
 	cout << T_GREEN << "done." << RESET << newline;
 }

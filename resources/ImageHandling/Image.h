@@ -7,8 +7,9 @@
 // Lode Vandevenne's LodePNG PNG Load/Save lib
 #include "../ImageHandling/LodePNG/lodepng.h"
 
-// Sean Barrett's public domain load, save, resize libs - need corresponding define in the ./stb/impl.cc file, before their inclusion,
-	// which is done by the time compilation hits this point - they can be straight included, here, as follows:
+// Sean Barrett's public domain load, save, resize libs - need corresponding define in the ./stb/impl.cc file,
+	// before their inclusion, which is done by the time compilation hits this point - they can be straight
+	// included, here, as follows:
 
 // https://github.com/nothings/stb/blob/master/stb_image.h
 #include "../ImageHandling/stb/stb_image.h"
@@ -22,13 +23,18 @@
 #include <string>
 #include <iostream>
 
-// considering templating this, or else just defining another couple classes
-	// I will need an equivalent float image type, and I will need 1 and 4 component buffers made from this type ( depth, color + alpha )
+// considering templating this - would need to know the type, unless I can use like, std::numeric_limits or something
+	// to inform what the zero point, max point should be - tbd - maybe just need to do like, T min and T max, set in
+	// the constructor - ? - would need to know the template type and switch on that, need to figure out decltype()
 
 // adding additional backends is as simple as adding an enum, writing the corresponding load/save implementation
 enum backend {
 	STB = 0,
 	LODEPNG = 1
+	// fpng has been removed, but leaving the option to potentially add other load/save options here
+		// fpng has a really weird situation where it throws an error loading regular pngs, it only
+		// wants to deal with its own format - I haven't found any use for it, unless you were using
+		// a lot of image assets that you could cook to that format
 };
 
 struct rgba {

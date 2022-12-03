@@ -107,9 +107,6 @@ void engine::ImguiPass () {
 	ImguiFrameStart();						// start the imgui frame
 	TonemapControlsWindow();
 	if ( true ) ImGui::ShowDemoWindow();	// show the demo window
-
-	DrawTextEditor();
-
 	QuitConf( &quitConfirm );				// show quit confirm window, if triggered
 	ImguiFrameEnd();						// finish up the imgui stuff and put it in the framebuffer
 }

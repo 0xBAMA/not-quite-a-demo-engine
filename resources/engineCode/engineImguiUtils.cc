@@ -70,8 +70,8 @@ void engine::DrawTextEditor () {
 }
 
 void engine::TonemapControlsWindow () {
+	ImGui::SetNextWindowSize( { 425, 115 } );
 	ImGui::Begin( "Tonemapping Controls", NULL, 0 );
-
 	const char* tonemapModesList[] = {
 		"None (Linear)",
 		"ACES (Narkowicz 2015)",

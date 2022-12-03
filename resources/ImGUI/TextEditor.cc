@@ -2546,6 +2546,35 @@ const TextEditor::Palette& TextEditor::GetDarkPalette()
 	return p;
 }
 
+const TextEditor::Palette& TextEditor::GetMonoPalette()
+{
+	const static Palette p = { {
+			0xa8b3abff,	// Default
+			0xa39e64ff,	// Keyword
+			0xe98800ff,	// Number
+			0xc23800ff,	// String
+			0xc23800ff, // Char literal
+			0x59635eff, // Punctuation
+			0xa39e64ff,	// Preprocessor
+			0xffffffff, // Identifier
+			0x4dc69bff, // Known identifier
+			0x5778b6ff, // Preproc identifier
+			0x666c68ff, // Comment (single line)
+			0x666c88ff, // Comment (multi line)
+			0x222c28ff, // Background
+			0xe0e0e0ff, // Cursor
+			0x444c4880, // Selection
+			0x1a070080, // ErrorMarker
+			0x444c4890, // ControlCharacter
+			0x0080f040, // Breakpoint
+			0xa6aaa9ff, // Line number
+			0x00000040, // Current line fill
+			0x80808040, // Current line fill (inactive)
+			0xa0a0a040, // Current line edge
+		} };
+	return p;
+}
+
 const TextEditor::Palette& TextEditor::GetMarianaPalette()
 {
 	const static Palette p = { {
@@ -2579,7 +2608,7 @@ const TextEditor::Palette& TextEditor::GetLightPalette()
 {
 	const static Palette p = { {
 			0x404040ff,	// None
-			0x060cffff,	// Keyword	
+			0x060cffff,	// Keyword
 			0x008000ff,	// Number
 			0xa02020ff,	// String
 			0x704030ff, // Char literal
@@ -2608,7 +2637,7 @@ const TextEditor::Palette& TextEditor::GetRetroBluePalette()
 {
 	const static Palette p = { {
 			0xffff00ff,	// None
-			0x00ffffff,	// Keyword	
+			0x00ffffff,	// Keyword
 			0x00ff00ff,	// Number
 			0x008080ff,	// String
 			0x008080ff, // Char literal

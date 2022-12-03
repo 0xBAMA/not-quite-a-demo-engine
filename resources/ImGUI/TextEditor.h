@@ -323,6 +323,7 @@ public:
 
 	static const Palette& GetMarianaPalette();
 	static const Palette& GetDarkPalette();
+	static const Palette& GetMonoPalette();
 	static const Palette& GetLightPalette();
 	static const Palette& GetRetroBluePalette();
 

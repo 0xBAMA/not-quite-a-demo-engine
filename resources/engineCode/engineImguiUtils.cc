@@ -41,12 +41,14 @@ void engine::DrawTextEditor () {
 	static TextEditor editor;
 
 	static auto language = TextEditor::LanguageDefinition::GLSL();
+	// static auto language = TextEditor::LanguageDefinition::CPlusPlus();
 	editor.SetLanguageDefinition( language );
 
 	auto cursorPosition = editor.GetCursorPosition();
-	editor.SetPalette( TextEditor::GetDarkPalette() );
+	editor.SetPalette( TextEditor::GetMonoPalette() );
 
 	static const char *fileToEdit = "resources/engineCode/shaders/blit.vs.glsl";
+	// static const char *fileToEdit = "resources/engineCode/engineImguiUtils.cc";
 	static bool loaded = false;
 	if ( !loaded ) {
 		std::ifstream t ( fileToEdit );

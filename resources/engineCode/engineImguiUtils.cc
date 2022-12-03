@@ -62,7 +62,7 @@ void engine::DrawTextEditor () {
 		cursorPosition.mColumn + 1, editor.GetTotalLines(),
 		editor.IsOverwrite() ? "Ovr" : "Ins",
 		editor.CanUndo() ? "*" : " ",
-		editor.GetLanguageDefinition().mName.c_str(), fileToEdit );
+		editor.GetLanguageDefinitionName(), fileToEdit );
 
 	editor.Render( "Editor" );
 	HelpMarker( "dummy helpmarker to get rid of unused warning" );

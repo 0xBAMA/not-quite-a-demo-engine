@@ -130,7 +130,7 @@ struct configData {
 	bool reportPlatformInfo = true;
 	bool enableDepthTesting = false;
 
-	// anything else?
+	// anything else ... ?
 };
 
 struct colorGradeParameters {

@@ -47,8 +47,8 @@ void engine::DrawTextEditor () {
 	auto cursorPosition = editor.GetCursorPosition();
 	editor.SetPalette( TextEditor::GetMonoPalette() );
 
-	static const char *fileToEdit = "src/engineCode/shaders/blit.vs.glsl";
-	// static const char *fileToEdit = "src/engineCode/engineImguiUtils.cc";
+	static const char *fileToEdit = "src/engine/shaders/blit.vs.glsl";
+	// static const char *fileToEdit = "src/engine/engineImguiUtils.cc";
 	static bool loaded = false;
 	if ( !loaded ) {
 		std::ifstream t ( fileToEdit );

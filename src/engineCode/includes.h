@@ -36,11 +36,12 @@ constexpr double pi = 3.14159265358979323846;
 // vector math library GLM
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZW
-#include "../GLM/glm.hpp"                  //general vector types
-#include "../GLM/gtc/matrix_transform.hpp" // for glm::ortho
-#include "../GLM/gtc/type_ptr.hpp"         //to send matricies gpu-side
+#include "../GLM/glm.hpp"					// general vector types
+#include "../GLM/gtc/matrix_transform.hpp"	// for glm::ortho
+#include "../GLM/gtc/type_ptr.hpp"			// to send matricies gpu-side
 #include "../GLM/gtx/rotate_vector.hpp"
 #include "../GLM/gtx/transform.hpp"
+#include "../GLM/gtx/string_cast.hpp"		// to_string for glm types
 
 // not sure as to the utility of this
 // #define GLX_GLEXT_PROTOTYPES

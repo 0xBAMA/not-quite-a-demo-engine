@@ -10,7 +10,7 @@ void engine::LoadConfig () {
 	cout << T_BLUE << "    Configuring Application" << RESET << " ................... ";
 	json j;
 	// load the config json, populate config struct - this will probably have more data, eventually
-	ifstream i( "resources/engineCode/config.json" );
+	ifstream i( "src/engineCode/config.json" );
 	i >> j; i.close();
 	config.windowTitle = j[ "windowTitle" ];
 	config.width = j[ "screenWidth" ];
@@ -163,7 +163,7 @@ void engine::SetupTextureData () {
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data[ 0 ] );
 
 	// blue noise image on the GPU
-	Image blueNoiseImage{ "resources/noise/blueNoise.png", LODEPNG };
+	Image blueNoiseImage{ "src/noise/blueNoise.png", LODEPNG };
 	glGenTextures( 1, &blueNoiseTexture );
 	glActiveTexture( GL_TEXTURE4 );
 	glBindTexture( GL_TEXTURE_2D, blueNoiseTexture );
@@ -176,16 +176,16 @@ void engine::ShaderCompile () {
 	cout << T_BLUE << "    Compiling Shaders" << RESET << " ......................... ";
 
 	// create the shader for the triangles to cover the screen
-	displayShader = regularShader( "resources/engineCode/shaders/blit.vs.glsl", "resources/engineCode/shaders/blit.fs.glsl" ).shaderHandle;
+	displayShader = regularShader( "src/engineCode/shaders/blit.vs.glsl", "src/engineCode/shaders/blit.fs.glsl" ).shaderHandle;
 
 	// initialize the text renderer
-	textRenderer.Init( config.width, config.height, computeShader( "resources/fonts/fontRenderer/font.cs.glsl" ).shaderHandle );
+	textRenderer.Init( config.width, config.height, computeShader( "src/fonts/fontRenderer/font.cs.glsl" ).shaderHandle );
 
 	// something to put data in the accumulator texture
-	dummyDrawShader = computeShader( "resources/engineCode/shaders/dummyDraw.cs.glsl" ).shaderHandle;
+	dummyDrawShader = computeShader( "src/engineCode/shaders/dummyDraw.cs.glsl" ).shaderHandle;
 
 	// tonemapping shader
-	tonemapShader = computeShader( "resources/engineCode/shaders/tonemap.cs.glsl" ).shaderHandle;
+	tonemapShader = computeShader( "src/engineCode/shaders/tonemap.cs.glsl" ).shaderHandle;
 
 	cout << T_GREEN << "done." << RESET << newline;
 }
@@ -213,7 +213,7 @@ void engine::ImguiSetup () {
 	SDL_GL_SwapWindow( window ); // show clear color
 
 	// setting custom font, if desired
-	// io.Fonts->AddFontFromFileTTF( "resources/fonts/star_trek/titles/TNG_Title.ttf", 16 );
+	// io.Fonts->AddFontFromFileTTF( "src/fonts/star_trek/titles/TNG_Title.ttf", 16 );
 
 	ImGui::StyleColorsDark();
 	ImVec4 *colors = ImGui::GetStyle().Colors;

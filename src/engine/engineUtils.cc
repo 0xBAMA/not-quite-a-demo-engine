@@ -66,7 +66,7 @@ void engine::ComputePasses () {
 		// ...
 
 	// text rendering timestamp, as final step - required texture binds are handled internally
-	// textRenderer.Update( ImGui::GetIO().DeltaTime );
+	textRenderer.Update( ImGui::GetIO().DeltaTime );
 	textRenderer.Draw( displayTexture ); // displayTexture is the writeTarget
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }

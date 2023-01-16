@@ -120,7 +120,6 @@ void engine::DisplaySetup () {
 		const GLubyte *glslVersion = glGetString( GL_SHADING_LANGUAGE_VERSION );
 		cout << T_RED << "      GLSL Version Supported : " << T_CYAN << glslVersion << RESET << newline << newline;
 	}
-
 	SetupVertexData();
 	SetupTextureData();
 }

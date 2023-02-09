@@ -1,6 +1,3 @@
-[submodule "src/fonts/hoard-of-bitfonts"]
-	path = src/fonts/hoard-of-bitfonts
-	url = https://github.com/0xBAMA/hoard-of-bitfonts.git
 [submodule "src/tracy"]
 	path = src/tracy
 	url = https://github.com/wolfpld/tracy.git

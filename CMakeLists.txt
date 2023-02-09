@@ -34,12 +34,9 @@ target_link_libraries( opengl INTERFACE OpenGL::GL )
 add_subdirectory( ${PROJECT_SOURCE_DIR}/src/noise/FastNoise2 )
 
 # Tracy Profiler
-option(TRACY_ENABLE "" ON)
-option(TRACY_ON_DEMAND "" ON)
+option( TRACY_ENABLE "" ON )
+option( TRACY_ON_DEMAND "" ON )
 add_subdirectory( src/tracy )
-
-# assimp model loader
-add_subdirectory( ${PROJECT_SOURCE_DIR}/src/ModelLoading/assimp )
 
 # this is for ImGUI
 add_library( imgui
@@ -102,7 +99,6 @@ target_link_libraries( exe
 	tinyXML2
 	opengl
 	sdl2
-	assimp
 	STB_ImageUtilsWrapper
 	stdc++fs
 	FastNoise

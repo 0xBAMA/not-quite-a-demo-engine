@@ -94,6 +94,9 @@ using glm::mat4;
 // coloring of CLI output
 #include "../fonts/colors.h"
 
+// palette list
+#include "../fonts/paletteLoader.h"
+
 // diamond square heightmap generation
 #include "../noise/diamondSquare/diamond_square.h"
 

@@ -97,6 +97,9 @@ using glm::mat4;
 // palette list
 #include "../fonts/paletteLoader.h"
 
+// glyph list
+#include "../fonts/glyphLoader.h"
+
 // diamond square heightmap generation
 #include "../noise/diamondSquare/diamond_square.h"
 

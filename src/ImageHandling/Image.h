@@ -45,6 +45,10 @@ struct rgba {
 	uint8_t g = 0;
 	uint8_t b = 0;
 	uint8_t a = 0;
+	
+	friend bool operator == ( const rgba& left, const rgba& right ) {
+		return left.r == right.r && left.g == right.g && left.b == right.b && left.a == right.a;
+	}
 };
 
 constexpr float positiveMax = 10000.0f;

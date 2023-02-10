@@ -122,7 +122,10 @@ void engine::DisplaySetup () {
 	}
 	SetupVertexData();
 	SetupTextureData();
+
+	// data loading, this might go somewhere else
 	loadPalettes();
+	loadGlyphs();
 }
 
 void engine::SetupVertexData () {

@@ -104,6 +104,58 @@ void engine::CreateWindowAndContext () {
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << newline;
+
+
+
+	json j;
+	std::ifstream i( "src/fonts/paletteData.json" );
+	i >> j;
+
+	int maxLength = 0;
+	int maxColors = 0;
+	int count = 0;
+	for ( auto& entry : j ) {
+		string label = entry[ "label" ];
+		maxLength = std::max( int( label.length() ), maxLength );
+		int colorCount = 0;
+		for ( auto& color : entry[ "data" ] ) {
+			colorCount++;
+		}
+		maxColors = std::max( maxColors, colorCount );
+		count++;
+	}
+
+	Image palette( "src/fonts/paletteList.png" );
+	Image paletteWLabels( palette.width + maxLength, count + 1 );
+
+	int yIndex = 0;
+	for ( auto& entry : j ) {
+
+		string label = entry[ "label" ];
+		label.resize( maxLength, ' ' );
+
+		std::vector< ivec3 > colors;
+		for ( auto& color : entry[ "data" ] ) {
+			ivec3 val ( color[ 0 ], color[ 1 ], color[ 2 ] );
+			colors.push_back( val );
+		}
+
+		for ( int i = 0; i < maxLength; i++ ) {
+			paletteWLabels.SetAtXY( i, yIndex, { uint8_t( label[ i ] ), 0, 0, 255 } );
+		}
+
+		// paletteWLabels.SetAtXY( maxLength, yIndex, { 0, 0, 0, 255 } );
+
+		for ( unsigned int i = 1; i <= colors.size(); i++ ) {
+			paletteWLabels.SetAtXY( maxLength + i, yIndex, { uint8_t( colors[ i - 1 ].x ), uint8_t( colors[ i - 1 ].y ), uint8_t( colors[ i - 1 ].z ), 255 } );
+		}
+
+		yIndex++;
+	}
+
+	paletteWLabels.Save( "src/fonts/palettes.png" );
+
+	cout << newline << newline << " longest label ( plus padding ) is " << maxLength << " characters - " << count << " entries - most colors is " << maxColors << newline;
 }
 
 // split up into vertex, texture funcs + report platform info ( maybe do this later? )

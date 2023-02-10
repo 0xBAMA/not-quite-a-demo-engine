@@ -240,7 +240,7 @@ public:
 			data[ index + 1 ] = set.g;
 			data[ index + 2 ] = set.b;
 			data[ index + 3 ] = set.a;
-		}
+		} else { cout << "out of bounds write :(" << newline; }
 	}
 
 	void Swizzle ( char swizz[ 4 ] ) { // this matches the functionality of irFlip2

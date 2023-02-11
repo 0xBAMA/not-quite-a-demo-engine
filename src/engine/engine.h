@@ -21,30 +21,23 @@ private:
 	// text renderer framework
 	layerManager textRenderer;
 
-//==============================================================================
-
-	// OpenGL vertex data
+//====== OpenGL ===============================================================
 	GLuint displayVAO;
 	GLuint displayVBO;
 
-	// OpenGL resource management
+	// resource management
 	unordered_map< string, GLuint > textures;
 	unordered_map< string, GLuint > shaders;
 	unordered_map< string, bindSet > bindSets;
 
-//==============================================================================
-
-	// tonemapping parameters + adjustment
+//====== tonemapping parameters + adjustment ==================================
 	colorGradeParameters tonemap;
 	void TonemapControlsWindow ();
 	void SendTonemappingParameters ();
 
-//==============================================================================
-
-	// initialization
+//====== initialization =======================================================
 	void StartBlock ( string sectionName );
 	void EndBlock ();
-
 	void Init ();
 	void StartMessage ();
 	void LoadConfig ();
@@ -58,9 +51,7 @@ private:
 	void InitialClear ();
 	void ReportStartupStats ();
 
-//==============================================================================
-
-	// main loop functions
+//====== main loop functions ==================================================
 	void BlitToScreen ();
 	void HandleEvents ();
 	void ClearColorAndDepth ();
@@ -73,17 +64,15 @@ private:
 	void MenuLayout ( bool* open );
 	void QuitConf ( bool* open );
 
-//==============================================================================
-
+//====== shutdown procedures ==================================================
 	// shutdown procedures
 	void ImguiQuit ();
 	void SDLQuit ();
 	void Quit ();
 
-//==============================================================================
-
-	// program flags
+//====== program flags ========================================================
 	bool quitConfirm = false;
 	bool pQuit = false;
+
 };
 #endif

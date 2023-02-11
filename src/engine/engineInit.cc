@@ -11,7 +11,11 @@ void engine::StartBlock ( string sectionName ) {
 }
 
 void engine::EndBlock () {
-	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
+	const float timeInMS = Tock();
+	const float wholeMS = int( std::floor( timeInMS ) );
+	const float partialMS = int( ( timeInMS - wholeMS ) * 1000.0f );
+	cout << T_GREEN << "done." << T_RED << " ( " << std::setfill( ' ' ) << std::setw( 4 ) << wholeMS << "."
+		<< std::setw( 3 ) << std::setfill( '0' ) << partialMS << TIMEUNIT << " )" << RESET << newline;
 }
 
 void engine::StartMessage () {
@@ -362,6 +366,8 @@ void engine::InitialClear () {
 void engine::ReportStartupStats () {
 	ZoneScoped;
 
-	// other startup stuff
-	cout << endl << T_YELLOW << "  Startup is complete ( total " << TotalTime() << TIMEUNIT << " )" << RESET << endl << endl;
+	cout << endl << T_CYAN << "  " << shaders.size() << " shaders." << endl;
+	cout << "  " << textures.size() << " textures." << endl;
+	cout << "  " << bindSets.size() << " bindsets." << endl;
+	cout << T_YELLOW << "  Startup is complete ( total " << TotalTime() << TIMEUNIT << " )" << RESET << endl << endl;
 }

@@ -89,7 +89,7 @@ void engine::ClearColorAndDepth () {
 
 void engine::SendTonemappingParameters () {
 	ZoneScoped;
-	
+
 	static float prevColorTemperature = 0.0f;
 	static vec3 temperatureColor;
 	if ( tonemap.colorTemp != prevColorTemperature ) {

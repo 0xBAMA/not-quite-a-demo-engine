@@ -134,6 +134,7 @@ struct configData {
 	bool linearFilter = false;
 	ivec2 windowOffset = ivec2( 0, 0 );
 	uint8_t startOnScreen = 0;
+	int reportWidth = 64;
 
 	uint8_t MSAACount = 0;
 	vec4 clearColor = vec4( 0.0f );

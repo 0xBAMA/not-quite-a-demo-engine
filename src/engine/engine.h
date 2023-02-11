@@ -48,6 +48,9 @@ private:
 //==============================================================================
 
 	// initialization
+	void StartBlock ( string sectionName );
+	void EndBlock ();
+
 	void Init ();
 	void StartMessage ();
 	void LoadConfig ();

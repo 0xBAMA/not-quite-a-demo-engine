@@ -180,12 +180,17 @@ void engine::SetupTextureData () {
 
 	StartBlock( "Setting Up Textures" );
 	{
+		GLuint accumulatorTexture;
+		GLuint displayTexture;
+		GLuint blueNoiseTexture;
+
 		// create the image textures
 		Image initial( config.width, config.height, false );
 		glGenTextures( 1, &accumulatorTexture );
 		glActiveTexture( GL_TEXTURE3 );
 		glBindTexture( GL_TEXTURE_2D, accumulatorTexture );
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data[ 0 ] );
+		textures[ "Accumulator" ] = accumulatorTexture;
 
 		glGenTextures( 1, &displayTexture );
 		glActiveTexture( GL_TEXTURE0 );
@@ -195,6 +200,7 @@ void engine::SetupTextureData () {
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, config.width, config.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initial.data[ 0 ] );
+		textures[ "Display Texture" ] = displayTexture;
 
 		// blue noise image on the GPU
 		Image blueNoiseImage{ "src/noise/blueNoise.png", LODEPNG };
@@ -202,6 +208,28 @@ void engine::SetupTextureData () {
 		glActiveTexture( GL_TEXTURE4 );
 		glBindTexture( GL_TEXTURE_2D, blueNoiseTexture );
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data[ 0 ] );
+		textures[ "Blue Noise" ] = blueNoiseTexture;
+
+		// add bayer textures from Voraldo13
+
+	}
+	EndBlock();
+
+	StartBlock( "Setting Up Bindsets" );
+	{
+		bindSets[ "Drawing" ] = bindSet( {
+			binding( 0, textures[ "Blue Noise" ], GL_RGBA8UI ),
+			binding( 1, textures[ "Accumulator" ], GL_RGBA8UI )
+		} );
+
+		bindSets[ "Postprocessing" ] = bindSet( {
+			binding( 0, textures[ "Accumulator" ], GL_RGBA8UI ),
+			binding( 1, textures[ "Display Texture" ], GL_RGBA8UI )
+		} );
+
+		bindSets[ "Display" ] = bindSet( {
+			binding( 0, textures[ "Display Texture" ], GL_RGBA8UI )
+		} );
 	}
 	EndBlock();
 }
@@ -228,16 +256,16 @@ void engine::ShaderCompile () {
 	StartBlock( "Compiling Shaders" );
 	{
 		// create the shader for the triangles to cover the screen
-		displayShader = regularShader( "src/engine/shaders/blit.vs.glsl", "src/engine/shaders/blit.fs.glsl" ).shaderHandle;
+		shaders[ "Display" ] = regularShader( "src/engine/shaders/blit.vs.glsl", "src/engine/shaders/blit.fs.glsl" ).shaderHandle;
 
 		// initialize the text renderer
 		textRenderer.Init( config.width, config.height, computeShader( "src/fonts/fontRenderer/font.cs.glsl" ).shaderHandle );
 
 		// something to put data in the accumulator texture
-		dummyDrawShader = computeShader( "src/engine/shaders/dummyDraw.cs.glsl" ).shaderHandle;
+		shaders[ "Dummy Draw" ] = computeShader( "src/engine/shaders/dummyDraw.cs.glsl" ).shaderHandle;
 
 		// tonemapping shader
-		tonemapShader = computeShader( "src/engine/shaders/tonemap.cs.glsl" ).shaderHandle;
+		shaders[ "Tonemap" ] = computeShader( "src/engine/shaders/tonemap.cs.glsl" ).shaderHandle;
 	}
 	EndBlock();
 }

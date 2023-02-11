@@ -40,22 +40,18 @@ void engine::ComputePasses () {
 	ZoneScoped;
 
 // dummy draw
-	// set up environment ( 0:blue noise, 1: accumulator )
-	glBindImageTexture( 0, blueNoiseTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-	glBindImageTexture( 1, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	bindSets[ "Drawing" ].apply();
 
-	// blablah draw something into accumulatorTexture
-	glUseProgram( dummyDrawShader );
+	// draw something into accumulatorTexture
+	glUseProgram( shaders[ "Dummy Draw" ] );
 	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 // postprocessing
-	// set up environment ( 0:accumulator, 1:display )
-	glBindImageTexture( 0, accumulatorTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-	glBindImageTexture( 1, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
+	bindSets[ "Postprocessing" ].apply();
 
 	// shader for color grading ( color temp, contrast, gamma ... ) + tonemapping
-	glUseProgram( tonemapShader );
+	glUseProgram( shaders[ "Tonemap" ] );
 	SendTonemappingParameters();
 	glDispatchCompute( ( config.width + 15 ) / 16, ( config.height + 15 ) / 16, 1 );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
@@ -68,7 +64,7 @@ void engine::ComputePasses () {
 
 	// text rendering timestamp, as final step - required texture binds are handled internally
 	textRenderer.Update( ImGui::GetIO().DeltaTime );
-	textRenderer.Draw( displayTexture ); // displayTexture is the writeTarget
+	textRenderer.Draw( textures[ "Display Texture" ] );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }
 
@@ -87,19 +83,21 @@ void engine::ClearColorAndDepth () {
 
 void engine::SendTonemappingParameters () {
 	ZoneScoped;
-	glUniform3fv( glGetUniformLocation( tonemapShader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
-	glUniform1i( glGetUniformLocation( tonemapShader, "tonemapMode" ), tonemap.tonemapMode );
-	glUniform1f( glGetUniformLocation( tonemapShader, "gamma" ), tonemap.gamma );
+	const GLuint shader = shaders[ "Tonemap" ];
+	glUniform3fv( glGetUniformLocation( shader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
+	glUniform1i( glGetUniformLocation( shader, "tonemapMode" ), tonemap.tonemapMode );
+	glUniform1f( glGetUniformLocation( shader, "gamma" ), tonemap.gamma );
 }
 
 void engine::BlitToScreen () {
 	ZoneScoped;
-	// bind the displayTexture and display its current state - there are more efficient ways to do this, look into it
-	glBindImageTexture( 0, displayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8UI );
-	glUseProgram( displayShader );
+	// display current state of the display texture - there are more efficient ways to do this, look into it
+	bindSets[ "Display" ].apply();
+	const GLuint shader = shaders[ "Display" ];
+	glUseProgram( shader );
 	glBindVertexArray( displayVAO );
 	ImGuiIO &io = ImGui::GetIO();
-	glUniform2f( glGetUniformLocation( displayShader, "resolution" ), io.DisplaySize.x, io.DisplaySize.y );
+	glUniform2f( glGetUniformLocation( shader, "resolution" ), io.DisplaySize.x, io.DisplaySize.y );
 	glDrawArrays( GL_TRIANGLES, 0, 3 );
 }
 

@@ -1,5 +1,4 @@
 - Stuff from Voraldo13
-	- unordered maps of OpenGL resources
 	- trident, but that's pretty specific to Voraldo... fuck it, might as well
 		- add multisampling to the rendering, smooth edges
 

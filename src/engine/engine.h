@@ -23,15 +23,9 @@ private:
 
 //==============================================================================
 
-	// OpenGL data
-	GLuint blueNoiseTexture;
-	GLuint accumulatorTexture;
-	GLuint displayTexture;
-	GLuint displayShader;
+	// OpenGL vertex data
 	GLuint displayVAO;
 	GLuint displayVBO;
-	GLuint dummyDrawShader;
-	GLuint tonemapShader;
 
 	// OpenGL resource management
 	unordered_map< string, GLuint > textures;

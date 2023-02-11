@@ -37,6 +37,8 @@ static void HelpMarker ( const char *desc ) {
 }
 
 void engine::DrawTextEditor () {
+	ZoneScoped;
+
 	ImGui::Begin( "Editor", NULL, 0 );
 	static TextEditor editor;
 
@@ -72,6 +74,8 @@ void engine::DrawTextEditor () {
 }
 
 void engine::TonemapControlsWindow () {
+	ZoneScoped;
+
 	ImGui::SetNextWindowSize( { 425, 115 } );
 	ImGui::Begin( "Tonemapping Controls", NULL, 0 );
 	const char* tonemapModesList[] = {
@@ -101,6 +105,8 @@ void engine::TonemapControlsWindow () {
 }
 
 void engine::ImguiFrameStart () {
+	ZoneScoped;
+
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame( window );
@@ -108,6 +114,8 @@ void engine::ImguiFrameStart () {
 }
 
 void engine::ImguiFrameEnd () {
+	ZoneScoped;
+
 	// get it ready to put on the screen
 	ImGui::Render();
 

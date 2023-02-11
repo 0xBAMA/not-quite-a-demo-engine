@@ -1,7 +1,8 @@
 - Stuff from Voraldo13
 	- unordered maps of OpenGL resources
-	- trident, but that's pretty specific to Voraldo...
+	- trident, but that's pretty specific to Voraldo... fuck it, might as well
 		- add multisampling to the rendering, smooth edges
+	- make a function wrapper for startup reports, startBlock( string )
 
 - Convert back to using GLEW for OpenGL function loading
 	- hopefully will help to fix issues using GL3W on the new machine

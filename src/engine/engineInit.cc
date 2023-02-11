@@ -2,12 +2,16 @@
 #include "../debug/debug.h"
 
 void engine::StartMessage () {
+	ZoneScoped;
+
 	cout << endl << T_YELLOW << BOLD << "NQADE - Not Quite A Demo Engine" << newline;
 	cout << " By Jon Baker ( 2020 - 2023 ) " << RESET << newline;
 	cout << "  https://jbaker.graphics/ " << newline << newline;
 }
 
 void engine::LoadConfig () {
+	ZoneScoped;
+
 	Tick();
 	cout << T_BLUE << "    Configuring Application" << RESET << " ................................... ";
 	json j;
@@ -49,6 +53,8 @@ void engine::LoadConfig () {
 }
 
 void engine::CreateWindowAndContext () {
+	ZoneScoped;
+
 	Tick();
 	cout << T_BLUE << "    Initializing SDL2" << RESET << " ......................................... ";
 	if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 ) {
@@ -120,6 +126,8 @@ void engine::CreateWindowAndContext () {
 
 // split up into vertex, texture funcs + report platform info ( maybe do this later? )
 void engine::DisplaySetup () {
+	ZoneScoped;
+
 	// some info on your current platform
 	if ( config.reportPlatformInfo ) {
 	Tick();
@@ -137,9 +145,10 @@ void engine::DisplaySetup () {
 }
 
 void engine::SetupVertexData () {
+	ZoneScoped;
+
 	Tick();
 	cout << T_BLUE << "    Setting Up Vertex Data" << RESET << " .................................... ";
-
 
 	// OpenGL core spec requires a VAO bound when calling glDrawArrays
 	glGenVertexArrays( 1, &displayVAO );
@@ -156,6 +165,8 @@ void engine::SetupVertexData () {
 }
 
 void engine::SetupTextureData () {
+	ZoneScoped;
+
 	Tick();
 	cout << T_BLUE << "    Setting Up Textures" << RESET << " ....................................... ";
 
@@ -186,6 +197,7 @@ void engine::SetupTextureData () {
 }
 
 void engine::LoadData () {
+	ZoneScoped;
 
 	Tick();
 	cout << T_BLUE << "    Loading Palettes" << RESET << " .......................................... ";
@@ -200,6 +212,8 @@ void engine::LoadData () {
 }
 
 void engine::ShaderCompile () {
+	ZoneScoped;
+
 	Tick();
 	cout << T_BLUE << "    Compiling Shaders" << RESET << " ......................................... ";
 
@@ -219,6 +233,8 @@ void engine::ShaderCompile () {
 }
 
 void engine::ImguiSetup () {
+	ZoneScoped;
+
 	Tick();
 	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ..................................... ";
 
@@ -293,6 +309,8 @@ void engine::ImguiSetup () {
 }
 
 void engine::InitialClear () {
+	ZoneScoped;
+
 	Tick();
 	cout << T_BLUE << "    Clear Buffer" << RESET << " .............................................. ";
 	glClearColor( config.clearColor.x, config.clearColor.y, config.clearColor.z, config.clearColor.w );
@@ -302,6 +320,8 @@ void engine::InitialClear () {
 }
 
 void engine::ReportStartupStats () {
+	ZoneScoped;
+
 	// other startup stuff
 	cout << T_YELLOW << "  Startup is complete ( total " << TotalTime() << TIMEUNIT << " )" << RESET << endl << endl;
 }

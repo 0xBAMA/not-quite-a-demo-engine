@@ -21,8 +21,7 @@ private:
 	// text renderer framework
 	layerManager textRenderer;
 
-	// keyboard input management
-	// inputHandler keyboard;
+//==============================================================================
 
 	// OpenGL data
 	GLuint blueNoiseTexture;
@@ -39,19 +38,14 @@ private:
 	unordered_map< string, GLuint > shaders;
 	unordered_map< string, bindSet > bindSets;
 
-	// SPONZA STUFF
-	GLuint sponzaShader;
-	// packed color + normal array texture
-	GLuint texArray;
-	// how many triangles
-	uint32_t sponzaNumTriangles = 0;
-	// offsetting the model's location
-	vec3 offset;
+//==============================================================================
 
 	// tonemapping parameters + adjustment
 	colorGradeParameters tonemap;
 	void TonemapControlsWindow ();
 	void SendTonemappingParameters ();
+
+//==============================================================================
 
 	// initialization
 	void Init ();
@@ -67,6 +61,8 @@ private:
 	void InitialClear ();
 	void ReportStartupStats ();
 
+//==============================================================================
+
 	// main loop functions
 	void BlitToScreen ();
 	void HandleEvents ();
@@ -80,10 +76,14 @@ private:
 	void MenuLayout ( bool* open );
 	void QuitConf ( bool* open );
 
+//==============================================================================
+
 	// shutdown procedures
 	void ImguiQuit ();
 	void SDLQuit ();
 	void Quit ();
+
+//==============================================================================
 
 	// program flags
 	bool quitConfirm = false;

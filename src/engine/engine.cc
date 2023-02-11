@@ -2,6 +2,7 @@
 
 // initialization of OpenGL, etc
 void engine::Init () {
+	ZoneScoped;
 	StartMessage();
 	LoadConfig();
 	CreateWindowAndContext();
@@ -18,6 +19,7 @@ void engine::Init () {
 
 // terminate ImGUI
 void engine::ImguiQuit () {
+	ZoneScoped;
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -25,6 +27,7 @@ void engine::ImguiQuit () {
 
 // terminate SDL2
 void engine::SDLQuit () {
+	ZoneScoped;
 	SDL_GL_DeleteContext( GLcontext );
 	SDL_DestroyWindow( window );
 	SDL_Quit();
@@ -32,6 +35,7 @@ void engine::SDLQuit () {
 
 // called from destructor
 void engine::Quit () {
+	ZoneScoped;
 	ImguiQuit();
 	SDLQuit();
 }

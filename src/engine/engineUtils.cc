@@ -14,6 +14,7 @@ bool engine::MainLoop () {
 }
 
 void engine::DrawAPIGeometry () {
+	ZoneScoped;
 
 	GLuint64 startTime, stopTime;
 	GLuint queryID[2];

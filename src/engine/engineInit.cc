@@ -7,7 +7,7 @@ void engine::StartMessage () {
 }
 
 void engine::LoadConfig () {
-	cout << T_BLUE << "    Configuring Application" << RESET << " ................... ";
+	cout << T_BLUE << "    Configuring Application" << RESET << " ........................... ";
 	json j;
 	// load the config json, populate config struct - this will probably have more data, eventually
 	ifstream i( "src/engine/config.json" );
@@ -46,7 +46,7 @@ void engine::LoadConfig () {
 }
 
 void engine::CreateWindowAndContext () {
-	cout << T_BLUE << "    Initializing SDL2" << RESET << " ......................... ";
+	cout << T_BLUE << "    Initializing SDL2" << RESET << " ................................. ";
 	if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 ) {
 		cout << "Error: " << SDL_GetError() << newline;
 	}
@@ -64,7 +64,7 @@ void engine::CreateWindowAndContext () {
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, config.MSAACount );
 	}
 	cout << T_GREEN << "done." << RESET << newline;
-	cout << T_BLUE << "    Creating Window" << RESET << " ........................... ";
+	cout << T_BLUE << "    Creating Window" << RESET << " ................................... ";
 
 	// prep for window creation
 	SDL_DisplayMode displayMode;
@@ -82,7 +82,7 @@ void engine::CreateWindowAndContext () {
 		config.windowOffset.y, config.width, config.height, config.windowFlags );
 
 	cout << T_GREEN << "done." << RESET << newline;
-	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ................. ";
+	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ......................... ";
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 	// defaults to OpenGL 4.3
@@ -129,7 +129,7 @@ void engine::DisplaySetup () {
 }
 
 void engine::SetupVertexData () {
-	cout << T_BLUE << "    Setting Up Vertex Data" << RESET << " .................... ";
+	cout << T_BLUE << "    Setting Up Vertex Data" << RESET << " ............................ ";
 
 
 	// OpenGL core spec requires a VAO bound when calling glDrawArrays
@@ -147,7 +147,7 @@ void engine::SetupVertexData () {
 }
 
 void engine::SetupTextureData () {
-	cout << T_BLUE << "    Setting Up Textures" << RESET << " ....................... ";
+	cout << T_BLUE << "    Setting Up Textures" << RESET << " ............................... ";
 
 	// create the image textures
 	Image initial( config.width, config.height, false );
@@ -176,7 +176,7 @@ void engine::SetupTextureData () {
 }
 
 void engine::ShaderCompile () {
-	cout << T_BLUE << "    Compiling Shaders" << RESET << " ......................... ";
+	cout << T_BLUE << "    Compiling Shaders" << RESET << " ................................. ";
 
 	// create the shader for the triangles to cover the screen
 	displayShader = regularShader( "src/engine/shaders/blit.vs.glsl", "src/engine/shaders/blit.fs.glsl" ).shaderHandle;
@@ -194,7 +194,7 @@ void engine::ShaderCompile () {
 }
 
 void engine::ImguiSetup () {
-	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ..................... ";
+	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ............................. ";
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();

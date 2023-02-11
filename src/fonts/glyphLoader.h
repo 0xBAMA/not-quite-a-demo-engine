@@ -85,18 +85,6 @@ static void loadGlyphs () {
 			}
 		}
 	}
-
-	// I think we've validated the input - the glyph count is correct
-	// for ( auto& g : glyphList ) {
-	// 	for ( unsigned int y = 0; y < g.glyphData.size(); y++ ) {
-	// 		for ( unsigned int x = 0; x < g.glyphData[ y ].size(); x++ ) {
-	// 			std::cout << int( g.glyphData[ y ][ x ] );
-	// 		}
-	// 		std::cout << std::endl;
-	// 	}
-	// 	std::cout << std::endl;
-	// }
-	// std::cout << "read in " << glyphList.size() << " glyphs in" << std::endl
 }
 
 #endif // GLYPH_H

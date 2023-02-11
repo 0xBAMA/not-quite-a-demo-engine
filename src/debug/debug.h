@@ -32,14 +32,14 @@ void MessageCallback ( 	GLenum source,
 		fprintf( stderr, "        GL CALLBACK: %s type = 0x%x, severity = GL_DEBUG_SEVERITY_NOTIFICATION, message = %s\n",
 			( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type, message );
 
-	SDL_Delay( 10 ); // hang a short time so the spew doesn't make it impossible to get back to the error
+	SDL_Delay( 100 ); // hang a short time so the spew doesn't make it impossible to get back to the error
 }
 
 void GLDebugEnable () {
 	//DEBUG ENABLE
 	glEnable( GL_DEBUG_OUTPUT );
 	glDebugMessageCallback( MessageCallback, 0 );      //getting a seg fault here, I think
-	cout << endl << "\e[33m" << "  OpenGL debug callback enabled." << "\e[0m" << endl;
+	cout << endl << T_YELLOW << "  OpenGL debug callback enabled - 100ms delay.\n" << RESET << endl;
 
 	//report all gl extensions - useful on different platforms
 	// GLint n;

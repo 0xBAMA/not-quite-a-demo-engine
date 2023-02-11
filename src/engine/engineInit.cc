@@ -3,7 +3,7 @@
 
 void engine::StartMessage () {
 	cout << endl << T_YELLOW << BOLD << "NQADE - Not Quite A Demo Engine" << newline;
-	cout << " By Jon Baker ( 2020 - 2022 ) " << RESET << newline;
+	cout << " By Jon Baker ( 2020 - 2023 ) " << RESET << newline;
 	cout << "  https://jbaker.graphics/ " << newline << newline;
 }
 

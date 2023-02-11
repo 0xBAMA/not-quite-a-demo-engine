@@ -34,6 +34,11 @@ private:
 	GLuint dummyDrawShader;
 	GLuint tonemapShader;
 
+	// OpenGL resource management
+	unordered_map< string, GLuint > textures;
+	unordered_map< string, GLuint > shaders;
+	unordered_map< string, bindSet > bindSets;
+
 	// SPONZA STUFF
 	GLuint sponzaShader;
 	// packed color + normal array texture

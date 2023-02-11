@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <deque>
+// #include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -18,6 +19,7 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 // iostream stuff
@@ -28,6 +30,7 @@ using std::endl;
 using std::flush;
 using std::string;
 using std::stringstream;
+using std::unordered_map;
 constexpr char newline = '\n';
 
 // pi definition - definitely sufficient precision
@@ -69,6 +72,9 @@ using glm::mat4;
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 // #include <SDL2/SDL_opengl_glext.h>
+
+// managing bindings of textures to binding points
+#include "./coreUtils/bindset.h"
 
 // image load/save/resize/access/manipulation wrapper
 #include "./coreUtils/image.h"

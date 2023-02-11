@@ -38,7 +38,7 @@ void engine::LoadConfig () {
 	ZoneScoped;
 
 	{
-		Block( "Configuring Application" );
+		Block Start( "Configuring Application" );
 		json j;
 		// load the config json, populate config struct - this will probably have more data, eventually
 		ifstream i( "src/engine/config.json" );
@@ -77,7 +77,7 @@ void engine::CreateWindowAndContext () {
 	ZoneScoped;
 
 	{	
-		Block( "Initializing SDL2" );
+		Block Start( "Initializing SDL2" );
 
 		if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 ) {
 			cout << "Error: " << SDL_GetError() << newline;
@@ -98,7 +98,7 @@ void engine::CreateWindowAndContext () {
 	}
 
 	{	
-		Block( "Creating Window" );
+		Block Start( "Creating Window" );
 
 		// prep for window creation
 		SDL_DisplayMode displayMode;
@@ -116,7 +116,7 @@ void engine::CreateWindowAndContext () {
 	}
 
 	{
-		Block( "Setting Up OpenGL Context" );
+		Block Start( "Setting Up OpenGL Context" );
 
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
@@ -167,7 +167,7 @@ void engine::SetupVertexData () {
 	ZoneScoped;
 
 	{	
-		Block( "Setting Up Vertex Data" );
+		Block Start( "Setting Up Vertex Data" );
 
 		// OpenGL core spec requires a VAO bound when calling glDrawArrays
 		glGenVertexArrays( 1, &displayVAO );
@@ -186,7 +186,7 @@ void engine::SetupTextureData () {
 	ZoneScoped;
 
 	{
-		Block( "Setting Up Textures" );
+		Block Start( "Setting Up Textures" );
 
 		GLuint accumulatorTexture;
 		GLuint displayTexture;
@@ -237,7 +237,7 @@ void engine::SetupTextureData () {
 	}
 
 	{
-		Block( "Setting Up Bindsets" );
+		Block Start( "Setting Up Bindsets" );
 
 		bindSets[ "Drawing" ] = bindSet( {
 			binding( 0, textures[ "Blue Noise" ], GL_RGBA8UI ),
@@ -259,12 +259,12 @@ void engine::LoadData () {
 	ZoneScoped;
 
 	{
-		Block( "Loading Palettes" );
+		Block Start( "Loading Palettes" );
 		loadPalettes();
 	}
 
 	{
-		Block( "Loading Font Glyphs" );
+		Block Start( "Loading Font Glyphs" );
 		loadGlyphs();
 	}
 }
@@ -273,7 +273,7 @@ void engine::ShaderCompile () {
 	ZoneScoped;
 
 	{
-		Block( "Compiling Shaders" );
+		Block Start( "Compiling Shaders" );
 
 		const string base( "./src/engine/shaders/" );
 
@@ -301,7 +301,7 @@ void engine::ImguiSetup () {
 	ZoneScoped;
 
 	{
-		Block( "Configuring dearImGUI" );
+		Block Start( "Configuring dearImGUI" );
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -376,7 +376,7 @@ void engine::InitialClear () {
 	ZoneScoped;
 
 	{
-		Block( "Clear Buffer" );
+		Block Start( "Clear Buffer" );
 
 		glClearColor( config.clearColor.x, config.clearColor.y, config.clearColor.z, config.clearColor.w );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );

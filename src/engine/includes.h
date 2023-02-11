@@ -101,10 +101,10 @@ using glm::mat4;
 #include "../fonts/colors.h"
 
 // palette list
-#include "../fonts/paletteLoader.h"
+#include "../data/paletteLoader.h"
 
 // glyph list
-#include "../fonts/glyphLoader.h"
+#include "../data/glyphLoader.h"
 
 // diamond square heightmap generation
 #include "../noise/diamondSquare/diamond_square.h"

@@ -255,17 +255,19 @@ void engine::ShaderCompile () {
 
 	StartBlock( "Compiling Shaders" );
 	{
+		const string base( "./src/engine/shaders/" );
+
 		// create the shader for the triangles to cover the screen
-		shaders[ "Display" ] = regularShader( "src/engine/shaders/blit.vs.glsl", "src/engine/shaders/blit.fs.glsl" ).shaderHandle;
+		shaders[ "Display" ] = regularShader( base + "blit.vs.glsl", base + "blit.fs.glsl" ).shaderHandle;
 
 		// initialize the text renderer
 		textRenderer.Init( config.width, config.height, computeShader( "src/fonts/fontRenderer/font.cs.glsl" ).shaderHandle );
 
 		// something to put data in the accumulator texture
-		shaders[ "Dummy Draw" ] = computeShader( "src/engine/shaders/dummyDraw.cs.glsl" ).shaderHandle;
+		shaders[ "Dummy Draw" ] = computeShader( base + "dummyDraw.cs.glsl" ).shaderHandle;
 
 		// tonemapping shader
-		shaders[ "Tonemap" ] = computeShader( "src/engine/shaders/tonemap.cs.glsl" ).shaderHandle;
+		shaders[ "Tonemap" ] = computeShader( base + "tonemap.cs.glsl" ).shaderHandle;
 	}
 	EndBlock();
 }

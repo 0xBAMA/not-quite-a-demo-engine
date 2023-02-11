@@ -12,7 +12,7 @@ struct palette {
 
 static std::vector< palette > paletteList;
 static void loadPalettes () {
-	Image paletteRecord( "./src/fonts/palettes.png" );
+	Image paletteRecord( "./src/data/palettes.png" );
 	for ( uint32_t yPos = 0; yPos < paletteRecord.height; yPos++ ) {
 		palette p;
 

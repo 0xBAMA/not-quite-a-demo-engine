@@ -75,7 +75,7 @@ static void readGlyphAt ( uint32_t x, uint32_t y, Image &buffer ) {
 }
 
 static void loadGlyphs () {
-	Image glyphRecord( "./src/fonts/bitfontCore2.png" );
+	Image glyphRecord( "./src/data/bitfontCore2.png" );
 	// iterate through all the pixels in the image
 	for ( uint32_t y = 0; y < glyphRecord.height; y++ ) {
 		for ( uint32_t x = 0; x < glyphRecord.width; x++ ) {

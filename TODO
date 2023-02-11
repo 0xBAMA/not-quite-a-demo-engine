@@ -1,0 +1,7 @@
+- Stuff from Voraldo13
+	- bindsets
+	- timer utility
+	- startup timing added to report
+
+- Convert back to using GLEW for OpenGL function loading
+	- hopefully will help to fix issues using GL3W on the new machine

@@ -7,7 +7,7 @@
 
 struct glyph {
 	int index = 0;
-	std::vector< std::vector< bool > > glyphData;
+	std::vector< std::vector< uint8_t > > glyphData;
 };
 
 constexpr rgba clear {   0,   0,   0,   0 };
@@ -17,13 +17,11 @@ static bool isBlackOrWhite( rgba check ) {
 	return check == black || check == white;
 }
 
-
 static std::vector< glyph > glyphList;
 
 static void readGlyphAt ( uint32_t x, uint32_t y, Image &buffer ) {
 	// find the footprint of the glyph
 	glyph g;
-
 
 	// because of how we iterate across the image we know that x,y is the top left corner
 	uint32_t xcur = x, ycur = y;
@@ -51,30 +49,24 @@ static void readGlyphAt ( uint32_t x, uint32_t y, Image &buffer ) {
 	// size the arrays
 	const int xdim = xcur - x + 1;
 	const int ydim = ycur - y + 1;
-
 	g.glyphData.resize( ydim );
 	for ( unsigned int i = 0; i < g.glyphData.size(); i++ ) { g.glyphData[ i ].resize( xdim ); }
-
-	std::cout << "reading in a glyph of size " << xdim << " by " << ydim << std::endl;
 
 	// read in the footprint of the glyph, store it in the glyph object
 	for ( uint32_t yy = y; yy <= ycur; yy++ ) {
 		for ( uint32_t xx = x; xx <= xcur; xx++ ) {
+
 			rgba read = buffer.GetAtXY( xx, yy );
 			if ( read == black ) {
-				g.glyphData[ yy ][ xx ] = false;
+				g.glyphData[ yy - y ][ xx - x ] = 0;
 			} else if ( read == white ) {
-				g.glyphData[ yy ][ xx ] = true;
-			} else {
-				std::cout << "you fucked up... i fucked up...." << std::endl;
-			}
+				g.glyphData[ yy - y ][ xx - x ] = 1;
+			} // else ... no else - shouldn't hit this
 
-			// zero out the footprint of the glyph, so it is not recounted
+			// zero out the footprint of the glyph, so it is not recounted on subsequent rows
 			buffer.SetAtXY( xx, yy, clear );
 		}
 	}
-
-	std::cout << "done" << std::endl;
 
 	// get the index from the colored drop shadow
 	rgba dexx = buffer.GetAtXY( xcur + 1, ycur + 1 );
@@ -93,7 +85,18 @@ static void loadGlyphs () {
 			}
 		}
 	}
-	glyphRecord.Save( "./src/fonts/afterOne.png" );
+
+	// I think we've validated the input - the glyph count is correct
+	// for ( auto& g : glyphList ) {
+	// 	for ( unsigned int y = 0; y < g.glyphData.size(); y++ ) {
+	// 		for ( unsigned int x = 0; x < g.glyphData[ y ].size(); x++ ) {
+	// 			std::cout << int( g.glyphData[ y ][ x ] );
+	// 		}
+	// 		std::cout << std::endl;
+	// 	}
+	// 	std::cout << std::endl;
+	// }
+	// std::cout << "read in " << glyphList.size() << " glyphs in" << std::endl
 }
 
 #endif // GLYPH_H

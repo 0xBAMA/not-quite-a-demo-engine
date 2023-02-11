@@ -24,7 +24,7 @@ class Block {
 public:
 	Block( string sectionName ) { StartBlock( sectionName ); }
 	~Block() { EndBlock(); }
-}
+};
 
 void engine::StartMessage () {
 	ZoneScoped;

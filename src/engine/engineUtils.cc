@@ -34,7 +34,7 @@ void engine::DrawAPIGeometry () {
 	glGetQueryObjectui64v( queryID[ 1 ], GL_QUERY_RESULT, &stopTime );
 	float passTimeMs = ( stopTime - startTime ) / 1000000.0f; // operation time in ms
 
-	( void ) passTimeMs; // avoid unused variable warning
+	( void ) passTimeMs; // avoid unused variable warning - do something with the value if desired
 }
 
 void engine::ComputePasses () {

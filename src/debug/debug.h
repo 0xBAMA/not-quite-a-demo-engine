@@ -39,7 +39,7 @@ void MessageCallback ( 	GLenum source,
 void GLDebugEnable () {
 	//DEBUG ENABLE
 	glEnable( GL_DEBUG_OUTPUT );
-	glDebugMessageCallback( MessageCallback, 0 );      //getting a seg fault here, I think
+	glDebugMessageCallback( MessageCallback, 0 );
 
 	//report all gl extensions - useful on different platforms
 	// GLint n;

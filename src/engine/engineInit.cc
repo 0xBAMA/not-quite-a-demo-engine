@@ -1,21 +1,29 @@
 #include "engine.h"
 #include "../debug/debug.h"
 
-void engine::StartBlock ( string sectionName ) {
+const int reportWidth = 64;
+
+void StartBlock ( string sectionName ) {
 	Tick();
-	cout << T_BLUE << "    " << sectionName << " ";
-	for ( unsigned int i = 0; i < config.reportWidth - sectionName.size(); i++ ) {
+	cout << T_BLUE << "    " << sectionName << " " << RESET;
+	for ( unsigned int i = 0; i < reportWidth - sectionName.size(); i++ ) {
 		cout << ".";
 	}
 	cout << " ";
 }
 
-void engine::EndBlock () {
+void EndBlock () {
 	const float timeInMS = Tock();
 	const float wholeMS = int( std::floor( timeInMS ) );
 	const float partialMS = int( ( timeInMS - wholeMS ) * 1000.0f );
-	cout << T_GREEN << "done." << T_RED << " ( " << std::setfill( ' ' ) << std::setw( 4 ) << wholeMS << "."
+	cout << T_GREEN << "done." << T_RED << " ( " << std::setfill( ' ' ) << std::setw( 6 ) << wholeMS << "."
 		<< std::setw( 3 ) << std::setfill( '0' ) << partialMS << TIMEUNIT << " )" << RESET << newline;
+}
+
+class Block {
+public:
+	Block( string sectionName ) { StartBlock( sectionName ); }
+	~Block() { EndBlock(); }
 }
 
 void engine::StartMessage () {
@@ -29,8 +37,8 @@ void engine::StartMessage () {
 void engine::LoadConfig () {
 	ZoneScoped;
 
-	StartBlock( "Configuring Application" );
 	{
+		Block( "Configuring Application" );
 		json j;
 		// load the config json, populate config struct - this will probably have more data, eventually
 		ifstream i( "src/engine/config.json" );
@@ -43,8 +51,6 @@ void engine::LoadConfig () {
 		config.windowOffset.y = j[ "windowOffset" ][ "y" ];
 		config.startOnScreen = j[ "startOnScreen" ];
 		config.numMsDelayAfterCallback = j[ "numMsDelayAfterCallback" ];
-		config.reportWidth = j[ "reportWidth" ];
-
 		config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN" ] ? SDL_WINDOW_FULLSCREEN : 0 );
 		config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN_DESKTOP" ] ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0 );
 		config.windowFlags |= ( j[ "SDL_WINDOW_BORDERLESS" ] ? SDL_WINDOW_BORDERLESS : 0 );
@@ -56,25 +62,23 @@ void engine::LoadConfig () {
 		config.OpenGLVersionMinor = j[ "OpenGLVersionMinor" ];
 		config.reportPlatformInfo = j[ "reportPlatformInfo" ];
 		config.enableDepthTesting = j[ "enableDepthTesting" ];
-
 		config.clearColor.r = j[ "clearColor" ][ "r" ];
 		config.clearColor.g = j[ "clearColor" ][ "g" ];
 		config.clearColor.b = j[ "clearColor" ][ "b" ];
 		config.clearColor.a = j[ "clearColor" ][ "a" ];
-
 		// color grading stuff
 		tonemap.tonemapMode = j[ "colorGrade" ][ "tonemapMode" ];
 		tonemap.gamma = j[ "colorGrade" ][ "gamma" ];
 		tonemap.colorTemp = j[ "colorGrade" ][ "colorTemp" ];
 	}
-	EndBlock();
 }
 
 void engine::CreateWindowAndContext () {
 	ZoneScoped;
 
-	StartBlock( "Initializing SDL2" );
 	{	
+		Block( "Initializing SDL2" );
+
 		if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 ) {
 			cout << "Error: " << SDL_GetError() << newline;
 		}
@@ -92,10 +96,10 @@ void engine::CreateWindowAndContext () {
 			SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, config.MSAACount );
 		}
 	}
-	EndBlock();
 
-	StartBlock( "Creating Window" );
 	{	
+		Block( "Creating Window" );
+
 		// prep for window creation
 		SDL_DisplayMode displayMode;
 		SDL_GetDesktopDisplayMode( 0, &displayMode );
@@ -110,10 +114,10 @@ void engine::CreateWindowAndContext () {
 		window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x + config.startOnScreen * displayMode.w,
 			config.windowOffset.y, config.width, config.height, config.windowFlags );
 	}
-	EndBlock();
 
-	StartBlock( "Setting Up OpenGL Context" );
 	{
+		Block( "Setting Up OpenGL Context" );
+
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 		// defaults to OpenGL 4.3
@@ -135,7 +139,6 @@ void engine::CreateWindowAndContext () {
 		glEnable( GL_BLEND );
 		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	}
-	EndBlock();
 
 	numMsDelayAfterCallback = config.numMsDelayAfterCallback;
 	GLDebugEnable();
@@ -148,14 +151,14 @@ void engine::DisplaySetup () {
 
 	// some info on your current platform
 	if ( config.reportPlatformInfo ) {
-		cout << T_BLUE << "    Platform Info :" << RESET << newline;
 		const GLubyte *vendor = glGetString( GL_VENDOR );
-		cout << T_RED << "      Vendor : " << T_CYAN << vendor << RESET << newline;
 		const GLubyte *renderer = glGetString( GL_RENDERER );
-		cout << T_RED << "      Renderer : " << T_CYAN << renderer << RESET << newline;
 		const GLubyte *version = glGetString( GL_VERSION );
-		cout << T_RED << "      OpenGL Version Supported : " << T_CYAN << version << RESET << newline;
 		const GLubyte *glslVersion = glGetString( GL_SHADING_LANGUAGE_VERSION );
+		cout << T_BLUE << "    Platform Info :" << RESET << newline;
+		cout << T_RED << "      Vendor : " << T_CYAN << vendor << RESET << newline;
+		cout << T_RED << "      Renderer : " << T_CYAN << renderer << RESET << newline;
+		cout << T_RED << "      OpenGL Version Supported : " << T_CYAN << version << RESET << newline;
 		cout << T_RED << "      GLSL Version Supported : " << T_CYAN << glslVersion << RESET << newline << newline;
 	}
 }
@@ -163,30 +166,32 @@ void engine::DisplaySetup () {
 void engine::SetupVertexData () {
 	ZoneScoped;
 
-	StartBlock( "Setting Up Vertex Data" );
 	{	
+		Block( "Setting Up Vertex Data" );
+
 		// OpenGL core spec requires a VAO bound when calling glDrawArrays
 		glGenVertexArrays( 1, &displayVAO );
 		glBindVertexArray( displayVAO );
 
-		// corresponding VBO, unused
+		// corresponding VBO, unused by the default NQADE template
 		glGenBuffers( 1, &displayVBO );
 		glBindBuffer( GL_ARRAY_BUFFER, displayVBO );
 
 		// no op, by default...
 			// load models, setup vertex attributes, etc, here
 	}
-	EndBlock();
 }
 
 void engine::SetupTextureData () {
 	ZoneScoped;
 
-	StartBlock( "Setting Up Textures" );
 	{
+		Block( "Setting Up Textures" );
+
 		GLuint accumulatorTexture;
 		GLuint displayTexture;
 		GLuint blueNoiseTexture;
+		GLuint tridentImage;
 
 		// create the image textures
 		Image initial( config.width, config.height, false );
@@ -214,13 +219,26 @@ void engine::SetupTextureData () {
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data[ 0 ] );
 		textures[ "Blue Noise" ] = blueNoiseTexture;
 
+		// create the image for the trident
+		Image initialT( trident.blockDimensions.x * 8, trident.blockDimensions.y * 16 );
+		glGenTextures( 1, &tridentImage );
+		glActiveTexture( GL_TEXTURE5 );
+		glBindTexture( GL_TEXTURE_2D, tridentImage );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, initialT.width, initialT.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &initialT.data.data()[ 0 ] );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		trident.PassInImage( tridentImage );
+		textures[ "Trident" ] = tridentImage;
+
 		// add bayer textures from Voraldo13
 
 	}
-	EndBlock();
 
-	StartBlock( "Setting Up Bindsets" );
 	{
+		Block( "Setting Up Bindsets" );
+
 		bindSets[ "Drawing" ] = bindSet( {
 			binding( 0, textures[ "Blue Noise" ], GL_RGBA8UI ),
 			binding( 1, textures[ "Accumulator" ], GL_RGBA8UI )
@@ -235,52 +253,56 @@ void engine::SetupTextureData () {
 			binding( 0, textures[ "Display Texture" ], GL_RGBA8UI )
 		} );
 	}
-	EndBlock();
 }
 
 void engine::LoadData () {
 	ZoneScoped;
 
-	StartBlock( "Loading Palettes" );
 	{
+		Block( "Loading Palettes" );
 		loadPalettes();
 	}
-	EndBlock();
 
-	StartBlock( "Loading Font Glyphs" );
 	{
+		Block( "Loading Font Glyphs" );
 		loadGlyphs();
 	}
-	EndBlock();
 }
 
 void engine::ShaderCompile () {
 	ZoneScoped;
 
-	StartBlock( "Compiling Shaders" );
 	{
+		Block( "Compiling Shaders" );
+
 		const string base( "./src/engine/shaders/" );
+
+		// something to put some basic data in the accumulator texture
+		shaders[ "Dummy Draw" ] = computeShader( base + "dummyDraw.cs.glsl" ).shaderHandle;
+
+		// tonemapping shader
+		shaders[ "Tonemap" ] = computeShader( base + "tonemap.cs.glsl" ).shaderHandle;
 
 		// create the shader for the triangles to cover the screen
 		shaders[ "Display" ] = regularShader( base + "blit.vs.glsl", base + "blit.fs.glsl" ).shaderHandle;
 
 		// initialize the text renderer
-		textRenderer.Init( config.width, config.height, computeShader( "src/fonts/fontRenderer/font.cs.glsl" ).shaderHandle );
+		shaders[ "Font Renderer" ] = computeShader( "src/fonts/fontRenderer/font.cs.glsl" ).shaderHandle;
+		textRenderer.Init( config.width, config.height, shaders[ "Font Renderer" ] );
 
-		// something to put data in the accumulator texture
-		shaders[ "Dummy Draw" ] = computeShader( base + "dummyDraw.cs.glsl" ).shaderHandle;
-
-		// tonemapping shader
-		shaders[ "Tonemap" ] = computeShader( base + "tonemap.cs.glsl" ).shaderHandle;
+		// trident shaders
+		shaders[ "Trident Raymarch" ] = computeShader( "./src/trident/tridentGenerate.cs.glsl" ).shaderHandle;
+		shaders[ "Trident Blit" ] = computeShader( "./src/trident/tridentCopy.cs.glsl" ).shaderHandle;
+		trident.PassInShaders( shaders[ "Trident Raymarch" ], shaders[ "Trident Blit" ] );
 	}
-	EndBlock();
 }
 
 void engine::ImguiSetup () {
 	ZoneScoped;
 
-	StartBlock( "Configuring dearImGUI" );
 	{
+		Block( "Configuring dearImGUI" );
+
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -348,26 +370,23 @@ void engine::ImguiSetup () {
 		colors[ ImGuiCol_NavWindowingDimBg ]		= ImVec4( 0.80f, 0.80f, 0.80f, 0.20f );
 		colors[ ImGuiCol_ModalWindowDimBg ]			= ImVec4( 0.80f, 0.80f, 0.80f, 0.35f );
 	}
-	EndBlock();
 }
 
 void engine::InitialClear () {
 	ZoneScoped;
 
-	StartBlock( "Clear Buffer" );
 	{
+		Block( "Clear Buffer" );
+
 		glClearColor( config.clearColor.x, config.clearColor.y, config.clearColor.z, config.clearColor.w );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		SDL_GL_SwapWindow( window );
 	}
-	EndBlock();
 }
 
 void engine::ReportStartupStats () {
 	ZoneScoped;
 
-	cout << endl << T_CYAN << "  " << shaders.size() << " shaders." << endl;
-	cout << "  " << textures.size() << " textures." << endl;
-	cout << "  " << bindSets.size() << " bindsets." << endl;
+	cout << endl << T_CYAN << "  " << shaders.size() << " shader programs, " << textures.size() << " textures, " << bindSets.size() << " bindsets" << endl;
 	cout << T_YELLOW << "  Startup is complete ( total " << TotalTime() << TIMEUNIT << " )" << RESET << endl << endl;
 }

@@ -10,7 +10,6 @@
 	},
 	"linearFilterDisplayTex":true,
 	"numMsDelayAfterCallback":100,
-	"reportWidth":64,
 	"OpenGLVersionMajor":4,
 	"OpenGLVersionMinor":3,
 	"reportPlatformInfo":true,

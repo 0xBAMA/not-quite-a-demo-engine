@@ -21,6 +21,9 @@ private:
 	// text renderer framework
 	layerManager textRenderer;
 
+	// orientation gizmo from Voraldo13
+	orientTrident trident;
+
 //====== OpenGL ===============================================================
 	GLuint displayVAO;
 	GLuint displayVBO;

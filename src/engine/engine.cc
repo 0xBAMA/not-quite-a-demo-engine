@@ -5,11 +5,15 @@ void engine::Init () {
 	StartMessage();
 	LoadConfig();
 	CreateWindowAndContext();
-	ShaderCompile();
 	DisplaySetup();
+	SetupVertexData();
+	SetupTextureData();
+	ShaderCompile();
+	LoadData();
 	ImguiSetup();
-	// if init takes some time, don't show the window before it's done
-	SDL_ShowWindow( window );
+	InitialClear();
+	SDL_ShowWindow( window ); // if init takes some time, don't show the window before it's done
+	ReportStartupStats();
 }
 
 // terminate ImGUI

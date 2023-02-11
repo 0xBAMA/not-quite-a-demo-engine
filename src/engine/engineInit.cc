@@ -8,7 +8,8 @@ void engine::StartMessage () {
 }
 
 void engine::LoadConfig () {
-	cout << T_BLUE << "    Configuring Application" << RESET << " ........................... ";
+	Tick();
+	cout << T_BLUE << "    Configuring Application" << RESET << " ................................... ";
 	json j;
 	// load the config json, populate config struct - this will probably have more data, eventually
 	ifstream i( "src/engine/config.json" );
@@ -44,11 +45,12 @@ void engine::LoadConfig () {
 	tonemap.gamma = j[ "colorGrade" ][ "gamma" ];
 	tonemap.colorTemp = j[ "colorGrade" ][ "colorTemp" ];
 
-	cout << T_GREEN << "done." << RESET << newline;
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
 }
 
 void engine::CreateWindowAndContext () {
-	cout << T_BLUE << "    Initializing SDL2" << RESET << " ................................. ";
+	Tick();
+	cout << T_BLUE << "    Initializing SDL2" << RESET << " ......................................... ";
 	if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 ) {
 		cout << "Error: " << SDL_GetError() << newline;
 	}
@@ -65,8 +67,10 @@ void engine::CreateWindowAndContext () {
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1 );
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, config.MSAACount );
 	}
-	cout << T_GREEN << "done." << RESET << newline;
-	cout << T_BLUE << "    Creating Window" << RESET << " ................................... ";
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
+
+	Tick();
+	cout << T_BLUE << "    Creating Window" << RESET << " ........................................... ";
 
 	// prep for window creation
 	SDL_DisplayMode displayMode;
@@ -83,8 +87,10 @@ void engine::CreateWindowAndContext () {
 	window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x + config.startOnScreen * displayMode.w,
 		config.windowOffset.y, config.width, config.height, config.windowFlags );
 
-	cout << T_GREEN << "done." << RESET << newline;
-	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ......................... ";
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
+
+	Tick();
+	cout << T_BLUE << "    Setting Up OpenGL Context" << RESET << " ................................. ";
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 	// defaults to OpenGL 4.3
@@ -105,8 +111,9 @@ void engine::CreateWindowAndContext () {
 	// glPointSize( 3.0 );
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	cout << T_GREEN << "done." << RESET << newline;
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
 
+	numMsDelayAfterCallback = config.numMsDelayAfterCallback;
 	GLDebugEnable();
 	cout << endl << T_YELLOW << "  OpenGL debug callback enabled - " << numMsDelayAfterCallback << "ms delay.\n" << RESET << endl;
 }
@@ -115,6 +122,8 @@ void engine::CreateWindowAndContext () {
 void engine::DisplaySetup () {
 	// some info on your current platform
 	if ( config.reportPlatformInfo ) {
+	Tick();
+		
 		cout << T_BLUE << "    Platform Info :" << RESET << newline;
 		const GLubyte *vendor = glGetString( GL_VENDOR );
 		cout << T_RED << "      Vendor : " << T_CYAN << vendor << RESET << newline;
@@ -125,16 +134,11 @@ void engine::DisplaySetup () {
 		const GLubyte *glslVersion = glGetString( GL_SHADING_LANGUAGE_VERSION );
 		cout << T_RED << "      GLSL Version Supported : " << T_CYAN << glslVersion << RESET << newline << newline;
 	}
-	SetupVertexData();
-	SetupTextureData();
-
-	// data loading, this might go somewhere else
-	loadPalettes();
-	loadGlyphs();
 }
 
 void engine::SetupVertexData () {
-	cout << T_BLUE << "    Setting Up Vertex Data" << RESET << " ............................ ";
+	Tick();
+	cout << T_BLUE << "    Setting Up Vertex Data" << RESET << " .................................... ";
 
 
 	// OpenGL core spec requires a VAO bound when calling glDrawArrays
@@ -148,11 +152,12 @@ void engine::SetupVertexData () {
 	// no op, by default...
 		// load models, setup vertex attributes, etc, here
 
-	cout << T_GREEN << "done." << RESET << newline;
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
 }
 
 void engine::SetupTextureData () {
-	cout << T_BLUE << "    Setting Up Textures" << RESET << " ............................... ";
+	Tick();
+	cout << T_BLUE << "    Setting Up Textures" << RESET << " ....................................... ";
 
 	// create the image textures
 	Image initial( config.width, config.height, false );
@@ -177,11 +182,26 @@ void engine::SetupTextureData () {
 	glBindTexture( GL_TEXTURE_2D, blueNoiseTexture );
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, blueNoiseImage.width, blueNoiseImage.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blueNoiseImage.data[ 0 ] );
 
-	cout << T_GREEN << "done." << RESET << newline;
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
+}
+
+void engine::LoadData () {
+
+	Tick();
+	cout << T_BLUE << "    Loading Palettes" << RESET << " .......................................... ";
+	loadPalettes();
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
+
+	Tick();
+	cout << T_BLUE << "    Loading Font Glyphs" << RESET << " ....................................... ";
+	loadGlyphs();
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
+
 }
 
 void engine::ShaderCompile () {
-	cout << T_BLUE << "    Compiling Shaders" << RESET << " ................................. ";
+	Tick();
+	cout << T_BLUE << "    Compiling Shaders" << RESET << " ......................................... ";
 
 	// create the shader for the triangles to cover the screen
 	displayShader = regularShader( "src/engine/shaders/blit.vs.glsl", "src/engine/shaders/blit.fs.glsl" ).shaderHandle;
@@ -195,11 +215,12 @@ void engine::ShaderCompile () {
 	// tonemapping shader
 	tonemapShader = computeShader( "src/engine/shaders/tonemap.cs.glsl" ).shaderHandle;
 
-	cout << T_GREEN << "done." << RESET << newline;
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
 }
 
 void engine::ImguiSetup () {
-	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ............................. ";
+	Tick();
+	cout << T_BLUE << "    Configuring dearImGUI" << RESET << " ..................................... ";
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -215,113 +236,72 @@ void engine::ImguiSetup () {
 	const char *glsl_version = "#version 430";
 	ImGui_ImplOpenGL3_Init( glsl_version );
 
-	// initial value for clear color
-	glClearColor( config.clearColor.x, config.clearColor.y, config.clearColor.z, config.clearColor.w );
-	glClear( GL_COLOR_BUFFER_BIT );
-	SDL_GL_SwapWindow( window ); // show clear color
-
 	// setting custom font, if desired
 	// io.Fonts->AddFontFromFileTTF( "src/fonts/star_trek/titles/TNG_Title.ttf", 16 );
 
-	ImGui::StyleColorsDark();
 	ImVec4 *colors = ImGui::GetStyle().Colors;
+	colors[ ImGuiCol_Text ]						= ImVec4( 0.64f, 0.37f, 0.37f, 1.00f );
+	colors[ ImGuiCol_TextDisabled ]				= ImVec4( 0.49f, 0.26f, 0.26f, 1.00f );
+	colors[ ImGuiCol_WindowBg ]					= ImVec4( 0.17f, 0.00f, 0.00f, 0.98f );
+	colors[ ImGuiCol_ChildBg ]					= ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+	colors[ ImGuiCol_PopupBg ]					= ImVec4( 0.18f, 0.00f, 0.00f, 0.94f );
+	colors[ ImGuiCol_Border ]					= ImVec4( 0.35f, 0.00f, 0.03f, 0.50f );
+	colors[ ImGuiCol_BorderShadow ]				= ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+	colors[ ImGuiCol_FrameBg ]					= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
+	colors[ ImGuiCol_FrameBgHovered ]			= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
+	colors[ ImGuiCol_FrameBgActive ]			= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
+	colors[ ImGuiCol_TitleBg ]					= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
+	colors[ ImGuiCol_TitleBgActive ]			= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
+	colors[ ImGuiCol_TitleBgCollapsed ]			= ImVec4( 0.00f, 0.00f, 0.00f, 0.51f );
+	colors[ ImGuiCol_MenuBarBg ]				= ImVec4( 0.14f, 0.14f, 0.14f, 1.00f );
+	colors[ ImGuiCol_ScrollbarBg ]				= ImVec4( 0.02f, 0.02f, 0.02f, 0.53f );
+	colors[ ImGuiCol_ScrollbarGrab ]			= ImVec4( 0.31f, 0.31f, 0.31f, 1.00f );
+	colors[ ImGuiCol_ScrollbarGrabHovered ]		= ImVec4( 0.41f, 0.41f, 0.41f, 1.00f );
+	colors[ ImGuiCol_ScrollbarGrabActive ]		= ImVec4( 0.51f, 0.51f, 0.51f, 1.00f );
+	colors[ ImGuiCol_CheckMark ]				= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
+	colors[ ImGuiCol_SliderGrab ]				= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
+	colors[ ImGuiCol_SliderGrabActive ]			= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
+	colors[ ImGuiCol_Button ]					= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_ButtonHovered ]			= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
+	colors[ ImGuiCol_ButtonActive ]				= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
+	colors[ ImGuiCol_Header ]					= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_HeaderHovered ]			= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
+	colors[ ImGuiCol_HeaderActive ]				= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
+	colors[ ImGuiCol_Separator ]				= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_SeparatorHovered ]			= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
+	colors[ ImGuiCol_SeparatorActive ]			= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
+	colors[ ImGuiCol_ResizeGrip ]				= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_ResizeGripHovered ]		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
+	colors[ ImGuiCol_ResizeGripActive ]			= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
+	colors[ ImGuiCol_Tab ]						= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_TabHovered ]				= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
+	colors[ ImGuiCol_TabActive ]				= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
+	colors[ ImGuiCol_TabUnfocused ]				= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_TabUnfocusedActive ]		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_PlotLines ]				= ImVec4( 0.61f, 0.61f, 0.61f, 1.00f );
+	colors[ ImGuiCol_PlotLinesHovered ]			= ImVec4( 1.00f, 0.43f, 0.35f, 1.00f );
+	colors[ ImGuiCol_PlotHistogram ]			= ImVec4( 0.90f, 0.70f, 0.00f, 1.00f );
+	colors[ ImGuiCol_PlotHistogramHovered ]		= ImVec4( 1.00f, 0.60f, 0.00f, 1.00f );
+	colors[ ImGuiCol_TextSelectedBg ]			= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
+	colors[ ImGuiCol_DragDropTarget ]			= ImVec4( 1.00f, 1.00f, 0.00f, 0.90f );
+	colors[ ImGuiCol_NavHighlight ]				= ImVec4( 1.00f, 0.60f, 0.00f, 1.00f );
+	colors[ ImGuiCol_NavWindowingHighlight ]	= ImVec4( 1.00f, 1.00f, 1.00f, 0.70f );
+	colors[ ImGuiCol_NavWindowingDimBg ]		= ImVec4( 0.80f, 0.80f, 0.80f, 0.20f );
+	colors[ ImGuiCol_ModalWindowDimBg ]			= ImVec4( 0.80f, 0.80f, 0.80f, 0.35f );
 
-	colors[ ImGuiCol_Text ]
-		= ImVec4( 0.64f, 0.37f, 0.37f, 1.00f );
-	colors[ ImGuiCol_TextDisabled ]
-		= ImVec4( 0.49f, 0.26f, 0.26f, 1.00f );
-	colors[ ImGuiCol_WindowBg ]
-		= ImVec4( 0.17f, 0.00f, 0.00f, 0.98f );
-	colors[ ImGuiCol_ChildBg ]
-		= ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
-	colors[ ImGuiCol_PopupBg ]
-		= ImVec4( 0.18f, 0.00f, 0.00f, 0.94f );
-	colors[ ImGuiCol_Border ]
-		= ImVec4( 0.35f, 0.00f, 0.03f, 0.50f );
-	colors[ ImGuiCol_BorderShadow ]
-		= ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
-	colors[ ImGuiCol_FrameBg ]
-		= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
-	colors[ ImGuiCol_FrameBgHovered ]
-		= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
-	colors[ ImGuiCol_FrameBgActive ]
-		= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
-	colors[ ImGuiCol_TitleBg ]
-		= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
-	colors[ ImGuiCol_TitleBgActive ]
-		= ImVec4( 0.14f, 0.04f, 0.00f, 1.00f );
-	colors[ ImGuiCol_TitleBgCollapsed ]
-		= ImVec4( 0.00f, 0.00f, 0.00f, 0.51f );
-	colors[ ImGuiCol_MenuBarBg ]
-		= ImVec4( 0.14f, 0.14f, 0.14f, 1.00f );
-	colors[ ImGuiCol_ScrollbarBg ]
-		= ImVec4( 0.02f, 0.02f, 0.02f, 0.53f );
-	colors[ ImGuiCol_ScrollbarGrab ]
-		= ImVec4( 0.31f, 0.31f, 0.31f, 1.00f );
-	colors[ ImGuiCol_ScrollbarGrabHovered ]
-		= ImVec4( 0.41f, 0.41f, 0.41f, 1.00f );
-	colors[ ImGuiCol_ScrollbarGrabActive ]
-		= ImVec4( 0.51f, 0.51f, 0.51f, 1.00f );
-	colors[ ImGuiCol_CheckMark ]
-		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
-	colors[ ImGuiCol_SliderGrab ]
-		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
-	colors[ ImGuiCol_SliderGrabActive ]
-		= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
-	colors[ ImGuiCol_Button ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_ButtonHovered ]
-		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
-	colors[ ImGuiCol_ButtonActive ]
-		= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
-	colors[ ImGuiCol_Header ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_HeaderHovered ]
-		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
-	colors[ ImGuiCol_HeaderActive ]
-		= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
-	colors[ ImGuiCol_Separator ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_SeparatorHovered ]
-		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
-	colors[ ImGuiCol_SeparatorActive ]
-		= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
-	colors[ ImGuiCol_ResizeGrip ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_ResizeGripHovered ]
-		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
-	colors[ ImGuiCol_ResizeGripActive ]
-		= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
-	colors[ ImGuiCol_Tab ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_TabHovered ]
-		= ImVec4( 0.87f, 0.23f, 0.09f, 1.00f );
-	colors[ ImGuiCol_TabActive ]
-		= ImVec4( 1.00f, 0.33f, 0.00f, 1.00f );
-	colors[ ImGuiCol_TabUnfocused ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_TabUnfocusedActive ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_PlotLines ]
-		= ImVec4( 0.61f, 0.61f, 0.61f, 1.00f );
-	colors[ ImGuiCol_PlotLinesHovered ]
-		= ImVec4( 1.00f, 0.43f, 0.35f, 1.00f );
-	colors[ ImGuiCol_PlotHistogram ]
-		= ImVec4( 0.90f, 0.70f, 0.00f, 1.00f );
-	colors[ ImGuiCol_PlotHistogramHovered ]
-		= ImVec4( 1.00f, 0.60f, 0.00f, 1.00f );
-	colors[ ImGuiCol_TextSelectedBg ]
-		= ImVec4( 0.81f, 0.38f, 0.09f, 0.08f );
-	colors[ ImGuiCol_DragDropTarget ]
-		= ImVec4( 1.00f, 1.00f, 0.00f, 0.90f );
-	colors[ ImGuiCol_NavHighlight ]
-		= ImVec4( 1.00f, 0.60f, 0.00f, 1.00f );
-	colors[ ImGuiCol_NavWindowingHighlight ]
-		= ImVec4( 1.00f, 1.00f, 1.00f, 0.70f );
-	colors[ ImGuiCol_NavWindowingDimBg ]
-		= ImVec4( 0.80f, 0.80f, 0.80f, 0.20f );
-	colors[ ImGuiCol_ModalWindowDimBg ]
-		= ImVec4( 0.80f, 0.80f, 0.80f, 0.35f );
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline;
+}
 
-	cout << T_GREEN << "done." << RESET << newline << newline;
+void engine::InitialClear () {
+	Tick();
+	cout << T_BLUE << "    Clear Buffer" << RESET << " .............................................. ";
+	glClearColor( config.clearColor.x, config.clearColor.y, config.clearColor.z, config.clearColor.w );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	SDL_GL_SwapWindow( window );
+	cout << T_GREEN << "done." << T_RED << " ( " << Tock() << TIMEUNIT << " )" << RESET << newline << newline;
+}
+
+void engine::ReportStartupStats () {
+	// other startup stuff
+	cout << T_YELLOW << "  Startup is complete ( total " << TotalTime() << TIMEUNIT << " )" << RESET << endl << endl;
 }

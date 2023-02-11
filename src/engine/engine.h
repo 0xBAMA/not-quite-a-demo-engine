@@ -57,7 +57,10 @@ private:
 	void SetupVertexData ();
 	void SetupTextureData ();
 	void ShaderCompile ();
+	void LoadData ();
 	void ImguiSetup ();
+	void InitialClear ();
+	void ReportStartupStats ();
 
 	// main loop functions
 	void BlitToScreen ();

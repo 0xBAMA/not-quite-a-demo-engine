@@ -9,6 +9,7 @@
 		"y":200
 	},
 	"linearFilterDisplayTex":true,
+	"numMsDelayAfterCallback":100,
 	"OpenGLVersionMajor":4,
 	"OpenGLVersionMinor":3,
 	"reportPlatformInfo":true,

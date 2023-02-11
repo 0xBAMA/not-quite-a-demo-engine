@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "../debug/debug.h"
 
 void engine::StartMessage () {
 	cout << endl << T_YELLOW << BOLD << "NQADE - Not Quite A Demo Engine" << newline;
@@ -19,6 +20,7 @@ void engine::LoadConfig () {
 	config.windowOffset.x = j[ "windowOffset" ][ "x" ];
 	config.windowOffset.y = j[ "windowOffset" ][ "y" ];
 	config.startOnScreen = j[ "startOnScreen" ];
+	config.numMsDelayAfterCallback = j[ "numMsDelayAfterCallback" ];
 
 	config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN" ] ? SDL_WINDOW_FULLSCREEN : 0 );
 	config.windowFlags |= ( j[ "SDL_WINDOW_FULLSCREEN_DESKTOP" ] ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0 );
@@ -104,6 +106,9 @@ void engine::CreateWindowAndContext () {
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	cout << T_GREEN << "done." << RESET << newline;
+
+	GLDebugEnable();
+	cout << endl << T_YELLOW << "  OpenGL debug callback enabled - " << numMsDelayAfterCallback << "ms delay.\n" << RESET << endl;
 }
 
 // split up into vertex, texture funcs + report platform info ( maybe do this later? )

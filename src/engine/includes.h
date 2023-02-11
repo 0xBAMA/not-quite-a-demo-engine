@@ -132,6 +132,7 @@ struct configData {
 	uint8_t MSAACount = 0;
 	vec4 clearColor = vec4( 0.0f );
 	bool vSyncEnable = true;
+	int numMsDelayAfterCallback = 100;
 	uint8_t OpenGLVersionMajor = 4;
 	uint8_t OpenGLVersionMinor = 3;
 	bool reportPlatformInfo = true;

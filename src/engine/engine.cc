@@ -1,12 +1,10 @@
 #include "engine.h"
-#include "../debug/debug.h"
 
 // initialization of OpenGL, etc
 void engine::Init () {
 	StartMessage();
 	LoadConfig();
 	CreateWindowAndContext();
-	GLDebugEnable();
 	ShaderCompile();
 	DisplaySetup();
 	ImguiSetup();

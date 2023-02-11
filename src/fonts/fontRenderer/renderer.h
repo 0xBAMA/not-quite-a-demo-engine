@@ -261,11 +261,14 @@ public:
 		layers.push_back( Layer( numBinsWidth, numBinsHeight ) );
 		layers.push_back( Layer( numBinsWidth, numBinsHeight ) );
 
+		// set basepoint for the orientation widget
+		basePt = glm::ivec2( 8 * ( numBinsWidth - 20 ), 16 );
+
 		// get the compiled shader
 		fontWriteShader = shader;
 
 		// generate the altas texture - only ever needed in the context of layerManager
-		Image fontAtlas( "src/fonts/fontRenderer/whiteOnClear.png", LODEPNG );
+		Image fontAtlas( "./src/fonts/fontRenderer/whiteOnClear.png", LODEPNG );
 		fontAtlas.FlipVertical(); // for some reason loading upside down
 
 		// font atlas GPU setup
@@ -298,6 +301,9 @@ public:
 		ss << " total: " << std::setw( 10 ) << std::setfill( ' ' ) << std::setprecision( 4 ) << std::fixed << ms << "ms";
 		layers[ 0 ].DrawRectConstant( glm::uvec2( layers[ 0 ].width - ss.str().length(), 0 ), glm::uvec2( layers[ 0 ].width, 0 ), cChar( BLACK, FILL_100 ) );
 		layers[ 1 ].WriteString( glm::uvec2( layers[ 1 ].width - ss.str().length(), 0 ), glm::uvec2( layers[ 1 ].width, 0 ), ss.str(), WHITE );
+
+		// the above writes a string 20 chars long
+		// layers[ 0 ].DrawRectConstant( glm::uvec2( layers[ 0 ].width - ss.str().length(), 1 ), glm::uvec2( layers[ 0 ].width, 7 ), cChar( GOLD, FILL_25 ) );
 	}
 
 	void Draw ( GLuint writeTarget ) {
@@ -313,6 +319,8 @@ public:
 	int width, height;
 	int numBinsWidth;
 	int numBinsHeight;
+
+	glm::ivec2 basePt;
 
 	GLuint fontWriteShader;
 	GLuint atlasTexture;

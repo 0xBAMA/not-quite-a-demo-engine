@@ -67,6 +67,10 @@ void engine::ComputePasses () {
 	textRenderer.Update( ImGui::GetIO().DeltaTime );
 	textRenderer.Draw( textures[ "Display Texture" ] );
 	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+
+	// show trident with current orientation
+	trident.Update( textures[ "Display Texture" ] );
+	glMemoryBarrier( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 }
 
 void engine::ClearColorAndDepth () {
@@ -125,19 +129,46 @@ void engine::ImguiPass () {
 void engine::HandleEvents () {
 	ZoneScoped;
 
-	// can handle multiple simultaneous inputs like this
-	const uint8_t *state = SDL_GetKeyboardState( NULL );
-	// const float scalar = SDL_GetModState() & KMOD_SHIFT ? 1000.0f : 10.0f;
-	if ( state[ SDL_SCANCODE_RIGHT ] ) {	cout << "Right Key Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_LEFT ] ) {		cout << "Left Key Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_UP ] ) {		cout << "Up Key Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_DOWN ] ) {		cout << "Down Key Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_PAGEDOWN ] ) {	cout << "PageDown Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_PAGEUP ] ) {	cout << "PageUp Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_W ] ) {		cout << "W Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_S ] ) {		cout << "S Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_A ] ) {		cout << "A Pressed" << newline; }
-	if ( state[ SDL_SCANCODE_D ] ) {		cout << "D Pressed" << newline; }
+	if ( !ImGui::GetIO().WantCaptureKeyboard ) {
+		constexpr float bigStep = 0.120;
+		constexpr float lilStep = 0.008;
+		// can handle multiple simultaneous inputs like this
+		const uint8_t *state = SDL_GetKeyboardState( NULL );
+		// these will operate on the trident object, which retains state for block orientation
+		if ( state[ SDL_SCANCODE_LEFT ] )
+			trident.RotateY( ( SDL_GetModState() & KMOD_SHIFT ) ?  bigStep :  lilStep );
+		if ( state[ SDL_SCANCODE_RIGHT ] )
+			trident.RotateY( ( SDL_GetModState() & KMOD_SHIFT ) ? -bigStep : -lilStep );
+		if ( state[ SDL_SCANCODE_UP ] )
+			trident.RotateX( ( SDL_GetModState() & KMOD_SHIFT ) ?  bigStep :  lilStep );
+		if ( state[ SDL_SCANCODE_DOWN ] )
+			trident.RotateX( ( SDL_GetModState() & KMOD_SHIFT ) ? -bigStep : -lilStep );
+		if ( state[ SDL_SCANCODE_PAGEUP ] )
+			trident.RotateZ( ( SDL_GetModState() & KMOD_SHIFT ) ? -bigStep : -lilStep );
+		if ( state[ SDL_SCANCODE_PAGEDOWN ] )
+			trident.RotateZ( ( SDL_GetModState() & KMOD_SHIFT ) ?  bigStep :  lilStep );
+
+		if ( state[ SDL_SCANCODE_1 ] )
+			trident.SetViewFront();
+		if ( state[ SDL_SCANCODE_2 ] )
+			trident.SetViewRight();
+		if ( state[ SDL_SCANCODE_3 ] )
+			trident.SetViewBack();
+		if ( state[ SDL_SCANCODE_4 ] )
+			trident.SetViewLeft();
+		if ( state[ SDL_SCANCODE_5 ] )
+			trident.SetViewUp();
+		if ( state[ SDL_SCANCODE_6 ] )
+			trident.SetViewDown();
+
+		// if ( trident.Dirty() ) // rotation or movement has happened
+			// render.framesSinceLastInput = 0;
+
+		if ( state[ SDL_SCANCODE_W ] ) {		cout << "W Pressed" << newline; }
+		if ( state[ SDL_SCANCODE_S ] ) {		cout << "S Pressed" << newline; }
+		if ( state[ SDL_SCANCODE_A ] ) {		cout << "A Pressed" << newline; }
+		if ( state[ SDL_SCANCODE_D ] ) {		cout << "D Pressed" << newline; }
+	}
 
 //==============================================================================
 // Need to keep this for pQuit handling ( force quit )
@@ -156,5 +187,13 @@ void engine::HandleEvents () {
 		// this has to stay because it doesn't seem like ImGui::IsKeyReleased is stable enough to use
 		if ( ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE ) || ( event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1 )  )
 			quitConfirm = !quitConfirm;
+		if ( !ImGui::GetIO().WantCaptureMouse ) {
+			ImVec2 valueRaw = ImGui::GetMouseDragDelta( 1, 0.0f );
+			if ( ( valueRaw.x != 0 || valueRaw.y != 0 ) ) {
+				trident.RotateY( -valueRaw.x * 0.03f );
+				trident.RotateX( -valueRaw.y * 0.03f );
+				ImGui::ResetMouseDragDelta( 1 );
+			}
+		}
 	}
 }

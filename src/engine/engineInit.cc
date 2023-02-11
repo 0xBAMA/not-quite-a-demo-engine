@@ -293,6 +293,7 @@ void engine::ShaderCompile () {
 		// trident shaders
 		shaders[ "Trident Raymarch" ] = computeShader( "./src/trident/tridentGenerate.cs.glsl" ).shaderHandle;
 		shaders[ "Trident Blit" ] = computeShader( "./src/trident/tridentCopy.cs.glsl" ).shaderHandle;
+		trident.basePt = textRenderer.basePt; // location to draw at
 		trident.PassInShaders( shaders[ "Trident Raymarch" ], shaders[ "Trident Blit" ] );
 	}
 }

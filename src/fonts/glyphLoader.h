@@ -2,8 +2,7 @@
 #ifndef GLYPH_H
 #define GLYPH_H
 
-// #include "../GLM/glm.hpp"
-#include "../ImageHandling/Image.h"
+#include "../engine/coreUtils/image.h"
 
 struct glyph {
 	int index = 0;

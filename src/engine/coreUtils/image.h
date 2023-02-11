@@ -5,21 +5,21 @@
 // Image Handling Libs
 
 // Lode Vandevenne's LodePNG PNG Load/Save lib
-#include "../ImageHandling/LodePNG/lodepng.h"
+#include "../../imageLibs/LodePNG/lodepng.h"
 
 // Sean Barrett's public domain load, save, resize libs - need corresponding define in the ./stb/impl.cc file,
 	// before their inclusion, which is done by the time compilation hits this point - they can be straight
 	// included, here, as follows:
 
 // https://github.com/nothings/stb/blob/master/stb_image.h
-#include "../ImageHandling/stb/stb_image.h"
+#include "../../imageLibs/stb/stb_image.h"
 //  https://github.com/nothings/stb/blob/master/stb_image_write.h
-#include "../ImageHandling/stb/stb_image_write.h"
+#include "../../imageLibs/stb/stb_image_write.h"
 // https://github.com/nothings/stb/blob/master/stb_image_resize.h
-#include "../ImageHandling/stb/stb_image_resize.h"
+#include "../../imageLibs/stb/stb_image_resize.h"
 
 // TinyEXR is for loading and saving of high bit depth images - 16, 32 bits
-#include "../ImageHandling/tinyEXR/tinyexr.h"
+#include "../../imageLibs/tinyEXR/tinyexr.h"
 
 #include <vector>
 #include <random>

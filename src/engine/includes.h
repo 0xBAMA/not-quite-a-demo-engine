@@ -71,10 +71,10 @@ using glm::mat4;
 // #include <SDL2/SDL_opengl_glext.h>
 
 // image load/save/resize/access/manipulation wrapper
-#include "../ImageHandling/Image.h"
+#include "./coreUtils/image.h"
 
 // simple std::chrono wrapper
-#include "Timer.h"
+#include "./coreUtils/timer.h"
 
 // tracy profiler annotation
 #include "../tracy/public/tracy/Tracy.hpp"

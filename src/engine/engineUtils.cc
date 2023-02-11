@@ -2,6 +2,7 @@
 
 bool engine::MainLoop () {
 	ZoneScoped;
+	
 	HandleEvents();					// handle keyboard / mouse events
 	ClearColorAndDepth();			// if I just disable depth testing, this can disappear
 	DrawAPIGeometry();				// draw any API geometry desired
@@ -70,6 +71,7 @@ void engine::ComputePasses () {
 
 void engine::ClearColorAndDepth () {
 	ZoneScoped;
+
 	// clear the screen
 	glClearColor( config.clearColor.x, config.clearColor.y, config.clearColor.z, config.clearColor.w );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -83,14 +85,23 @@ void engine::ClearColorAndDepth () {
 
 void engine::SendTonemappingParameters () {
 	ZoneScoped;
+	
+	static float prevColorTemperature = 0.0f;
+	static vec3 temperatureColor;
+	if ( tonemap.colorTemp != prevColorTemperature ) {
+		prevColorTemperature = tonemap.colorTemp;
+		temperatureColor = GetColorForTemperature( tonemap.colorTemp );
+	}
+
 	const GLuint shader = shaders[ "Tonemap" ];
-	glUniform3fv( glGetUniformLocation( shader, "colorTempAdjust" ), 1, glm::value_ptr( GetColorForTemperature( tonemap.colorTemp ) ) );
+	glUniform3fv( glGetUniformLocation( shader, "colorTempAdjust" ), 1, glm::value_ptr( temperatureColor ) );
 	glUniform1i( glGetUniformLocation( shader, "tonemapMode" ), tonemap.tonemapMode );
 	glUniform1f( glGetUniformLocation( shader, "gamma" ), tonemap.gamma );
 }
 
 void engine::BlitToScreen () {
 	ZoneScoped;
+
 	// display current state of the display texture - there are more efficient ways to do this, look into it
 	bindSets[ "Display" ].apply();
 	const GLuint shader = shaders[ "Display" ];
@@ -103,6 +114,7 @@ void engine::BlitToScreen () {
 
 void engine::ImguiPass () {
 	ZoneScoped;
+
 	ImguiFrameStart();						// start the imgui frame
 	TonemapControlsWindow();
 	if ( true ) ImGui::ShowDemoWindow();	// show the demo window

@@ -1,7 +1,6 @@
 - Stuff from Voraldo13
 	- trident, but that's pretty specific to Voraldo... fuck it, might as well
 		- add multisampling to the rendering, smooth edges
-	- add bayer header with the bayer patterns from Voraldo13
 
 - Convert back to using GLEW for OpenGL function loading
 	- hopefully will help to fix issues using GL3W on the new machine

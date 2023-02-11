@@ -98,7 +98,10 @@ using glm::mat4;
 #include "shaders/lib/shaderWrapper.h"
 
 // coloring of CLI output
-#include "../fonts/colors.h"
+#include "../data/colors.h"
+
+// bayer patterns 2, 4, 8 + four channel helper func
+#include "../data/bayer.h"
 
 // palette list
 #include "../data/paletteLoader.h"
@@ -153,29 +156,5 @@ struct colorGradeParameters {
 	float gamma = 1.1f;
 	float colorTemp = 6500.0f;
 };
-
-// Function to get color temperature from shadertoy user BeRo
-// from the author:
-//   Color temperature (sRGB) stuff
-//   Copyright (C) 2014 by Benjamin 'BeRo' Rosseaux
-//   Because the german law knows no public domain in the usual sense,
-//   this code is licensed under the CC0 license
-//   http://creativecommons.org/publicdomain/zero/1.0/
-// Valid from 1000 to 40000 K (and additionally 0 for pure full white)
-inline vec3 GetColorForTemperature ( float temperature ) {
-	// Values from:
-	// http://blenderartists.org/forum/showthread.php?270332-OSL-Goodness&p=2268693&viewfull=1#post2268693
-	mat3 m =
-		( temperature <= 6500.0f )
-			? mat3( vec3( 0.0f, -2902.1955373783176f, -8257.7997278925690f ),
-					vec3( 0.0f, 1669.5803561666639f, 2575.2827530017594f ),
-					vec3( 1.0f, 1.3302673723350029f, 1.8993753891711275f ) )
-			: mat3( vec3( 1745.0425298314172f, 1216.6168361476490f, -8257.7997278925690f ),
-					vec3( -2666.3474220535695f, -2173.1012343082230f, 2575.2827530017594f ),
-					vec3( 0.55995389139931482f, 0.70381203140554553f, 1.8993753891711275f ) );
-
-	return glm::mix( glm::clamp( vec3( m[ 0 ] / ( vec3( glm::clamp( temperature, 1000.0f, 40000.0f ) ) +
-		m[ 1 ] ) + m[ 2 ] ), vec3( 0.0f ), vec3( 1.0f ) ), vec3( 1.0f ), glm::smoothstep( 1000.0f, 0.0f, temperature ) );
-}
 
 #endif

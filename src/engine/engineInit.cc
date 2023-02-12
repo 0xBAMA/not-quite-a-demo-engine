@@ -1,29 +1,25 @@
 #include "engine.h"
 #include "../debug/debug.h"
 
-const int reportWidth = 64;
-
-void StartBlock ( string sectionName ) {
-	Tick();
-	cout << T_BLUE << "    " << sectionName << " " << RESET;
-	for ( unsigned int i = 0; i < reportWidth - sectionName.size(); i++ ) {
-		cout << ".";
-	}
-	cout << " ";
-}
-
-void EndBlock () {
-	const float timeInMS = Tock();
-	const float wholeMS = int( std::floor( timeInMS ) );
-	const float partialMS = int( ( timeInMS - wholeMS ) * 1000.0f );
-	cout << T_GREEN << "done." << T_RED << " ( " << std::setfill( ' ' ) << std::setw( 6 ) << wholeMS << "."
-		<< std::setw( 3 ) << std::setfill( '0' ) << partialMS << TIMEUNIT << " )" << RESET << newline;
-}
-
 class Block {
+const int reportWidth = 64;
 public:
-	Block( string sectionName ) { StartBlock( sectionName ); }
-	~Block() { EndBlock(); }
+	Block( string sectionName ) {
+		Tick();
+		cout << T_BLUE << "    " << sectionName << " " << RESET;
+		for ( unsigned int i = 0; i < reportWidth - sectionName.size(); i++ ) {
+			cout << ".";
+		}
+		cout << " ";
+	}
+
+	~Block() {
+		const float timeInMS = Tock();
+		const float wholeMS = int( std::floor( timeInMS ) );
+		const float partialMS = int( ( timeInMS - wholeMS ) * 1000.0f );
+		cout << T_GREEN << "done." << T_RED << " ( " << std::setfill( ' ' ) << std::setw( 6 ) << wholeMS << "."
+			<< std::setw( 3 ) << std::setfill( '0' ) << partialMS << TIMEUNIT << " )" << RESET << newline;
+	}
 };
 
 void engine::StartMessage () {

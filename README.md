@@ -26,15 +26,17 @@
 
 **Utilities**
 - CMake parallel build setup
+- OpenGL texture bindings management with bindsets
 - [GLM](http://glm.g-truc.net/0.9.8/api/index.html) for vector and matrix types
-- Image wrapper for loading/saving/resizing/etc of images ( 4 channel, 8-bit default, WIP floating point support, supports saving 32-bit per channel floating point images with TinyEXR - stb and lodepng backends )
+- Image wrapper for loading/saving/resizing/etc of images ( 4 channel, 8-bit default - STB and [LodePNG](https://lodev.org/lodepng/) I/O backends )
+	- Incorporates the [irFlip2](https://jbaker.graphics/writings/irFlip2.html#irflip2) image swizzling utility
+	- WIP floating point support, supports saving 32-bit per channel floating point images with [TinyEXR](https://github.com/syoyo/tinyexr)
 - JSON parsing using [nlohmann's single header implementation](https://github.com/nlohmann/json)
 - XML parsing using [TinyXML2](https://tinyxml2.docsforge.com/)
 - TinyOBJLoader for loading of Wavefront .OBJ 3D model files
 - [Brent Werness' Voxel Automata Terrain ( VAT )](https://bitbucket.org/BWerness/voxel-automata-terrain/src/master/), converted from processing to C++
 	- BigInt library required by the VAT implementation ( to replace java/processing BigInt )
-- Startup config in json format, setting a number of application parameters at startup
-- OpenGL texture bindings management with bindsets
+- Startup config in json format, setting application parameters at startup without recompiling
 - Tick() / Tock() timing wrapper around std::chrono
 - Orientation Trident from Voraldo13, with the addition of multisampled AA in this implementation
 - [Tracy](https://github.com/wolfpld/tracy) profiler integration ( client mode )
@@ -43,6 +45,6 @@
 **Data Resources**
 - Bayer pattern header, size 2, 4, 8 patterns
 - Header with some color utilities
-- PNG encoded data resources
-	- bitfontCore2 + loader ( ~140k glyphs from [robhagemans](https://github.com/robhagemans/hoard-of-bitfonts) )
+- PNG encoded data resources with loader/decoder
+	- [bitfontCore2](https://jbaker.graphics/writings/bitfontCore2.html) ( ~140k glyphs from [robhagemans](https://github.com/robhagemans/hoard-of-bitfonts) ) + loader
 	- Collection of palettes from [lospec](https://lospec.com/) + loader

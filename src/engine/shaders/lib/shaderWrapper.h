@@ -1,9 +1,6 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-// OpenGL function loader
-#include "../../../ImGUI/gl3w.h"
-
 // #include processing for shader files
 #include "stb_include.h"
 

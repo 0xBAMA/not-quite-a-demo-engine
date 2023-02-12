@@ -130,7 +130,7 @@ void engine::CreateWindowAndContext () {
 		SDL_GL_SetSwapInterval( config.vSyncEnable ? 1 : 0 );
 
 		// load OpenGL functions
-		if ( gl3wInit() != 0 ) { cout << "Failed to Initialize OpenGL Loader!" << newline; abort(); }
+		if ( glewInit() != GLEW_OK ) { cout << "Failed to Initialize OpenGL Loader!" << newline; abort(); }
 
 		// basic OpenGL Config
 		glEnable( GL_DEPTH_TEST );

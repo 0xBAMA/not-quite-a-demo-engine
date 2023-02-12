@@ -60,18 +60,20 @@ using glm::mat3;
 using glm::mat4;
 
 // OpenGL Loader
-#include "../ImGUI/gl3w.h"
+#include <GL/glew.h>
+// #include "../ImGUI/gl3w.h"
 
 // GUI library (dear ImGUI)
 #include "../ImGUI/TextEditor.h"
 #include "../ImGUI/imgui.h"
-#include "../ImGUI/imgui_impl_sdl.h"
+#include "../ImGUI/imgui_impl_sdl2.h"
 #include "../ImGUI/imgui_impl_opengl3.h"
 
 // SDL includes - windowing, gl context, system info
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 // #include <SDL2/SDL_opengl_glext.h>
+
 
 // managing bindings of textures to binding points
 #include "./coreUtils/bindset.h"

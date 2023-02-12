@@ -1,4 +1,8 @@
 - Stuff from Voraldo13
+	- different types of screenshot utilities ( lower priority )
+		- accumulator
+		- after postprocessing
+		- directly from framebuffer
 
 - Convert back to using GLEW for OpenGL function loading
 	- hopefully will help to fix issues using GL3W on the new machine

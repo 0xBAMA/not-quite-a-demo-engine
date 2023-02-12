@@ -6,13 +6,13 @@
 static int numMsDelayAfterCallback = 100;
 
 //gl debug dump
-void MessageCallback ( 	GLenum source,
+void GLAPIENTRY MessageCallback ( 	GLenum source,
 						GLenum type,
 						GLuint id,
 						GLenum severity,
 						GLsizei length,
 						const GLchar* message,
-						void* userParam ) {
+						const void* userParam ) {
 	bool show_high_severity         = true;
 	if( severity == GL_DEBUG_SEVERITY_HIGH && show_high_severity )
 		fprintf( stderr, "        GL CALLBACK: %s type = 0x%x, severity = GL_DEBUG_SEVERITY_HIGH, message = %s\n",

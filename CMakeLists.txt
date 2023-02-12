@@ -30,6 +30,11 @@ find_package( OpenGL REQUIRED )
 add_library( opengl INTERFACE )
 target_link_libraries( opengl INTERFACE OpenGL::GL )
 
+# GL Extension Wrangler
+find_package( GLEW REQUIRED )
+include_directories( ${GLEW_INCLUDE_DIRS} )
+link_libraries( ${GLEW_LIBRARIES} )
+
 # FastNoise2
 add_subdirectory( ${PROJECT_SOURCE_DIR}/src/noise/FastNoise2 )
 
@@ -40,14 +45,13 @@ add_subdirectory( src/tracy )
 
 # this is for ImGUI
 add_library( imgui
-	src/ImGUI/imgui_impl_sdl.cc
+	src/ImGUI/imgui_impl_sdl2.cc
 	src/ImGUI/imgui_impl_opengl3.cc
 	src/ImGUI/imgui.cc
 	src/ImGUI/imgui_demo.cc
 	src/ImGUI/imgui_draw.cc
 	src/ImGUI/imgui_widgets.cc
 	src/ImGUI/imgui_tables.cc
-	src/ImGUI/imgui_gl3w.cc
 	src/ImGUI/TextEditor.cc
 	src/ImGUI/LanguageDefinitions.cc
 )

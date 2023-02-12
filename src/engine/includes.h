@@ -36,6 +36,8 @@ constexpr char newline = '\n';
 // pi definition - definitely sufficient precision
 constexpr double pi = 3.14159265358979323846;
 
+//====== OpenGL ===============================================================
+
 // vector math library GLM
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZW
@@ -59,9 +61,8 @@ using glm::ivec4;
 using glm::mat3;
 using glm::mat4;
 
-// OpenGL Loader
+// OpenGL Function Loader
 #include <GL/glew.h>
-// #include "../ImGUI/gl3w.h"
 
 // GUI library (dear ImGUI)
 #include "../ImGUI/TextEditor.h"
@@ -72,8 +73,9 @@ using glm::mat4;
 // SDL includes - windowing, gl context, system info
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-// #include <SDL2/SDL_opengl_glext.h>
+#include <SDL2/SDL_opengl_glext.h>
 
+//=============================================================================
 
 // managing bindings of textures to binding points
 #include "./coreUtils/bindset.h"

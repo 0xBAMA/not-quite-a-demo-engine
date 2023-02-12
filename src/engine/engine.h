@@ -15,14 +15,9 @@ private:
 	SDL_Window * window;
 	SDL_GLContext GLcontext;
 
-	// loaded from config.json
-	configData config;
-
-	// text renderer framework
-	layerManager textRenderer;
-
-	// orientation gizmo from Voraldo13
-	orientTrident trident;
+	configData config;			// loaded from config.json
+	layerManager textRenderer;	// text renderer framework
+	orientTrident trident;		// orientation gizmo from Voraldo13
 
 //====== OpenGL ===============================================================
 	GLuint displayVAO;

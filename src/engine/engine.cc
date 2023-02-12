@@ -13,7 +13,7 @@ void engine::Init () {
 	LoadData();
 	ImguiSetup();
 	InitialClear();
-	SDL_ShowWindow( window ); // if init takes some time, don't show the window before it's done
+	SDL_ShowWindow( w.window ); // if init takes some time, don't show the window before it's done
 	ReportStartupStats();
 }
 
@@ -25,17 +25,9 @@ void engine::ImguiQuit () {
 	ImGui::DestroyContext();
 }
 
-// terminate SDL2
-void engine::SDLQuit () {
-	ZoneScoped;
-	SDL_GL_DeleteContext( GLcontext );
-	SDL_DestroyWindow( window );
-	SDL_Quit();
-}
-
-// called from destructor
+// function to terminate, called from destructor
 void engine::Quit () {
 	ZoneScoped;
 	ImguiQuit();
-	SDLQuit();
+	w.Kill();
 }

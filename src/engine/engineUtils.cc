@@ -9,7 +9,7 @@ bool engine::MainLoop () {
 	ComputePasses();				// multistage update of displayTexture
 	BlitToScreen();					// fullscreen triangle copying the displayTexture to the screen
 	ImguiPass();					// do all the gui stuff
-	SDL_GL_SwapWindow( window );	// show what has just been drawn to the back buffer ( displayTexture + ImGui )
+	w.Swap();						// show what has just been drawn to the back buffer ( displayTexture + ImGui )
 	FrameMark;						// tells tracy that this is the end of a frame
 	return pQuit;					// break main loop when pQuit turns true
 }
@@ -182,7 +182,7 @@ void engine::HandleEvents () {
 		ImGui_ImplSDL2_ProcessEvent( &event );
 		// swap out the multiple if statements for a big chained boolean setting the value of pQuit
 		pQuit = ( event.type == SDL_QUIT ) ||
-				( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( window ) ) ||
+				( event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID( w.window ) ) ||
 				( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && SDL_GetModState() & KMOD_SHIFT );
 		// this has to stay because it doesn't seem like ImGui::IsKeyReleased is stable enough to use
 		if ( ( event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE ) || ( event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_X1 )  )

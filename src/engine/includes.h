@@ -135,5 +135,7 @@ using XMLDocument = tinyxml2::XMLDocument;
 // config, etc structs
 #include "./dataStructs.h"
 
+// management of window and GL context
+#include "./coreUtils/window.h"
 
 #endif

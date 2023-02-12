@@ -4,17 +4,15 @@
 
 class engine {
 public:
+//====== Public Interface =====================================================
 	engine()  { Init(); }
 	~engine() { Quit(); }
 
-	bool MainLoop (); // called from main
+	bool MainLoop (); // called from loop in main
 
 private:
-	// application handles + basic data
-	// windowHandler w; // this was partially implemented in Voraldo13, consider bringing that over
-	SDL_Window * window;
-	SDL_GLContext GLcontext;
-
+//====== Application Handles and Basic Data ===================================
+	windowHandler w;			// OpenGL context and SDL2 window
 	configData config;			// loaded from config.json
 	layerManager textRenderer;	// text renderer framework
 	orientTrident trident;		// orientation gizmo from Voraldo13
@@ -63,9 +61,7 @@ private:
 	void QuitConf ( bool* open );
 
 //====== shutdown procedures ==================================================
-	// shutdown procedures
 	void ImguiQuit ();
-	void SDLQuit ();
 	void Quit ();
 
 //====== program flags ========================================================

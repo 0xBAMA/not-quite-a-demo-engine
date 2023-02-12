@@ -1,9 +1,8 @@
 #ifndef INCLUDES
 #define INCLUDES
 
+//====== General STL Stuff ====================================================
 #include <stdio.h>
-
-// stl includes
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -36,9 +35,8 @@ constexpr char newline = '\n';
 // pi definition - definitely sufficient precision
 constexpr double pi = 3.14159265358979323846;
 
-//====== OpenGL ===============================================================
-
-// vector math library GLM
+//====== OpenGL / SDL =========================================================
+// GLM - vector math library GLM
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZW
 #include "../GLM/glm.hpp"					// general vector types
@@ -47,9 +45,7 @@ constexpr double pi = 3.14159265358979323846;
 #include "../GLM/gtx/rotate_vector.hpp"
 #include "../GLM/gtx/transform.hpp"
 #include "../GLM/gtx/string_cast.hpp"		// to_string for glm types
-
-// not sure as to the utility of this
-// #define GLX_GLEXT_PROTOTYPES
+// #define GLX_GLEXT_PROTOTYPES 			// not sure as to the utility of this
 
 // convenience defines for GLM
 using glm::vec2;
@@ -75,8 +71,25 @@ using glm::mat4;
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
 
-//=============================================================================
+//==== Third Party Libraries ==================================================
+// tracy profiler annotation
+#include "../tracy/public/tracy/Tracy.hpp"
 
+// more general noise solution
+#include "../noise/FastNoise2/include/FastNoise/FastNoise.h"
+
+// wrapper for TinyOBJLoader
+#include "../ModelLoading/TinyOBJLoader/tiny_obj_loader.h"
+
+// Niels Lohmann - JSON for Modern C++
+#include "../Serialization/JSON/json.hpp"
+using json = nlohmann::json;
+
+// tinyXML2 XML parser
+#include "../Serialization/tinyXML2/tinyxml2.h"
+using XMLDocument = tinyxml2::XMLDocument;
+
+//==== My Stuff ===============================================================
 // managing bindings of textures to binding points
 #include "./coreUtils/bindset.h"
 
@@ -89,14 +102,8 @@ using glm::mat4;
 // orientation trident
 #include "../trident/trident.h"
 
-// tracy profiler annotation
-#include "../tracy/public/tracy/Tracy.hpp"
-
 // font rendering header
 #include "../fonts/fontRenderer/renderer.h"
-
-// wrapper for TinyOBJLoader
-#include "../ModelLoading/TinyOBJLoader/tiny_obj_loader.h"
 
 // software rasterizer reimplementation
 #include "../SoftRast/SoftRast.h"
@@ -119,24 +126,14 @@ using glm::mat4;
 // diamond square heightmap generation
 #include "../noise/diamondSquare/diamond_square.h"
 
-// Brent Werness' Voxel Automata Terrain
+// Brent Werness' Voxel Automata Terrain, adapted to C++
 #include "../noise/VAT/VAT.h"
-
-// more general noise solution
-#include "../noise/FastNoise2/include/FastNoise/FastNoise.h"
 
 // bringing the old perlin impl back
 #include "../noise/perlin.h"
 
-// Niels Lohmann - JSON for Modern C++
-#include "../Serialization/JSON/json.hpp"
-using json = nlohmann::json;
-
-// tinyXML2 XML parser
-#include "../Serialization/tinyXML2/tinyxml2.h"
-using XMLDocument = tinyxml2::XMLDocument;
-
 // config, etc structs
 #include "./dataStructs.h"
+
 
 #endif

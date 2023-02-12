@@ -72,24 +72,11 @@ void engine::LoadConfig () {
 void engine::CreateWindowAndContext () {
 	ZoneScoped;
 
-	w.config = config;
+	w.config = &config;
 
-	{
-		Block Start( "Initializing SDL2" );
-		w.PreInit();
-	}
-
-	{
-		Block Start( "Creating Window" );
-		w.Init();
-	}
-
-	{
-		Block Start( "Setting Up OpenGL Context" );
-		w.OpenGLSetup();
-	}
-
-	config = w.config; // this feels a bit shit, ehh
+	{ Block Start( "Initializing SDL2" ); w.PreInit(); }
+	{ Block Start( "Creating Window" ); w.Init(); }
+	{ Block Start( "Setting Up OpenGL Context" ); w.OpenGLSetup(); }
 
 	// setup OpenGL debug callback with configured delay
 	numMsDelayAfterCallback = config.numMsDelayAfterCallback;

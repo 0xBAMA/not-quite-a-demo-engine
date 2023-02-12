@@ -19,11 +19,11 @@ public:
 		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,        24 );
 		SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,       8 );
 		// multisampling AA, for edges when evaluating API geometry
-		if ( config.MSAACount > 1 ) {
+		if ( config->MSAACount > 1 ) {
 			SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1 );
-			SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, config.MSAACount );
+			SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, config->MSAACount );
 		}
-		vsyncState = config.vSyncEnable;
+		vsyncState = config->vSyncEnable;
 	}
 
 	void Init () {
@@ -32,27 +32,27 @@ public:
 		SDL_GetDesktopDisplayMode( 0, &displayMode );
 
 		// 0 or negative numbers will size the window relative to the display
-		config.width = ( config.width <= 0 ) ? displayMode.w + config.width : config.width;
-		config.height = ( config.height <= 0 ) ? displayMode.h + config.height : config.height;
+		config->width = ( config->width <= 0 ) ? displayMode.w + config->width : config->width;
+		config->height = ( config->height <= 0 ) ? displayMode.h + config->height : config->height;
 
 		// always need OpenGL, always start hidden till init finishes
-		config.windowFlags |= SDL_WINDOW_OPENGL;
-		config.windowFlags |= SDL_WINDOW_HIDDEN;
-		window = SDL_CreateWindow( config.windowTitle.c_str(), config.windowOffset.x + config.startOnScreen * displayMode.w,
-			config.windowOffset.y, config.width, config.height, config.windowFlags );
+		config->windowFlags |= SDL_WINDOW_OPENGL;
+		config->windowFlags |= SDL_WINDOW_HIDDEN;
+		window = SDL_CreateWindow( config->windowTitle.c_str(), config->windowOffset.x + config->startOnScreen * displayMode.w,
+			config->windowOffset.y, config->width, config->height, config->windowFlags );
 	}
 
 	void OpenGLSetup () {
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_FLAGS, 0 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 		// defaults to OpenGL 4.3
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, config.OpenGLVersionMajor );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, config.OpenGLVersionMinor );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, config->OpenGLVersionMajor );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, config->OpenGLVersionMinor );
 		GLcontext = SDL_GL_CreateContext( window );
 		SDL_GL_MakeCurrent( window, GLcontext );
 
 		// config vsync enable/disable
-		SDL_GL_SetSwapInterval( config.vSyncEnable ? 1 : 0 );
+		SDL_GL_SetSwapInterval( config->vSyncEnable ? 1 : 0 );
 
 		// load OpenGL functions
 		if ( glewInit() != GLEW_OK ) { cout << "Failed to Initialize OpenGL Loader!" << newline; abort(); }
@@ -84,7 +84,7 @@ public:
 	uint32_t flags;
 	SDL_Window * window;
 	SDL_GLContext GLcontext;
-	configData config;
+	configData * config;
 };
 
 #endif

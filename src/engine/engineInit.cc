@@ -206,6 +206,12 @@ void engine::LoadData () {
 		Block Start( "Loading Font Glyphs" );
 		loadGlyphs();
 	}
+
+	{
+		Block Start( "Load Wordlists" );
+		loadBadWords();
+		loadColorWords();
+	}
 }
 
 void engine::ShaderCompile () {
@@ -310,6 +316,50 @@ void engine::ImguiSetup () {
 		colors[ ImGuiCol_NavWindowingDimBg ]		= ImVec4( 0.80f, 0.80f, 0.80f, 0.20f );
 		colors[ ImGuiCol_ModalWindowDimBg ]			= ImVec4( 0.80f, 0.80f, 0.80f, 0.35f );
 	}
+
+
+	// string read;
+
+	// std::ifstream badWordList( "../../badWords.txt" );
+	// std::vector< string > bad;
+	// size_t maxBad = 0;
+	// while ( std::getline( badWordList, read ) ) {
+	// 	maxBad = std::max( maxBad, read.length() );
+	// 	read = std::regex_replace( read, std::regex( " " ), "-" );
+	// 	bad.push_back( read );
+	// }
+	// for ( auto& s : bad ) {
+	// 	s.resize( maxBad, ' ' );
+	// 	cout << s << endl;
+	// }
+	// cout << "Loaded " << bad.size() << " bad words, max " << maxBad << " chars" << newline;
+	// Image badImage( maxBad, bad.size() );
+	// for ( unsigned int y = 0; y < bad.size(); y++ ) {
+	// 	for ( unsigned int x = 0; x < bad[ y ].length(); x++ ) {
+	// 		badImage.SetAtXY( x, y, { uint8_t( bad[ y ][ x ] ), 0, 0, 255 } );
+	// 	}
+	// }
+	// badImage.Save( "badWords.png" );
+
+	// std::ifstream colorWordList( "../../colorWords.txt" );
+	// std::vector< string > color;
+	// size_t maxColor = 0;
+	// while ( std::getline( colorWordList, read ) ) {
+	// 	maxColor = std::max( maxColor, read.length() );
+	// 	color.push_back( read );
+	// }
+	// for ( auto& s : color ) {
+	// 	s.resize( maxColor, ' ' );
+	// }
+	// cout << "Loaded " << color.size() << " color words, max " << maxColor << " chars" << newline;
+	// Image colorImage( maxColor, color.size() );
+	// for ( unsigned int y = 0; y < color.size(); y++ ) {
+	// 	for ( unsigned int x = 0; x < color[ y ].length(); x++ ) {
+	// 		colorImage.SetAtXY( x, y, { uint8_t( color[ y ][ x ] ), 0, 0, 255 } );
+	// 	}
+	// }
+	// colorImage.Save( "colorWords.png" );
+
 }
 
 void engine::InitialClear () {

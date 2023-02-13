@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <iostream>
 #include <numeric>
+#include <regex>
 #include <random>
 #include <sstream>
 #include <string>
@@ -122,6 +123,9 @@ using XMLDocument = tinyxml2::XMLDocument;
 
 // glyph list
 #include "../data/glyphLoader.h"
+
+// wordlists
+#include "../data/wordlistLoader.h"
 
 // diamond square heightmap generation
 #include "../noise/diamondSquare/diamond_square.h"

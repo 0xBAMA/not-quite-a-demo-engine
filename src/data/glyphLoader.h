@@ -18,7 +18,7 @@ static bool isBlackOrWhite( rgba check ) {
 
 static std::vector< glyph > glyphList;
 
-static void readGlyphAt ( uint32_t x, uint32_t y, Image &buffer ) {
+static void ReadGlyphAt ( uint32_t x, uint32_t y, Image &buffer ) {
 	// find the footprint of the glyph
 	glyph g;
 
@@ -74,13 +74,13 @@ static void readGlyphAt ( uint32_t x, uint32_t y, Image &buffer ) {
 	glyphList.push_back( g );
 }
 
-static void loadGlyphs () {
+static void LoadGlyphs () {
 	Image glyphRecord( "./src/data/bitfontCore2.png" );
 	// iterate through all the pixels in the image
 	for ( uint32_t y = 0; y < glyphRecord.height; y++ ) {
 		for ( uint32_t x = 0; x < glyphRecord.width; x++ ) {
 			if ( isBlackOrWhite( glyphRecord.GetAtXY( x, y ) ) ) {
-				readGlyphAt( x, y, glyphRecord );
+				ReadGlyphAt( x, y, glyphRecord );
 			}
 		}
 	}

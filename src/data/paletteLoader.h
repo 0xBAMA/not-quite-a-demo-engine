@@ -11,7 +11,7 @@ struct palette {
 };
 
 static std::vector< palette > paletteList;
-static void loadPalettes () {
+static void LoadPalettes () {
 	Image paletteRecord( "./src/data/palettes.png" );
 	for ( uint32_t yPos = 0; yPos < paletteRecord.height; yPos++ ) {
 		palette p;

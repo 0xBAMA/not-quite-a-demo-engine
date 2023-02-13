@@ -199,18 +199,18 @@ void engine::LoadData () {
 
 	{
 		Block Start( "Loading Palettes" );
-		loadPalettes();
+		LoadPalettes();
 	}
 
 	{
 		Block Start( "Loading Font Glyphs" );
-		loadGlyphs();
+		LoadGlyphs();
 	}
 
 	{
 		Block Start( "Load Wordlists" );
-		loadBadWords();
-		loadColorWords();
+		LoadBadWords();
+		LoadColorWords();
 	}
 }
 

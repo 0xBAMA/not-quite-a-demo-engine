@@ -5,8 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
-
 #include "../engine/coreUtils/image.h"
 
 static std::vector< std::string > badWords;
